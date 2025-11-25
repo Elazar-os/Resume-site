@@ -32,6 +32,7 @@ export default function CombinedPage() {
 import { Briefcase, Award, Heart, GraduationCap, CheckCircle2, BookOpen, Users } from "lucide-react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { SHIDDUCH_DATA } from "@/lib/data";
+import { DailyMissions } from "@/components/daily-missions";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -148,6 +149,10 @@ function TabsView() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Daily Missions Widget */}
+              <DailyMissions />
+
             </div>
           </motion.aside>
 

@@ -107,3 +107,27 @@ export const PROFILE_SUMMARY = {
   ],
   focus: "Building a career in Tech/AI while maintaining strong Torah values."
 };
+
+export const DAILY_MISSIONS = [
+  {
+    category: "Career",
+    title: "Tech Translation",
+    description: "Draft 3 bullet points for your LinkedIn 'About' section focusing on your transition from Hospitality to Tech.",
+    duration: "5 min",
+    icon: "Briefcase"
+  },
+  {
+    category: "Social",
+    title: "The Elevator Pitch",
+    description: "Practice your 'Who am I?' pitch out loud once. Focus on the blend of 'Manager' + 'Tech Aspirant'.",
+    duration: "2 min",
+    icon: "Users"
+  },
+  {
+    category: "Energy",
+    title: "Reset Breath",
+    description: "Do a 2-minute box breathing session (4-4-4-4) before your next shift or study session.",
+    duration: "2 min",
+    icon: "Zap"
+  }
+];
