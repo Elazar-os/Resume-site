@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles, BookOpen, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const RESUME_DATA = {
   personalInfo: {
@@ -72,8 +73,33 @@ const RESUME_DATA = {
   careerGoal: "Eager to leverage extensive operations and management experience to drive growth and efficiency in a dynamic new role. Committed to delivering exceptional results through strategic leadership and process optimization."
 };
 
+const SHIDDUCH_DATA = {
+  basics: {
+    age: 22,
+    hebrewName: "Elazar",
+    location: "Passaic, NJ"
+  },
+  education: [
+    { name: "Yeshiva Tiferes Avner", type: "Beis Medrash" },
+    { name: "Mesivta of Las Vegas", type: "Beis Medrash Program" },
+    { name: "Yeshivas Ner Boruch PTI", type: "Morning Kollel" },
+    { name: "Mesivta of North Jersey", type: "High School", notes: "Graduated with strong commitment to learning" }
+  ],
+  hashkafa: {
+    style: "Modern Orthodox / Modern Yeshivish balance",
+    values: "Values Torah learning, personal growth, community, and building a home rooted in warmth and authenticity.",
+    personality: "Grounded, thoughtful, emotionally aware, and easy to talk to. Hardworking with a growth mindset — committed to self-development spiritually and professionally. Friendly, responsible, enjoys meaningful conversation."
+  },
+  family: {
+    father: "Moshe Greisman",
+    mother: "Elisheva Greisman",
+    description: "Respected family in the Passaic community, warm home, strong values."
+  },
+  lookingFor: "A kind, sincere, and growth-oriented woman who values family, connection, and building a warm Jewish home. Someone emotionally mature, positive, supportive, and excited about building a future of teamwork, communication, and shared values."
+};
+
 const PROFILE_SUMMARY = {
-  identity: "A high-energy hospitality leader who thrives on efficiency and connection. Whether orchestrating a busy dinner service or coordinating community study groups, I bring structure, warmth, and a drive for excellence to everything I do. I balance high-stakes operational focus with a genuine passion for people and growth.",
+  identity: "A high-energy hospitality leader and dedicated ben Torah who thrives on efficiency, connection, and growth. Whether orchestrating a busy dinner service, learning in morning seder, or coordinating community study groups, I bring structure, warmth, and a drive for excellence. I balance high-stakes operational focus with a genuine passion for people and Torah values.",
   strengths: [
     { name: "Operational Strategy", level: 90 },
     { name: "Team Building", level: 95 },
@@ -84,10 +110,11 @@ const PROFILE_SUMMARY = {
   highlights: [
     "Founded a local study network",
     "Certified Swim Instructor & Lifeguard",
-    "3+ Years in High-Volume Dining Operations",
-    "Passionate about mentorship & growth"
+    "3+ Years in Restaurant Management",
+    "Active Morning Kollel Member",
+    "Aspiring Tech Professional"
   ],
-  focus: "Scaling operational impact & professional growth in management roles."
+  focus: "Building a career in Tech/AI while maintaining strong Torah values."
 };
 
 const containerVariants = {
@@ -210,109 +237,209 @@ export default function Home() {
           </motion.aside>
 
           {/* Main Content (Right Column) */}
-          <main className="lg:col-span-8 space-y-10 pt-6 lg:pt-0">
-            
-            {/* Summary */}
-            <motion.section variants={itemVariants} className="space-y-4">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h2 className="text-2xl font-bold font-heading text-primary">Professional Resume</h2>
-                <Badge variant="secondary" className="text-xs font-mono">Updated 2025</Badge>
-              </div>
-              <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                {RESUME_DATA.summary}
-              </p>
-            </motion.section>
+          <main className="lg:col-span-8 pt-6 lg:pt-0">
+            <Tabs defaultValue="professional" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="professional">Professional Profile</TabsTrigger>
+                <TabsTrigger value="personal">Personal & Shidduch</TabsTrigger>
+              </TabsList>
 
-            {/* Experience */}
-            <motion.section variants={itemVariants} className="space-y-6">
-              <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                <Briefcase className="w-6 h-6 text-accent" /> Experience
-              </h2>
-              
-              <div className="space-y-8">
-                {RESUME_DATA.experience.map((job, index) => (
-                  <div key={index} className="relative pl-4 border-l-2 border-muted hover:border-accent transition-colors duration-300">
-                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-accent" />
-                    
-                    <div className="space-y-1 mb-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                        <h3 className="text-xl font-bold text-primary">{job.role}</h3>
-                        <span className="text-sm font-mono text-muted-foreground bg-secondary px-2 py-1 rounded">{job.dates}</span>
-                      </div>
-                      <p className="text-lg font-medium text-accent">{job.company}</p>
-                      <p className="text-sm text-muted-foreground">{job.location}</p>
-                    </div>
-
-                    <ul className="space-y-3">
-                      {job.achievements.map((achievement, i) => (
-                        <li key={i} className="flex items-start gap-3 text-muted-foreground">
-                          <CheckCircle2 className="w-5 h-5 text-primary/40 shrink-0 mt-0.5" />
-                          <span>{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
+              {/* PROFESSIONAL TAB */}
+              <TabsContent value="professional" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Summary */}
+                <motion.section variants={itemVariants} className="space-y-4">
+                  <div className="flex items-center justify-between border-b pb-2">
+                    <h2 className="text-2xl font-bold font-heading text-primary">Professional Summary</h2>
+                    <Badge variant="secondary" className="text-xs font-mono">Updated 2025</Badge>
                   </div>
-                ))}
-              </div>
-            </motion.section>
+                  <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+                    {RESUME_DATA.summary}
+                  </p>
+                </motion.section>
 
-            {/* Skills Grid */}
-             <motion.section variants={itemVariants} className="space-y-6">
-                <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                  <Award className="w-6 h-6 text-accent" /> Skills & Expertise
-                </h2>
-                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {RESUME_DATA.skills.map((skill, index) => (
-                    <div key={index} className="flex items-center gap-2 p-3 rounded-lg bg-secondary/30 border border-transparent hover:border-accent/20 transition-colors">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      <span className="text-sm font-medium text-foreground/80">{skill}</span>
+                {/* Experience */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                  <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                    <Briefcase className="w-6 h-6 text-accent" /> Experience
+                  </h2>
+                  
+                  <div className="space-y-8">
+                    {RESUME_DATA.experience.map((job, index) => (
+                      <div key={index} className="relative pl-4 border-l-2 border-muted hover:border-accent transition-colors duration-300">
+                        <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-accent" />
+                        
+                        <div className="space-y-1 mb-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                            <h3 className="text-xl font-bold text-primary">{job.role}</h3>
+                            <span className="text-sm font-mono text-muted-foreground bg-secondary px-2 py-1 rounded">{job.dates}</span>
+                          </div>
+                          <p className="text-lg font-medium text-accent">{job.company}</p>
+                          <p className="text-sm text-muted-foreground">{job.location}</p>
+                        </div>
+
+                        <ul className="space-y-3">
+                          {job.achievements.map((achievement, i) => (
+                            <li key={i} className="flex items-start gap-3 text-muted-foreground">
+                              <CheckCircle2 className="w-5 h-5 text-primary/40 shrink-0 mt-0.5" />
+                              <span>{achievement}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </motion.section>
+
+                {/* Skills Grid */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                    <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <Award className="w-6 h-6 text-accent" /> Skills & Expertise
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {RESUME_DATA.skills.map((skill, index) => (
+                        <div key={index} className="flex items-center gap-2 p-3 rounded-lg bg-secondary/30 border border-transparent hover:border-accent/20 transition-colors">
+                          <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                          <span className="text-sm font-medium text-foreground/80">{skill}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                 </div>
-             </motion.section>
+                </motion.section>
 
-            {/* Volunteer / Other */}
-            <motion.section variants={itemVariants} className="space-y-6">
-              <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                <Heart className="w-6 h-6 text-accent" /> Volunteer & Leadership
-              </h2>
-              
-              <div className="grid gap-6 md:grid-cols-2">
-                {RESUME_DATA.otherExperience.map((role, index) => (
-                  <Card key={index} className="bg-secondary/30 border-none shadow-sm hover:shadow-md transition-shadow">
-                    <CardContent className="p-5 space-y-3">
-                      <div>
-                        <h3 className="font-bold text-primary">{role.role}</h3>
-                        <p className="text-sm text-accent font-medium">{role.organization}</p>
+                {/* Volunteer / Other */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                  <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                    <Heart className="w-6 h-6 text-accent" /> Volunteer & Leadership
+                  </h2>
+                  
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {RESUME_DATA.otherExperience.map((role, index) => (
+                      <Card key={index} className="bg-secondary/30 border-none shadow-sm hover:shadow-md transition-shadow">
+                        <CardContent className="p-5 space-y-3">
+                          <div>
+                            <h3 className="font-bold text-primary">{role.role}</h3>
+                            <p className="text-sm text-accent font-medium">{role.organization}</p>
+                          </div>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {role.description}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </motion.section>
+                
+                {/* Education */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                  <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <GraduationCap className="w-6 h-6 text-accent" /> Education
+                    </h2>
+                    <div className="p-4 rounded-lg border bg-card">
+                      <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-primary">{RESUME_DATA.education.school}</h3>
+                            <p className="text-muted-foreground">{RESUME_DATA.education.degree}</p>
+                          </div>
+                          <div className="text-right text-sm text-muted-foreground">
+                            <p>{RESUME_DATA.education.year}</p>
+                            <p>{RESUME_DATA.education.location}</p>
+                          </div>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {role.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </motion.section>
-             
-             {/* Education */}
-             <motion.section variants={itemVariants} className="space-y-6">
-               <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                  <GraduationCap className="w-6 h-6 text-accent" /> Education
-                </h2>
-                <div className="p-4 rounded-lg border bg-card">
-                   <div className="flex justify-between items-start">
+                    </div>
+                </motion.section>
+              </TabsContent>
+
+              {/* PERSONAL / SHIDDUCH TAB */}
+              <TabsContent value="personal" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                
+                {/* Intro Header */}
+                <motion.section variants={itemVariants} className="bg-accent/5 p-6 rounded-xl border border-accent/10">
+                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                        <h3 className="font-bold text-primary">{RESUME_DATA.education.school}</h3>
-                        <p className="text-muted-foreground">{RESUME_DATA.education.degree}</p>
+                         <h2 className="text-2xl font-bold font-heading text-primary">Personal Profile</h2>
+                         <p className="text-muted-foreground mt-1">Age {SHIDDUCH_DATA.basics.age} • {SHIDDUCH_DATA.basics.location}</p>
                       </div>
-                      <div className="text-right text-sm text-muted-foreground">
-                        <p>{RESUME_DATA.education.year}</p>
-                        <p>{RESUME_DATA.education.location}</p>
+                      <div className="text-right hidden md:block">
+                        <p className="text-sm font-medium text-primary">Hebrew Name</p>
+                        <p className="text-lg font-heading text-accent">{SHIDDUCH_DATA.basics.hebrewName}</p>
                       </div>
                    </div>
-                </div>
-             </motion.section>
+                </motion.section>
 
+                {/* Hashkafa & Personality */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-accent" /> Hashkafa & Values
+                   </h2>
+                   <div className="grid gap-6 md:grid-cols-2">
+                      <Card className="bg-card border-none shadow-sm">
+                         <CardHeader>
+                            <CardTitle className="text-lg">Hashkafa</CardTitle>
+                         </CardHeader>
+                         <CardContent className="space-y-4">
+                            <Badge variant="secondary" className="mb-2">{SHIDDUCH_DATA.hashkafa.style}</Badge>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                               {SHIDDUCH_DATA.hashkafa.values}
+                            </p>
+                         </CardContent>
+                      </Card>
+                      <Card className="bg-card border-none shadow-sm">
+                         <CardHeader>
+                            <CardTitle className="text-lg">Personality</CardTitle>
+                         </CardHeader>
+                         <CardContent>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                               {SHIDDUCH_DATA.hashkafa.personality}
+                            </p>
+                         </CardContent>
+                      </Card>
+                   </div>
+                </motion.section>
+
+                {/* Yeshiva Education */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <GraduationCap className="w-5 h-5 text-accent" /> Yeshiva Education
+                   </h2>
+                   <div className="space-y-4">
+                      {SHIDDUCH_DATA.education.map((edu, i) => (
+                         <div key={i} className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border border-transparent hover:border-accent/20 transition-colors">
+                            <div>
+                               <h3 className="font-bold text-primary">{edu.name}</h3>
+                               {edu.notes && <p className="text-xs text-muted-foreground mt-1">{edu.notes}</p>}
+                            </div>
+                            <Badge variant="outline">{edu.type}</Badge>
+                         </div>
+                      ))}
+                   </div>
+                </motion.section>
+
+                {/* Family */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-accent" /> Family Background
+                   </h2>
+                   <Card className="bg-primary/5 border-none">
+                      <CardContent className="p-6 space-y-2">
+                         <p className="font-medium text-primary text-lg">Parents: {SHIDDUCH_DATA.family.father} & {SHIDDUCH_DATA.family.mother}</p>
+                         <p className="text-muted-foreground">{SHIDDUCH_DATA.family.description}</p>
+                      </CardContent>
+                   </Card>
+                </motion.section>
+
+                {/* Looking For */}
+                 <motion.section variants={itemVariants} className="space-y-6">
+                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-accent" /> What I'm Looking For
+                   </h2>
+                   <div className="bg-accent/10 p-6 rounded-xl border border-accent/20">
+                      <p className="text-lg leading-relaxed text-primary/90 font-medium italic">
+                         "{SHIDDUCH_DATA.lookingFor}"
+                      </p>
+                   </div>
+                </motion.section>
+
+              </TabsContent>
+            </Tabs>
           </main>
         </motion.div>
       </div>
