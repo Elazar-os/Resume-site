@@ -22,9 +22,9 @@ export function ShareProfile() {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   
   const links = {
-    professional: `${origin}/resume`,
-    shidduch: `${origin}/shidduch`,
-    combined: `${origin}/combined`
+    professional: `${origin}/#/resume`,
+    shidduch: `${origin}/#/shidduch`,
+    combined: `${origin}/#/combined`
   };
 
   const messages = {
