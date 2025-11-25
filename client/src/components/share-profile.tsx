@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Copy, Share2, Briefcase, Heart, Layout } from "lucide-react";
+import { Check, Copy, Share2, Briefcase, Heart, Layout, Mail, MessageSquare, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +31,27 @@ export function ShareProfile() {
     professional: `Hi, here is my professional resume and portfolio: ${links.professional}`,
     shidduch: `Hi, here is my shidduch profile: ${links.shidduch}`,
     combined: `Hi, here is my full profile (Elazar OS): ${links.combined}`
+  };
+
+  const shareVia = (method: 'sms' | 'whatsapp' | 'email', type: 'professional' | 'shidduch' | 'combined') => {
+    const message = messages[type];
+    const encodedMessage = encodeURIComponent(message);
+    let url = '';
+
+    switch (method) {
+      case 'sms':
+        // different devices handle sms body differently, standard is body=
+        url = `sms:?&body=${encodedMessage}`;
+        break;
+      case 'whatsapp':
+        url = `https://wa.me/?text=${encodedMessage}`;
+        break;
+      case 'email':
+        url = `mailto:?subject=Profile Share&body=${encodedMessage}`;
+        break;
+    }
+    
+    window.open(url, '_blank');
   };
 
   const copyToClipboard = (text: string, type: string) => {
@@ -85,9 +106,21 @@ export function ShareProfile() {
               </div>
             </div>
             
-            <Button variant="secondary" className="w-full text-xs" onClick={() => copyToClipboard(messages.professional, "Message")}>
+            <Button variant="secondary" className="w-full text-xs mb-3" onClick={() => copyToClipboard(messages.professional, "Message")}>
               Copy Pre-written Message
             </Button>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('sms', 'professional')}>
+                <Smartphone className="w-3 h-3 mr-1.5" /> SMS
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('whatsapp', 'professional')}>
+                <MessageSquare className="w-3 h-3 mr-1.5" /> WA
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('email', 'professional')}>
+                <Mail className="w-3 h-3 mr-1.5" /> Email
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="shidduch" className="space-y-4">
@@ -112,9 +145,21 @@ export function ShareProfile() {
               </div>
             </div>
             
-            <Button variant="secondary" className="w-full text-xs" onClick={() => copyToClipboard(messages.shidduch, "Message")}>
+            <Button variant="secondary" className="w-full text-xs mb-3" onClick={() => copyToClipboard(messages.shidduch, "Message")}>
               Copy Pre-written Message
             </Button>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('sms', 'shidduch')}>
+                <Smartphone className="w-3 h-3 mr-1.5" /> SMS
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('whatsapp', 'shidduch')}>
+                <MessageSquare className="w-3 h-3 mr-1.5" /> WA
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('email', 'shidduch')}>
+                <Mail className="w-3 h-3 mr-1.5" /> Email
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="combined" className="space-y-4">
@@ -139,9 +184,21 @@ export function ShareProfile() {
               </div>
             </div>
             
-            <Button variant="secondary" className="w-full text-xs" onClick={() => copyToClipboard(messages.combined, "Message")}>
+            <Button variant="secondary" className="w-full text-xs mb-3" onClick={() => copyToClipboard(messages.combined, "Message")}>
               Copy Pre-written Message
             </Button>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('sms', 'combined')}>
+                <Smartphone className="w-3 h-3 mr-1.5" /> SMS
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('whatsapp', 'combined')}>
+                <MessageSquare className="w-3 h-3 mr-1.5" /> WA
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('email', 'combined')}>
+                <Mail className="w-3 h-3 mr-1.5" /> Email
+              </Button>
+            </div>
           </TabsContent>
           
         </Tabs>

@@ -79,10 +79,10 @@ export default function ShidduchPage() {
                       <Mail className="w-4 h-4" />
                       Email
                     </a>
-                    <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
+                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Phone className="w-4 h-4" />
                       Phone
-                    </div>
+                    </a>
                      <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
                       <MapPin className="w-4 h-4" />
                       NJ
