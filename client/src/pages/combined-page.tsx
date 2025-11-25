@@ -33,6 +33,7 @@ import { Briefcase, Award, Heart, GraduationCap, CheckCircle2, BookOpen, Users }
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { SHIDDUCH_DATA } from "@/lib/data";
 import { DailyMissions } from "@/components/daily-missions";
+import { PhotoGallery } from "@/components/photo-gallery";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -152,6 +153,9 @@ function TabsView() {
 
               {/* Daily Missions Widget */}
               <DailyMissions />
+
+              {/* Photo Gallery Widget */}
+              <PhotoGallery />
 
             </div>
           </motion.aside>
