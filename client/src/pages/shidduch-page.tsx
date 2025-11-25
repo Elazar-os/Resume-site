@@ -55,14 +55,7 @@ export default function ShidduchPage() {
                   </div>
 
                   <div className="space-y-4 text-left">
-                    <div className="bg-secondary/50 rounded-lg p-4">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2">
-                        <Sparkles className="w-3 h-3" /> Identity Snapshot
-                      </h3>
-                      <p className="text-sm text-foreground/80 leading-relaxed">
-                        {PROFILE_SUMMARY.identity}
-                      </p>
-                    </div>
+                    {/* Identity Snapshot removed for shidduch profile */}
 
                     <div>
                       <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
