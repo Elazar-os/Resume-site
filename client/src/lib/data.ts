@@ -105,6 +105,26 @@ export const PROFILE_SUMMARY = {
     "Active Morning Kollel Member",
     "Aspiring Tech Professional"
   ],
+  tags: [
+    "#PassaicNative",
+    "#OperationsNinja",
+    "#MorningSeder",
+    "#FutureTechie",
+    "#PeoplePerson",
+    "#GrindMode",
+    "#CommunityBuilder",
+    "#TorahAndTech",
+    "#LifeguardLife",
+    "#EfficiencyExpert",
+    "#FoodServiceVet",
+    "#GrowthMindset",
+    "#ModernYeshivish",
+    "#TeamCaptain",
+    "#AlwaysLearning",
+    "#RealTalk",
+    "#ChillButDriven",
+    "#ShadchanFriendly"
+  ],
   focus: "Building a career in Tech/AI while maintaining strong Torah values."
 };
 

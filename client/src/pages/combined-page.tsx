@@ -29,7 +29,7 @@ export default function CombinedPage() {
   );
 }
 
-import { Briefcase, Award, Heart, GraduationCap, CheckCircle2, BookOpen, Users } from "lucide-react";
+import { Briefcase, Award, Heart, GraduationCap, CheckCircle2, BookOpen, Users, Hash } from "lucide-react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { SHIDDUCH_DATA } from "@/lib/data";
 import { DailyMissions } from "@/components/daily-missions";
@@ -120,6 +120,19 @@ function TabsView() {
                           </li>
                         ))}
                       </ul>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                        <Hash className="w-3 h-3" /> Identity Tags
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {PROFILE_SUMMARY.tags.map((tag, i) => (
+                          <Badge key={i} variant="secondary" className="text-[10px] px-2 py-0.5 bg-secondary/40 hover:bg-accent hover:text-accent-foreground transition-colors cursor-default">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
 
                      <div className="pt-2">
