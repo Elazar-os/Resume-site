@@ -84,7 +84,7 @@ export const SHIDDUCH_DATA = {
   family: {
     father: "Moshe Greisman",
     mother: "Elisheva Greisman",
-    description: "Respected family in the Passaic community, warm home, strong values."
+    description: "Father is a Tax Lawyer for Goldman Sachs. Mother is a Teacher in Bnos Bracha Passaic."
   },
   lookingFor: "A kind, sincere, and growth-oriented woman who values family, connection, and building a warm Jewish home. Someone emotionally mature, positive, supportive, and excited about building a future of teamwork, communication, and shared values."
 };
