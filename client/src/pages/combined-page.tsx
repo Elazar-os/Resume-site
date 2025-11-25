@@ -34,6 +34,7 @@ import { CardHeader, CardTitle } from "@/components/ui/card";
 import { SHIDDUCH_DATA } from "@/lib/data";
 import { DailyMissions } from "@/components/daily-missions";
 import { PhotoGallery } from "@/components/photo-gallery";
+import { ShareProfile } from "@/components/share-profile";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -146,6 +147,10 @@ function TabsView() {
                   </div>
 
                   <Separator />
+                  
+                  <div className="px-6 pb-2">
+                    <ShareProfile />
+                  </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <a href={`mailto:${RESUME_DATA.personalInfo.email}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
