@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Briefcase, Heart, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DailyMissions } from "@/components/daily-missions";
 
 export default function LandingPage() {
   return (
@@ -78,6 +79,8 @@ export default function LandingPage() {
           </Link>
 
         </motion.div>
+
+        <DailyMissions />
 
         <footer className="text-sm text-muted-foreground/50">
           © 2025 Elazar Greisman. All rights reserved.
