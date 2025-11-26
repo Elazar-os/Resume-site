@@ -379,10 +379,15 @@ export default function SmartPhotoSelector() {
                       const blob = new Blob([JSON.stringify(sel, null, 2)], {type:'application/json'});
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement('a');
+                      a.style.display = 'none';
                       a.href = url;
                       a.download = 'photo_selection.json';
+                      document.body.appendChild(a);
                       a.click();
-                      URL.revokeObjectURL(url);
+                      setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                      }, 100);
                     }} 
                     disabled={files.length === 0}
                   >
@@ -417,14 +422,23 @@ export default function SmartPhotoSelector() {
           {/* Results Area */}
           <div className="lg:col-span-8 space-y-8">
             {files.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-xl text-muted-foreground">
-                <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mb-4">
+              <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-xl text-muted-foreground bg-accent/5">
+                <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mb-4 shadow-sm">
                   <Camera className="w-10 h-10 opacity-50" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground">No Photos Analyzed Yet</h3>
-                <p className="max-w-md mt-2">
+                <p className="max-w-md mt-2 mb-6">
                   Upload your photo dump and the AI will automatically categorize them into Professional, Casual, Adventurous, and Family groups.
                 </p>
+                <Button 
+                  onClick={() => fileInputRef.current?.click()} 
+                  disabled={isAnalyzing || isModelsLoading}
+                  className="w-full max-w-[200px]"
+                  size="lg"
+                >
+                  {isAnalyzing ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Upload className="w-5 h-5 mr-2" />}
+                  {isAnalyzing ? "Analyzing..." : "Select Photos"}
+                </Button>
               </div>
             ) : (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
