@@ -315,22 +315,21 @@ export default function SmartPhotoSelector() {
                     Drag & drop or select multiple photos to analyze
                   </p>
                 </div>
-                <Button 
-                  onClick={() => fileInputRef.current?.click()} 
-                  disabled={isAnalyzing || isModelsLoading}
-                  className="w-full max-w-[200px]"
-                >
-                  {isAnalyzing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Camera className="w-4 h-4 mr-2" />}
-                  {isAnalyzing ? "Analyzing..." : "Select Photos"}
-                </Button>
                 <input 
                   type="file" 
+                  id="hidden-file-input"
                   ref={fileInputRef} 
-                  style={{ opacity: 0, position: 'absolute', zIndex: -1, width: '1px', height: '1px' }}
+                  className="hidden" 
                   multiple 
                   accept="image/*" 
                   onChange={handleFileSelect} 
                 />
+                <label htmlFor="hidden-file-input" className="w-full max-w-[200px] inline-block">
+                  <div className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full ${isAnalyzing || isModelsLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                    {isAnalyzing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                    {isAnalyzing ? "Analyzing..." : "Select Photos"}
+                  </div>
+                </label>
               </CardContent>
             </Card>
 
@@ -430,15 +429,21 @@ export default function SmartPhotoSelector() {
                 <p className="max-w-md mt-2 mb-6">
                   Upload your photo dump and the AI will automatically categorize them into Professional, Casual, Adventurous, and Family groups.
                 </p>
-                <Button 
-                  onClick={() => fileInputRef.current?.click()} 
-                  disabled={isAnalyzing || isModelsLoading}
-                  className="w-full max-w-[200px]"
-                  size="lg"
-                >
-                  {isAnalyzing ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Upload className="w-5 h-5 mr-2" />}
-                  {isAnalyzing ? "Analyzing..." : "Select Photos"}
-                </Button>
+                <input 
+                  type="file" 
+                  id="hidden-file-input-2"
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  multiple 
+                  accept="image/*" 
+                  onChange={handleFileSelect} 
+                />
+                <label htmlFor="hidden-file-input-2" className="w-full max-w-[200px] inline-block">
+                  <div className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full ${isAnalyzing || isModelsLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                    {isAnalyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                    {isAnalyzing ? "Analyzing..." : "Select Photos"}
+                  </div>
+                </label>
               </div>
             ) : (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
