@@ -34,34 +34,34 @@
 }
 
 :root {
-  /* Friendly + Techy - Bright Blue */
-  --background: 216 20% 96%; /* #F2F4F7 */
-  --foreground: 235 21% 21%; /* #2B2D42 */
+  /* Elegant + Premium - Deep Navy & Gold */
+  --background: 210 17% 98%; /* #F8F9FA (Soft White) */
+  --foreground: 213 74% 15%; /* #0A2342 (Deep Navy) */
   
   --card: 0 0% 100%; /* #FFFFFF */
-  --card-foreground: 235 21% 21%; /* #2B2D42 */
+  --card-foreground: 213 74% 15%; /* #0A2342 */
   
   --popover: 0 0% 100%; /* #FFFFFF */
-  --popover-foreground: 235 21% 21%; /* #2B2D42 */
+  --popover-foreground: 213 74% 15%; /* #0A2342 */
   
-  --primary: 211 100% 50%; /* #007BFF */
-  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+  --primary: 213 74% 15%; /* #0A2342 (Deep Navy) */
+  --primary-foreground: 210 17% 98%; /* #F8F9FA */
   
-  --secondary: 205 100% 70%; /* #66BFFF */
-  --secondary-foreground: 235 21% 21%; /* #2B2D42 */
+  --secondary: 210 29% 90%; /* #DDE6ED (Silver Gray) */
+  --secondary-foreground: 213 74% 15%; /* #0A2342 */
   
-  --muted: 216 20% 96%;
-  --muted-foreground: 235 10% 50%;
+  --muted: 210 29% 90%;
+  --muted-foreground: 213 20% 50%;
   
-  --accent: 205 100% 70%; /* #66BFFF */
-  --accent-foreground: 235 21% 21%;
+  --accent: 35 38% 64%; /* #C5A880 (Gold) */
+  --accent-foreground: 213 74% 15%;
   
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 216 10% 90%;
-  --input: 216 10% 90%;
-  --ring: 211 100% 50%; /* #007BFF */
+  --border: 210 29% 85%;
+  --input: 210 29% 85%;
+  --ring: 220 80% 48%; /* #185ADB (Royal Blue) for focus rings */
   
   --radius: 0.5rem;
 }
