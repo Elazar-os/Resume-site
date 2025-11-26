@@ -175,6 +175,9 @@ function TabsView() {
               {/* Photo Gallery Widget */}
               <PhotoGallery />
 
+              {/* Daily Missions Widget */}
+              <DailyMissions />
+
             </div>
           </motion.aside>
 
