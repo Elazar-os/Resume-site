@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Elazar — Smart Photo Selector (Option C)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:18px;color:#111}
+    h1{margin-top:0}
+    .u-row{display:flex;gap:12px;flex-wrap:wrap}
+    .u-col{flex:1 1 260px;min-width:220px}
+    input[type=file]{display:block;margin-bottom:8px}
+    .progress{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-bottom:8px}
+    .bar{height:100%;background:linear-gradient(90deg,#3b82f6,#06b6d4);width:0%}
+    .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .card{border:1px solid #ddd;padding:6px;border-radius:8px;position:relative;background:#fff}
+    .card img{width:100%;height:170px;object-fit:cover;border-radius:6px}
+    .meta{font-size:12px;margin-top:6px;color:#444}
+    .categoryTitle{display:flex;justify-content:space-between;align-items:center}
+    button{padding:8px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer}
+    select{padding:6px;border-radius:6px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .dropzone{border:2px dashed #cbd5e1;padding:16px;border-radius:8px;text-align:center;color:#64748b}
+    .small{font-size:12px;color:#666}
+    .badge{position:absolute;left:8px;top:8px;background:#0ea5e9;color:#fff;padding:4px 6px;border-radius:6px;font-size:12px}
+    .override{display:flex;gap:6px;align-items:center;margin-top:6px}
+    .exportBtn{background:#06b6d4;color:#fff;border:none}
+  </style>
+</head>
+<body>
+  <h1>Smart Photo Selector — Option C</h1>
+  <p class="small">Upload photos and the site will auto-select the best photos for each category (Professional, Casual, Adventurous, Family/Community). Runs locally in your browser.</p>
+
+  <div class="u-row">
+    <div class="u-col">
+      <input id="fileInput" type="file" accept="image/*" multiple />
+      <div class="controls">
+        <button id="startBtn">Analyze Selected</button>
+        <button id="clearBtn">Clear All</button>
+        <button id="saveLocalBtn">Save Selection (local)</button>
+        <button id="downloadBtn" class="exportBtn">Export Selection (JSON)</button>
+        <select id="topN">
+          <option value="2">Top 2 per category</option>
+          <option value="3" selected>Top 3 per category</option>
+          <option value="4">Top 4 per category</option>
+        </select>
+      </div>
+
+      <div class="progress" aria-hidden><div class="bar" id="progressBar"></div></div>
+      <div id="status" class="small">Models: <span id="modelStatus">Not loaded</span></div>
+
+      <h3>Raw Upload Preview</h3>
+      <div id="rawPreview" class="gallery"></div>
+    </div>
+
+    <div class="u-col">
+      <div class="dropzone" id="dropzone">
+        Drop images here or use the file selector. After analysis you can reassign any photo to a different category manually.
+      </div>
+
+      <h3>Selected Photos by Category</h3>
+
+      <div class="category">
+        <div class="categoryTitle"><strong>Professional</strong><span id="profCount"></span></div>
+        <div id="professional" class="gallery"></div>
+      </div>
+
+      <div class="category">
+        <div class="categoryTitle"><strong>Casual</strong><span id="casualCount"></span></div>
+        <div id="casual" class="gallery"></div>
+      </div>
+
+      <div class="category">
+        <div class="categoryTitle"><strong>Adventurous</strong><span id="advenCount"></span></div>
+        <div id="adventurous" class="gallery"></div>
+      </div>
+
+      <div class="category">
+        <div class="categoryTitle"><strong>Family / Community</strong><span id="famCount"></span></div>
+        <div id="family" class="gallery"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.2.1/dist/mobilenet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <script>
+  /********* CONFIG *********/
+  const MODEL_URL = '/models' // ensure you host face-api weights at /models
+  const categories = ['professional','casual','adventurous','family']
+  const displayNames = { professional: 'Professional', casual:'Casual', adventurous:'Adventurous', family:'Family / Community' }
+
+  /********* STATE *********/
+  const state = {
+    files: [], // {file, url, image, canvas, features, scores, hash}
+    mobilenetModel: null,
+    modelsLoaded: false
+  }
+
+  const el = id => document.getElementById(id)
+  const progressBar = el('progressBar')
+  const modelStatus = el('modelStatus')
+  const rawPreview = el('rawPreview')
+
+  /********* UTILITIES *********/
+  function updateProgress(p){ progressBar.style.width = `${p*100}%` }
+  function readFileAsDataURL(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=e=>res(e.target.result); fr.onerror=rej; fr.readAsDataURL(file) }) }
+  function createImage(url){ return new Promise((res,rej)=>{ const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>res(img); img.onerror=rej; img.src=url }) }
+
+  // compute grayscale variance of Laplacian (sharpness) via canvas convolution
+  function computeSharpness(img){
+    const c = document.createElement('canvas')
+    const w = Math.min(500, img.naturalWidth)
+    const h = Math.floor(img.naturalHeight * (w / img.naturalWidth))
+    c.width=w;c.height=h
+    const ctx=c.getContext('2d')
+    ctx.drawImage(img,0,0,w,h)
+    const id=ctx.getImageData(0,0,w,h)
+    // convert to gray
+    const gray = new Float32Array(w*h)
+    for(let i=0;i<w*h;i++){
+      const r=id.data[i*4], g=id.data[i*4+1], b=id.data[i*4+2]
+      gray[i]=0.299*r+0.587*g+0.114*b
+    }
+    // laplacian kernel
+    const lap = new Float32Array(w*h)
+    const idx = (x,y)=> (y*w+x)
+    const K = [[0,1,0],[1,-4,1],[0,1,0]]
+    for(let y=1;y<h-1;y++){
+      for(let x=1;x<w-1;x++){
+        let s=0
+        for(let ky=-1;ky<=1;ky++) for(let kx=-1;kx<=1;kx++){
+          s += gray[idx(x+kx,y+ky)] * K[ky+1][kx+1]
+        }
+        lap[idx(x,y)]=s
+      }
+    }
+    // variance
+    let mean=0, n=0
+    for(let i=0;i<lap.length;i++){ mean+=lap[i]; n++ }
+    mean/=n
+    let varr=0
+    for(let i=0;i<lap.length;i++){ const d=lap[i]-mean; varr+=d*d }
+    varr/=n
+    return varr // larger => sharper
+  }
+
+  // compute a simple average hash (aHash)
+  function computeAHash(img){
+    const c = document.createElement('canvas')
+    c.width=8;c.height=8
+    const ctx=c.getContext('2d')
+    ctx.drawImage(img,0,0,8,8)
+    const data = ctx.getImageData(0,0,8,8).data
+    let sum=0
+    const vals=[]
+    for(let i=0;i<64;i++){
+      const r=data[i*4], g=data[i*4+1], b=data[i*4+2]
+      const v = 0.299*r+0.587*g+0.114*b
+      vals.push(v); sum+=v
+    }
+    const avg=sum/64
+    let bits=''
+    for(let i=0;i<64;i++) bits += (vals[i] > avg) ? '1' : '0'
+    return bits
+  }
+
+  function hamming(a,b){ let diff=0; for(let i=0;i<a.length;i++) if(a[i]!==b[i]) diff++; return diff }
+
+  /********* MODEL LOADING *********/
+  async function loadModels(){
+    modelStatus.innerText = 'Loading...'
+    try{
+      // mobilenet
+      state.mobilenetModel = await mobilenet.load({version:2, alpha:1.0})
+      // face-api: try to load tiny detector + landmarks + expressions
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+      state.modelsLoaded = true
+      modelStatus.innerText = 'Loaded (mobilenet + face-api)'
+    }catch(err){
+      console.warn('Model load failed or incomplete. Falling back to mobilenet only if available.', err)
+      if(state.mobilenetModel) modelStatus.innerText = 'Loaded (mobilenet only, face models missing)'
+      else modelStatus.innerText = 'Models not available — fallback heuristics only'
+    }
+  }
+
+  /********* PROCESSING PIPELINE *********/
+  async function analyzeAll(files){
+    state.files = [] // reset
+    rawPreview.innerHTML=''
+    updateProgress(0)
+    const total = files.length
+    for(let i=0;i<files.length;i++){
+      const file = files[i]
+      const url = await readFileAsDataURL(file)
+      const image = await createImage(url)
+      // compute features
+      const features = {}
+      // sharpness & hash
+      features.sharpness = computeSharpness(image)
+      features.hash = computeAHash(image)
+      features.width = image.naturalWidth
+      features.height = image.naturalHeight
+      // mobilenet classification
+      let mobilenetPreds = []
+      try{
+        mobilenetPreds = await state.mobilenetModel.classify(image)
+      }catch(e){
+        mobilenetPreds=[]
+      }
+      features.mobilenet = mobilenetPreds // array of {className,probability}
+      // face-api detection if available
+      let faceDet = null
+      if(state.modelsLoaded){
+        try{
+          const det = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+          faceDet = det
+        }catch(e){ console.warn('face-api detect error',e) }
+      }
+      features.faceDetections = faceDet // array or null
+
+      // compute metrics used for scoring
+      const metrics = computeMetrics(features)
+      const fileObj = { file, url, image, features, metrics, assigned: null }
+      state.files.push(fileObj)
+
+      // show raw preview card
+      const card = makeRawCard(fileObj)
+      rawPreview.appendChild(card)
+
+      updateProgress((i+1)/total)
+    }
+
+    // duplicate detection: group by hash, keep best (largest sharpness)
+    const uniqueFiles = dedupeByHash(state.files)
+    state.files = uniqueFiles
+
+    // scoring for each category
+    scoreAll(state.files)
+    // choose top N
+    const topN = parseInt(el('topN').value,10)
+    const selected = selectTopPerCategory(state.files, topN)
+    // render selections
+    renderSelections(selected)
+    updateProgress(1)
+    modelStatus.innerText += ' — done'
+  }
+
+  function dedupeByHash(files){
+    const map = {}
+    for(const f of files){
+      const h = f.features.hash
+      if(!map[h]) map[h] = []
+      map[h].push(f)
+    }
+    const out=[]
+    for(const h in map){
+      const arr=map[h]
+      arr.sort((a,b)=> b.metrics.qualityIndex - a.metrics.qualityIndex) // best first
+      out.push(arr[0]) // keep best
+    }
+    return out
+  }
+
+  function computeMetrics(features){
+    // simple heuristics to build "qualityIndex" and component scores
+    const sharp = features.sharpness || 0
+    const sizeFactor = Math.min(1, (features.width || 1000) / 2000)
+    const brightness = estimateBrightness(features)
+    // face count & face size
+    const faceCount = features.faceDetections ? features.faceDetections.length : 0
+    let maxFaceRelative = 0
+    if(features.faceDetections && features.faceDetections.length>0){
+      for(const fd of features.faceDetections){
+        const box = fd.detection.box
+        const rel = (box.width*box.height) / (features.width*features.height)
+        if(rel>maxFaceRelative) maxFaceRelative = rel
+      }
+    }
+    // qualityIndex = weighted combination
+    const qIndex = sharp*0.00005 + sizeFactor*0.2 + brightness*0.05 + maxFaceRelative*5
+    return { sharpness:sharp, sizeFactor, brightness, faceCount, maxFaceRelative, qualityIndex: qIndex }
+  }
+
+  function estimateBrightness(features){
+    // rough: look at mobilenet preds for 'dark' words; fallback neutral
+    const preds = features.mobilenet || []
+    let bright=0.5
+    for(const p of preds){
+      const name = p.className.toLowerCase()
+      if(name.includes('sky') || name.includes('beach') || name.includes('mountain')) bright+=0.2
+      if(name.includes('indoor') || name.includes('corridor') || name.includes('restaurant')) bright-=0.1
+    }
+    return Math.max(0,Math.min(1,bright))
+  }
+
+  function scoreAll(files){
+    for(const f of files){
+      f.scores = { professional:0, casual:0, adventurous:0, family:0 }
+      const feats = f.features
+      const m = f.metrics
+      // base on face presence and size
+      if(m.faceCount===1){
+        f.scores.professional += 30
+        f.scores.casual += 20
+      } else if(m.faceCount>1){
+        f.scores.family += 40
+      }
+      // if face bigger relative -> headshot -> professional
+      f.scores.professional += Math.min(30, m.maxFaceRelative * 80)
+      // sharpness and quality
+      f.scores.professional += Math.min(20, m.qualityIndex*8)
+      f.scores.casual += Math.min(20, m.qualityIndex*6)
+      // mobilenet cues: look for outdoor, car, jeep, snow, ice, mountain, lake, beach
+      const preds = (feats.mobilenet||[]).map(p=>p.className.toLowerCase()).join(' ')
+      if(/jeep|car|vehicle|truck/.test(preds) || /parking lot|automobile/.test(preds)) f.scores.casual += 15
+      if(/mountain|valley|sea|ocean|beach|cliff|ski|snow|ice|forest|lakeside|waterfall|glacier|desert|hiking/.test(preds)) f.scores.adventurous += 40
+      if(/stadium|field|trail|hiking|mountain|ski|beach|ocean|forest/.test(preds)) f.scores.adventurous += 20
+      // if group or event detected in mobilenet
+      if(/wedding|banquet|ceremony|auditorium|mosque|temple|church|synagogue|altar|stage/.test(preds)) f.scores.family += 20
+      // attire guess: look for "suit", "tie", "blazer"
+      if(/suit|tie|blazer|business|uniform|groom|wedding|clergy|priest/.test(preds)) f.scores.professional += 30
+      // smiles -> friendly -> casual/professional
+      if(feats.faceDetections && feats.faceDetections.length>0){
+        const ex = feats.faceDetections[0].expressions
+        if(ex && ex.happy && ex.happy > 0.6){
+          f.scores.casual += 20
+          f.scores.professional += 10
+        }
+      }
+      // lighting: bright outdoor helps adventurous
+      if(m.brightness > 0.6) f.scores.adventurous += 6
+      // final normalization (small bonus for distinctiveness)
+      const maxScore = Math.max(...Object.values(f.scores))
+      f.predictedCategory = Object.keys(f.scores).reduce((a,b)=> f.scores[a]>=f.scores[b]?a:b)
+    }
+  }
+
+  function selectTopPerCategory(files, topN=3){
+    const buckets = { professional:[], casual:[], adventurous:[], family:[] }
+    for(const f of files){
+      // push to the category where it scores highest (but also allow it to appear in multiple if high)
+      const sorted = Object.entries(f.scores).sort((a,b)=>b[1]-a[1])
+      // always push into top 2 categories for flexibility
+      for(let i=0;i<2;i++){
+        const cat = sorted[i][0]
+        buckets[cat].push({file:f, score: sorted[i][1]})
+      }
+    }
+    // sort each bucket by score and quality
+    for(const k of Object.keys(buckets)){
+      buckets[k].sort((a,b)=> (b.score + b.file.metrics.qualityIndex) - (a.score + a.file.metrics.qualityIndex) )
+      // take topN unique files
+      buckets[k] = buckets[k].slice(0, topN).map(x=>x.file)
+      // mark assigned (first category assignment)
+      for(const f of buckets[k]){
+        if(!f.assigned) f.assigned = k
+      }
+    }
+    return buckets
+  }
+
+  /********* RENDERING *********/
+  function makeRawCard(fileObj){
+    const card = document.createElement('div'); card.className='card'
+    const img = document.createElement('img'); img.src = fileObj.url
+    card.appendChild(img)
+    const b = document.createElement('div'); b.className='badge'; b.innerText = Math.round(fileObj.metrics.qualityIndex*100)/100
+    card.appendChild(b)
+    const meta = document.createElement('div'); meta.className='meta'
+    meta.innerHTML = `
+      <div><strong>${fileObj.file.name}</strong></div>
+      <div class="small">Faces: ${fileObj.metrics.faceCount} • Sharp:${Math.round(fileObj.metrics.sharpness)}</div>
+      <div class="override">
+        <label class="small">Assign:</label>
+        <select data-fn="assign" data-fname="${fileObj.file.name}">
+          <option value="">(auto)</option>
+          <option value="professional">Professional</option>
+          <option value="casual">Casual</option>
+          <option value="adventurous">Adventurous</option>
+          <option value="family">Family</option>
+        </select>
+      </div>
+    `
+    card.appendChild(meta)
+    // wire up assignment
+    meta.querySelector('select').addEventListener('change', e=>{
+      const val=e.target.value
+      fileObj.assigned = val || null
+      // re-render selections
+      const topN = parseInt(el('topN').value,10)
+      const buckets = selectTopPerCategory(state.files, topN)
+      renderSelections(buckets)
+    })
+    return card
+  }
+
+  function renderSelections(buckets){
+    for(const k of categories){
+      const container = el(k==='family'?'family':k) // same ids used
+      container.innerHTML=''
+      const arr = buckets[k] || []
+      el(k==='family'?'famCount': k==='adventurous'?'advenCount': k==='professional'?'profCount':'casualCount').innerText = ` (${arr.length})`
+      for(const f of arr){
+        const c = document.createElement('div'); c.className='card'
+        const im = document.createElement('img'); im.src = f.url
+        c.appendChild(im)
+        const meta = document.createElement('div'); meta.className='meta'
+        meta.innerHTML = `<div class="small">${f.file.name}</div>
+          <div class="small">Q:${Math.round(f.metrics.qualityIndex*100)/100} • Faces:${f.metrics.faceCount}</div>
+          <div class="override small">
+            <label>Move to</label>
+            <select data-fn="move" data-fname="${f.file.name}">
+              <option value="">(keep)</option>
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+              <option value="adventurous">Adventurous</option>
+              <option value="family">Family</option>
+            </select>
+          </div>`
+        c.appendChild(meta)
+        meta.querySelector('select').addEventListener('change', e=>{
+          const val=e.target.value
+          if(val){
+            // remove from all buckets, assign to chosen
+            for(const ff of state.files) if(ff.file.name===f.file.name) ff.assigned = val
+            // rebuild buckets respecting manual assignments
+            const topN = parseInt(el('topN').value,10)
+            const newBuckets = selectTopPerCategory(state.files, topN)
+            // ensure manual assigned photos stay in their assigned bucket (if not present, push them)
+            for(const ff of state.files) if(ff.assigned){
+              const assigned = ff.assigned
+              if(!newBuckets[assigned].includes(ff)) newBuckets[assigned].push(ff)
+            }
+            // re-render
+            renderSelections(newBuckets)
+          }
+        })
+        container.appendChild(c)
+      }
+    }
+  }
+
+  /********* UI EVENTS *********/
+  el('fileInput').addEventListener('change', e=>{
+    const files = Array.from(e.target.files || [])
+    if(files.length) {
+      startAnalysis(files)
+    }
+  })
+  // drag/drop
+  const dz = el('dropzone')
+  dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.style.background='#f1f5f9' })
+  dz.addEventListener('dragleave', e=>{ dz.style.background='transparent' })
+  dz.addEventListener('drop', e=>{ e.preventDefault(); dz.style.background='transparent'; const files = Array.from(e.dataTransfer.files || []); startAnalysis(files) })
+
+  el('startBtn').addEventListener('click', ()=>{
+    const files = el('fileInput').files ? Array.from(el('fileInput').files) : []
+    if(files.length) startAnalysis(files)
+    else alert('Choose some files first (or drag/drop into the box).')
+  })
+  el('clearBtn').addEventListener('click', ()=>{
+    state.files=[]; rawPreview.innerHTML=''; for(const k of categories) el(k).innerHTML=''; updateProgress(0); modelStatus.innerText = state.modelsLoaded ? 'Models loaded' : 'Models not loaded'
+  })
+  el('saveLocalBtn').addEventListener('click', ()=>{
+    const sel = getCurrentSelection()
+    localStorage.setItem('photoSelectorSelection', JSON.stringify(sel))
+    alert('Selection saved locally in your browser.')
+  })
+  el('downloadBtn').addEventListener('click', ()=>{
+    const sel = getCurrentSelection()
+    const blob = new Blob([JSON.stringify(sel, null, 2)], {type:'application/json'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href=url; a.download='photo_selection.json'; a.click(); URL.revokeObjectURL(url)
+  })
+
+  function getCurrentSelection(){
+    const out = { timestamp: new Date().toISOString(), categories:{} }
+    for(const k of categories){
+      const arr = state.files.filter(f=> f.assigned===k || (f.assigned===null && f.predictedCategory===k)).slice(0, parseInt(el('topN').value,10))
+      out.categories[k] = arr.map(f=> ({ name: f.file.name, dataUrl: f.url, quality: f.metrics.qualityIndex }) )
+    }
+    return out
+  }
+
+  /********* BOOT *********/
+  (async function init(){
+    modelStatus.innerText = 'Loading models...'
+    await loadModels()
+    modelStatus.innerText = state.modelsLoaded ? 'Models loaded (ready)' : 'Partial or no models loaded (ready)'
+  })()
+
+  async function startAnalysis(files){
+    document.activeElement && document.activeElement.blur()
+    await analyzeAll(files)
+  }
+  </script>
+</body>
+</html>
