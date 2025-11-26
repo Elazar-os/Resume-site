@@ -77,3 +77,57 @@
     @apply font-heading font-bold;
   }
 }
+
+/* Micro-Animations */
+@layer utilities {
+  /* Smooth Fade-In on Scroll */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Button Hover Animation */
+  .btn-hover-effect {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  .btn-hover-effect:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Card / Box Slide-In Animation */
+  .card-slide-in {
+    animation: cardSlideIn 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  @keyframes cardSlideIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Soft Link Hover Color Transition */
+  a {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+
+  /* Photo Hover Effect */
+  .photo-hover {
+    @apply transition-all duration-250 ease-in-out;
+  }
+  .photo-hover:hover {
+    filter: brightness(1.02);
+    transform: scale(1.02);
+  }
+}
