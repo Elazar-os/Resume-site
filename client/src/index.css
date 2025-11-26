@@ -34,34 +34,34 @@
 }
 
 :root {
-  /* Modern Minimalist - Soft Blue + Snow White */
-  --background: 0 0% 98%; /* #FAFAFA */
-  --foreground: 0 0% 33%; /* #555555 */
+  /* Friendly + Techy - Bright Blue */
+  --background: 216 20% 96%; /* #F2F4F7 */
+  --foreground: 235 21% 21%; /* #2B2D42 */
   
   --card: 0 0% 100%; /* #FFFFFF */
-  --card-foreground: 0 0% 33%; /* #555555 */
+  --card-foreground: 235 21% 21%; /* #2B2D42 */
   
   --popover: 0 0% 100%; /* #FFFFFF */
-  --popover-foreground: 0 0% 33%; /* #555555 */
+  --popover-foreground: 235 21% 21%; /* #2B2D42 */
   
-  --primary: 203 48% 44%; /* #3A7CA5 */
+  --primary: 211 100% 50%; /* #007BFF */
   --primary-foreground: 0 0% 100%; /* #FFFFFF */
   
-  --secondary: 212 100% 76%; /* #87BFFF */
-  --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+  --secondary: 205 100% 70%; /* #66BFFF */
+  --secondary-foreground: 235 21% 21%; /* #2B2D42 */
   
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 60%;
+  --muted: 216 20% 96%;
+  --muted-foreground: 235 10% 50%;
   
-  --accent: 212 100% 76%; /* #87BFFF */
-  --accent-foreground: 0 0% 100%;
+  --accent: 205 100% 70%; /* #66BFFF */
+  --accent-foreground: 235 21% 21%;
   
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 203 48% 44%; /* #3A7CA5 */
+  --border: 216 10% 90%;
+  --input: 216 10% 90%;
+  --ring: 211 100% 50%; /* #007BFF */
   
   --radius: 0.5rem;
 }
