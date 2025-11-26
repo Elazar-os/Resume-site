@@ -326,7 +326,7 @@ export default function SmartPhotoSelector() {
                 <input 
                   type="file" 
                   ref={fileInputRef} 
-                  className="hidden" 
+                  style={{ opacity: 0, position: 'absolute', zIndex: -1, width: '1px', height: '1px' }}
                   multiple 
                   accept="image/*" 
                   onChange={handleFileSelect} 
