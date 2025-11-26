@@ -368,6 +368,26 @@ export default function SmartPhotoSelector() {
                   <Button variant="secondary" onClick={handleSaveLocal} disabled={files.length === 0}>
                     <Save className="w-4 h-4 mr-2" /> Save Selection (Local)
                   </Button>
+                  <Button 
+                    variant="secondary" 
+                    className="bg-cyan-600 hover:bg-cyan-700 text-white" 
+                    onClick={() => {
+                      const sel = {
+                        timestamp: new Date().toISOString(),
+                        categories: getCategorizedFiles()
+                      };
+                      const blob = new Blob([JSON.stringify(sel, null, 2)], {type:'application/json'});
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'photo_selection.json';
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }} 
+                    disabled={files.length === 0}
+                  >
+                    <Download className="w-4 h-4 mr-2" /> Export JSON
+                  </Button>
                   <Button variant="outline" onClick={() => setFiles([])} disabled={files.length === 0}>
                     <X className="w-4 h-4 mr-2" /> Clear All
                   </Button>
