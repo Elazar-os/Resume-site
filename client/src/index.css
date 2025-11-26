@@ -34,34 +34,34 @@
 }
 
 :root {
-  /* Professional Slate Theme */
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%; /* Deep Navy/Black */
+  /* Modern Minimalist - Soft Blue + Snow White */
+  --background: 0 0% 98%; /* #FAFAFA */
+  --foreground: 0 0% 33%; /* #555555 */
   
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 0 0% 33%; /* #555555 */
   
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover: 0 0% 100%; /* #FFFFFF */
+  --popover-foreground: 0 0% 33%; /* #555555 */
   
-  --primary: 222 47% 11%; /* Deep Navy */
-  --primary-foreground: 210 40% 98%;
+  --primary: 203 48% 44%; /* #3A7CA5 */
+  --primary-foreground: 0 0% 100%; /* #FFFFFF */
   
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 212 100% 76%; /* #87BFFF */
+  --secondary-foreground: 0 0% 100%; /* #FFFFFF */
   
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 60%;
   
-  --accent: 217 91% 60%; /* Bright Professional Blue */
-  --accent-foreground: 210 40% 98%;
+  --accent: 212 100% 76%; /* #87BFFF */
+  --accent-foreground: 0 0% 100%;
   
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 0 0% 98%;
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 222 47% 11%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 203 48% 44%; /* #3A7CA5 */
   
   --radius: 0.5rem;
 }
