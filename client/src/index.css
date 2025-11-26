@@ -34,34 +34,34 @@
 }
 
 :root {
-  /* Custom Palette - Strong Blue & Soft Gray */
-  --background: 210 33% 96%; /* #F0F4F8 (Soft Gray) */
-  --foreground: 0 0% 10%; /* #1A1A1A (Dark Text) */
+  /* Professional Slate Theme */
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%; /* Deep Navy/Black */
   
-  --card: 0 0% 100%; /* #FFFFFF */
-  --card-foreground: 0 0% 10%; /* #1A1A1A */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
   
-  --popover: 0 0% 100%; /* #FFFFFF */
-  --popover-foreground: 0 0% 10%; /* #1A1A1A */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
   
-  --primary: 214 64% 33%; /* #1E4D8B (Primary Blue) */
-  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+  --primary: 222 47% 11%; /* Deep Navy */
+  --primary-foreground: 210 40% 98%;
   
-  --secondary: 211 100% 77%; /* #89C2FF (Light Blue Accent) */
-  --secondary-foreground: 0 0% 10%; /* #1A1A1A */
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
   
-  --muted: 210 33% 96%;
-  --muted-foreground: 214 20% 50%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
   
-  --accent: 211 100% 77%; /* #89C2FF (Light Blue Accent) */
-  --accent-foreground: 0 0% 10%;
+  --accent: 217 91% 60%; /* Bright Professional Blue */
+  --accent-foreground: 210 40% 98%;
   
   --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 210 20% 90%;
-  --input: 210 20% 90%;
-  --ring: 214 64% 33%; /* #1E4D8B */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 222 47% 11%;
   
   --radius: 0.5rem;
 }
