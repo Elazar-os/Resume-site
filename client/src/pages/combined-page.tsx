@@ -56,6 +56,8 @@ const containerVariants = {
     }
   };
 
+import { CalmReset } from "@/components/calm-reset";
+
 function TabsView() {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
@@ -177,6 +179,9 @@ function TabsView() {
 
               {/* Daily Missions Widget */}
               <DailyMissions />
+
+              {/* Calm Reset Button */}
+              <CalmReset />
 
             </div>
           </motion.aside>
