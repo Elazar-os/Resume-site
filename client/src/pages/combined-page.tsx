@@ -171,9 +171,6 @@ function TabsView() {
                 </CardContent>
               </Card>
 
-              {/* Daily Missions Widget */}
-              <DailyMissions />
-
               {/* Photo Gallery Widget */}
               <PhotoGallery />
 
