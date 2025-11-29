@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JSwipe – Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    background: #0b1622;
+    color: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    width: 380px;
+    background: #101b2d;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  }
+
+  .photo {
+    height: 420px;
+    background: #000;
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .name {
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .age {
+    font-size: 18px;
+    color: #cbd5e1;
+  }
+
+  .section-title {
+    margin-top: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #8ea3b8;
+  }
+
+  .field {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .small-note {
+    font-size: 12px;
+    opacity: 0.5;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <!-- Replace with your real photo -->
+  <div class="photo">
+    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1200"
+         alt="Profile Photo" />
+  </div>
+
+  <div class="content">
+    <div class="name">Elazar Greisman</div>
+    <div class="age">22 • 5'5" • Passaic, NJ</div>
+
+    <div class="section-title">CONTACT</div>
+    <div class="field"><span class="label">Phone:</span> 201-321-6587</div>
+    <div class="field"><span class="label">Email:</span> elazar.greisman@outlook.com</div>
+
+    <div class="section-title">PARENTS</div>
+    <div class="field"><span class="label">Father:</span> Moishy Greisman — Tax Lawyer</div>
+    <div class="field"><span class="label">Mother:</span> Elisheva Greisman — Teacher</div>
+
+    <div class="section-title">SIBLINGS</div>
+    <div class="field">• Esther Baila (24) — Married, Software Developer</div>
+    <div class="field">• Hillel (21) — Single, Car Sales & Auto Leasing</div>
+    <div class="field">• Shloimy (17) — Mesivta Torah Maier</div>
+    <div class="field">• Perri (14) — Ashirah</div>
+
+    <div class="section-title">EDUCATION</div>
+    <div class="field">• Mesivta of North Jersey</div>
+    <div class="field">• Yeshiva Tiferes Avner</div>
+    <div class="field">• Mesivta of Las Vegas</div>
+    <div class="field">• Morning Kollel — Yeshivas Ner Baruch</div>
+
+    <div class="section-title">WORK</div>
+    <div class="field">General Manager — King of Delancey</div>
+
+    <div class="section-title">REFERENCES</div>
+    <div class="field">Daniel Mayer (Employer): 201-988-6929</div>
+    <div class="field">Ronit Gottesman (Family Friend): 908-303-4261</div>
+    <div class="field">Rabbi Baruch Bodenheim (Rav): 862-371-3186</div>
+
+    <div class="small-note">Private parody page — not a real dating profile.</div>
+  </div>
+</div>
+
+</body>
+</html>
