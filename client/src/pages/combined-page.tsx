@@ -77,7 +77,7 @@ function TabsView() {
                 <div className="h-32 bg-gradient-to-br from-primary to-accent relative">
                   <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
                      <div className="w-24 h-24 rounded-full border-4 border-card bg-muted flex items-center justify-center shadow-md overflow-hidden photo-hover">
-                        <img src="/photos/dating-1.png" alt="Profile" className="w-full h-full object-cover" />
+                        <img src="/photos/dating-1.png" alt="Profile" loading="lazy" className="w-full h-full object-cover" />
                      </div>
                   </div>
                 </div>
@@ -301,92 +301,79 @@ function TabsView() {
               {/* PERSONAL / SHIDDUCH TAB */}
               <TabsContent value="personal" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 
-                {/* Intro Header */}
-                <motion.section variants={itemVariants} className="bg-accent/5 p-6 rounded-xl border border-accent/10">
-                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div>
-                         <h2 className="text-2xl font-bold font-heading text-primary">Personal Profile</h2>
-                         <p className="text-muted-foreground mt-1">Age {SHIDDUCH_DATA.basics.age} • {SHIDDUCH_DATA.basics.location}</p>
+                <Card className="border-none shadow-sm bg-card">
+                  <CardContent className="p-6 md:p-10 space-y-8">
+                    
+                    {/* Header */}
+                    <div className="space-y-4 text-center">
+                      <h2 className="text-3xl font-bold font-heading text-primary">{SHIDDUCH_DATA.basics.name}</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg text-muted-foreground max-w-lg mx-auto">
+                         <div>Age: {SHIDDUCH_DATA.basics.age}</div>
+                         <div>DOB: {SHIDDUCH_DATA.basics.dob}</div>
+                         <div>Height: {SHIDDUCH_DATA.basics.height}</div>
+                         <div>Location: {SHIDDUCH_DATA.basics.location}</div>
                       </div>
-                      <div className="text-right hidden md:block">
-                        <p className="text-sm font-medium text-primary">Hebrew Name</p>
-                        <p className="text-lg font-heading text-accent">{SHIDDUCH_DATA.basics.hebrewName}</p>
-                      </div>
-                   </div>
-                </motion.section>
+                    </div>
 
-                {/* Hashkafa & Personality */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-accent" /> Hashkafa & Values
-                   </h2>
-                   <div className="grid gap-6 md:grid-cols-2">
-                      <Card className="bg-card border-none shadow-sm">
-                         <CardHeader>
-                            <CardTitle className="text-lg">Hashkafa</CardTitle>
-                         </CardHeader>
-                         <CardContent className="space-y-4">
-                            <Badge variant="secondary" className="mb-2">{SHIDDUCH_DATA.hashkafa.style}</Badge>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                               {SHIDDUCH_DATA.hashkafa.values}
-                            </p>
-                         </CardContent>
-                      </Card>
-                      <Card className="bg-card border-none shadow-sm">
-                         <CardHeader>
-                            <CardTitle className="text-lg">Personality</CardTitle>
-                         </CardHeader>
-                         <CardContent>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                               {SHIDDUCH_DATA.hashkafa.personality}
-                            </p>
-                         </CardContent>
-                      </Card>
-                   </div>
-                </motion.section>
+                    <Separator />
 
-                {/* Yeshiva Education */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5 text-accent" /> Yeshiva Education
-                   </h2>
-                   <div className="space-y-4">
-                      {SHIDDUCH_DATA.education.map((edu, i) => (
-                         <div key={i} className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border border-transparent hover:border-accent/20 transition-colors">
-                            <div>
-                               <h3 className="font-bold text-primary">{edu.name}</h3>
-                               {edu.notes && <p className="text-xs text-muted-foreground mt-1">{edu.notes}</p>}
-                            </div>
-                            <Badge variant="outline">{edu.type}</Badge>
-                         </div>
-                      ))}
-                   </div>
-                </motion.section>
+                    {/* Family */}
+                    <section className="space-y-4">
+                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Family Information</h3>
+                       <div className="space-y-2 text-base md:text-lg">
+                          <p><span className="font-semibold text-primary/80">Father:</span> {SHIDDUCH_DATA.family.father}</p>
+                          <p><span className="font-semibold text-primary/80">Mother:</span> {SHIDDUCH_DATA.family.mother}</p>
+                          
+                          <div className="pt-2">
+                             <span className="font-semibold text-primary/80 block mb-1">Siblings:</span>
+                             <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
+                                {SHIDDUCH_DATA.family.siblings.map((sibling, i) => (
+                                   <li key={i}>{sibling}</li>
+                                ))}
+                             </ul>
+                          </div>
+                          
+                          <p className="pt-2"><span className="font-semibold text-primary/80">Family Hashkafa:</span> {SHIDDUCH_DATA.family.hashkafa}</p>
+                       </div>
+                    </section>
 
-                {/* Family */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <Users className="w-5 h-5 text-accent" /> Family Background
-                   </h2>
-                   <Card className="bg-primary/5 border-none">
-                      <CardContent className="p-6 space-y-2">
-                         <p className="font-medium text-primary text-lg">Parents: {SHIDDUCH_DATA.family.father} & {SHIDDUCH_DATA.family.mother}</p>
-                         <p className="text-muted-foreground">{SHIDDUCH_DATA.family.description}</p>
-                      </CardContent>
-                   </Card>
-                </motion.section>
+                    <Separator />
 
-                {/* Looking For */}
-                 <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-accent" /> What I'm Looking For
-                   </h2>
-                   <div className="bg-accent/10 p-6 rounded-xl border border-accent/20">
-                      <p className="text-lg leading-relaxed text-primary/90 font-medium italic">
-                         "{SHIDDUCH_DATA.lookingFor}"
-                      </p>
-                   </div>
-                </motion.section>
+                    {/* Education */}
+                    <section className="space-y-4">
+                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Education</h3>
+                       <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-muted-foreground">
+                          {SHIDDUCH_DATA.education.map((edu, i) => (
+                             <li key={i}>{edu}</li>
+                          ))}
+                       </ul>
+                    </section>
+
+                    <Separator />
+
+                    {/* Occupation */}
+                    <section className="space-y-4">
+                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Current Occupation</h3>
+                       <div className="space-y-2 text-base md:text-lg">
+                          <p className="font-medium text-primary">{SHIDDUCH_DATA.occupation.title}</p>
+                          <p className="text-muted-foreground">Employer Reference: {SHIDDUCH_DATA.occupation.reference}</p>
+                       </div>
+                    </section>
+
+                    <Separator />
+
+                    {/* References */}
+                    <section className="space-y-4">
+                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h3>
+                       <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-muted-foreground">
+                          {SHIDDUCH_DATA.references.map((ref, i) => (
+                             <li key={i}>{ref}</li>
+                          ))}
+                       </ul>
+                    </section>
+
+                  </CardContent>
+                </Card>
 
               </TabsContent>
 

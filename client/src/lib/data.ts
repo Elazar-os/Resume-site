@@ -66,27 +66,40 @@ export const RESUME_DATA = {
 
 export const SHIDDUCH_DATA = {
   basics: {
+    name: "Elazar Greisman",
     age: 22,
-    hebrewName: "Elazar",
-    location: "Passaic, NJ"
-  },
-  education: [
-    { name: "Yeshiva Tiferes Avner", type: "Beis Medrash" },
-    { name: "Mesivta of Las Vegas", type: "Beis Medrash Program" },
-    { name: "Yeshivas Ner Boruch PTI", type: "Morning Kollel" },
-    { name: "Mesivta of North Jersey", type: "High School", notes: "Graduated with strong commitment to learning" }
-  ],
-  hashkafa: {
-    style: "Modern Orthodox / Modern Yeshivish balance",
-    values: "Values Torah learning, personal growth, community, and building a home rooted in warmth and authenticity.",
-    personality: "Grounded, thoughtful, emotionally aware, and easy to talk to. Hardworking with a growth mindset — committed to self-development spiritually and professionally. Friendly, responsible, enjoys meaningful conversation."
+    dob: "February 10, 2003",
+    height: "5'5\"",
+    location: "Passaic, NJ",
+    phone: "201-321-6587",
+    email: "elazar.greisman@outlook.com"
   },
   family: {
-    father: "Moshe Greisman",
-    mother: "Elisheva Greisman",
-    description: "Father is a Tax Lawyer for Goldman Sachs. Mother is a Teacher in Bnos Bracha Passaic."
+    father: "Moishy Greisman — Tax Lawyer",
+    mother: "Elisheva Greisman — Teacher",
+    siblings: [
+      "Esther Baila (24) — Married; Software Developer",
+      "Hillel (21) — Single; Car Sales & Auto Leasing",
+      "Shloimy (17) — Mesivta Torah Maier",
+      "Perri (14) — Ashirah"
+    ],
+    hashkafa: "you got this Baila"
   },
-  lookingFor: "A kind, sincere, and growth-oriented woman who values family, connection, and building a warm Jewish home. Someone emotionally mature, positive, supportive, and excited about building a future of teamwork, communication, and shared values."
+  education: [
+    "Mesivta of North Jersey",
+    "Yeshiva Tiferes Avner",
+    "Mesivta of Las Vegas",
+    "Morning Kollel – Yeshivas Ner Baruch (PTI)"
+  ],
+  occupation: {
+    title: "General Manager – King of Delancey Restaurant",
+    reference: "Daniel Mayer — 201-988-6929"
+  },
+  references: [
+    "Ronit Gottesman, Family Friend — 908-303-4261",
+    "Rabbi Baruch Bodenheim, Rav — 862-371-3186",
+    "(Employer listed above)"
+  ]
 };
 
 export const PROFILE_SUMMARY = {

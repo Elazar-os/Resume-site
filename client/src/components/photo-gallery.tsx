@@ -85,6 +85,7 @@ export function PhotoGallery() {
                     <img 
                       src={photo.src} 
                       alt={photo.alt}
+                      loading="lazy"
                       className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">

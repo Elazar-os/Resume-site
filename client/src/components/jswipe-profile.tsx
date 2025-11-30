@@ -90,6 +90,7 @@ export function JSwipeProfile() {
             <img 
               src="/photos/dating-1.png" 
               alt="Profile Photo" 
+              loading="lazy"
               className="w-full h-full object-cover"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#101b2d] to-transparent h-24" />

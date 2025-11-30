@@ -1,193 +1,98 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles, BookOpen, Users } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { SHIDDUCH_DATA } from "@/lib/data";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Progress } from "@/components/ui/progress";
-import { RESUME_DATA, PROFILE_SUMMARY, SHIDDUCH_DATA } from "@/lib/data";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1,
-    transition: { 
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { 
-    y: 0, 
-    opacity: 1,
-    transition: { type: "spring" as const, stiffness: 50 }
-  }
-};
 
 export default function ShidduchPage() {
   return (
-    <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
-      <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
-        >
-          {/* Profile Summary Card (Left Column) */}
-          <motion.aside variants={itemVariants} className="lg:col-span-4 space-y-6">
-            <div className="lg:sticky lg:top-12 space-y-6">
+    <div className="min-h-screen bg-background font-sans p-4 md:p-8 lg:p-12 flex justify-center">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-3xl w-full"
+      >
+        <Card className="shadow-xl border-none bg-card">
+          <CardContent className="p-8 md:p-12 space-y-8">
+            
+            {/* Header */}
+            <div className="space-y-4 text-center">
+              <h1 className="text-3xl md:text-4xl font-bold font-heading text-primary">{SHIDDUCH_DATA.basics.name}</h1>
               
-              <Card className="overflow-hidden border-none shadow-xl bg-card">
-                <div className="h-32 bg-gradient-to-br from-primary to-accent relative">
-                  <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
-                     <div className="w-24 h-24 rounded-full border-4 border-card bg-muted flex items-center justify-center shadow-md overflow-hidden photo-hover">
-                        <img src="/photos/dating-1.png" alt="Profile" className="w-full h-full object-cover" />
-                     </div>
-                  </div>
-                </div>
-                <CardContent className="pt-16 pb-6 px-6 text-center space-y-6">
-                  <div>
-                    <h1 className="text-2xl font-bold font-heading text-primary">{RESUME_DATA.personalInfo.name}</h1>
-                    <p className="text-sm font-medium text-accent mt-1">Personal Profile</p>
-                  </div>
-
-                  <div className="space-y-4 text-left">
-                    {/* Identity Snapshot removed for shidduch profile */}
-
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                        <Star className="w-3 h-3" /> Highlights
-                      </h3>
-                      <ul className="space-y-2">
-                        {PROFILE_SUMMARY.highlights.map((h, i) => (
-                          <li key={i} className="text-sm flex items-start gap-2 text-muted-foreground">
-                            <div className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
-                            {h}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <a href={`mailto:${RESUME_DATA.personalInfo.email}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                      <Mail className="w-4 h-4" />
-                      Email
-                    </a>
-                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                      <Phone className="w-4 h-4" />
-                      Phone
-                    </a>
-                     <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      NJ
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.aside>
-
-          {/* Main Content (Right Column) */}
-          <main className="lg:col-span-8 pt-6 lg:pt-0">
-              <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                
-                {/* Intro Header */}
-                <motion.section variants={itemVariants} className="bg-accent/5 p-6 rounded-xl border border-accent/10">
-                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div>
-                         <h2 className="text-2xl font-bold font-heading text-primary">Personal Profile</h2>
-                         <p className="text-muted-foreground mt-1">Age {SHIDDUCH_DATA.basics.age} • {SHIDDUCH_DATA.basics.location}</p>
-                      </div>
-                      <div className="text-right hidden md:block">
-                        <p className="text-sm font-medium text-primary">Hebrew Name</p>
-                        <p className="text-lg font-heading text-accent">{SHIDDUCH_DATA.basics.hebrewName}</p>
-                      </div>
-                   </div>
-                </motion.section>
-
-                {/* Hashkafa & Personality */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-accent" /> Hashkafa & Values
-                   </h2>
-                   <div className="grid gap-6 md:grid-cols-2">
-                      <Card className="bg-card border-none shadow-sm">
-                         <CardHeader>
-                            <CardTitle className="text-lg">Hashkafa</CardTitle>
-                         </CardHeader>
-                         <CardContent className="space-y-4">
-                            <Badge variant="secondary" className="mb-2">{SHIDDUCH_DATA.hashkafa.style}</Badge>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                               {SHIDDUCH_DATA.hashkafa.values}
-                            </p>
-                         </CardContent>
-                      </Card>
-                      <Card className="bg-card border-none shadow-sm">
-                         <CardHeader>
-                            <CardTitle className="text-lg">Personality</CardTitle>
-                         </CardHeader>
-                         <CardContent>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                               {SHIDDUCH_DATA.hashkafa.personality}
-                            </p>
-                         </CardContent>
-                      </Card>
-                   </div>
-                </motion.section>
-
-                {/* Yeshiva Education */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5 text-accent" /> Yeshiva Education
-                   </h2>
-                   <div className="space-y-4">
-                      {SHIDDUCH_DATA.education.map((edu, i) => (
-                         <div key={i} className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border border-transparent hover:border-accent/20 transition-colors">
-                            <div>
-                               <h3 className="font-bold text-primary">{edu.name}</h3>
-                               {edu.notes && <p className="text-xs text-muted-foreground mt-1">{edu.notes}</p>}
-                            </div>
-                            <Badge variant="outline">{edu.type}</Badge>
-                         </div>
-                      ))}
-                   </div>
-                </motion.section>
-
-                {/* Family */}
-                <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <Users className="w-5 h-5 text-accent" /> Family Background
-                   </h2>
-                   <Card className="bg-primary/5 border-none">
-                      <CardContent className="p-6 space-y-2">
-                         <p className="font-medium text-primary text-lg">Parents: {SHIDDUCH_DATA.family.father} & {SHIDDUCH_DATA.family.mother}</p>
-                         <p className="text-muted-foreground">{SHIDDUCH_DATA.family.description}</p>
-                      </CardContent>
-                   </Card>
-                </motion.section>
-
-                {/* Looking For */}
-                 <motion.section variants={itemVariants} className="space-y-6">
-                   <h2 className="text-xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-accent" /> What I'm Looking For
-                   </h2>
-                   <div className="bg-accent/10 p-6 rounded-xl border border-accent/20">
-                      <p className="text-lg leading-relaxed text-primary/90 font-medium italic">
-                         "{SHIDDUCH_DATA.lookingFor}"
-                      </p>
-                   </div>
-                </motion.section>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg text-muted-foreground max-w-xl mx-auto">
+                 <div>Age: {SHIDDUCH_DATA.basics.age}</div>
+                 <div>DOB: {SHIDDUCH_DATA.basics.dob}</div>
+                 <div>Height: {SHIDDUCH_DATA.basics.height}</div>
+                 <div>Location: {SHIDDUCH_DATA.basics.location}</div>
               </div>
-          </main>
-        </motion.div>
-      </div>
+              
+              <div className="flex flex-col md:flex-row justify-center gap-4 text-accent font-medium pt-2">
+                 <a href={`tel:${SHIDDUCH_DATA.basics.phone}`} className="hover:underline">{SHIDDUCH_DATA.basics.phone}</a>
+                 <span className="hidden md:inline">•</span>
+                 <a href={`mailto:${SHIDDUCH_DATA.basics.email}`} className="hover:underline">{SHIDDUCH_DATA.basics.email}</a>
+              </div>
+            </div>
+
+            <Separator className="my-8" />
+
+            {/* Family */}
+            <section className="space-y-4">
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Family Information</h2>
+               <div className="space-y-2 text-lg">
+                  <p><span className="font-semibold text-primary/80">Father:</span> {SHIDDUCH_DATA.family.father}</p>
+                  <p><span className="font-semibold text-primary/80">Mother:</span> {SHIDDUCH_DATA.family.mother}</p>
+                  
+                  <div className="pt-2">
+                     <span className="font-semibold text-primary/80 block mb-1">Siblings:</span>
+                     <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
+                        {SHIDDUCH_DATA.family.siblings.map((sibling, i) => (
+                           <li key={i}>{sibling}</li>
+                        ))}
+                     </ul>
+                  </div>
+                  
+                  <p className="pt-2"><span className="font-semibold text-primary/80">Family Hashkafa:</span> {SHIDDUCH_DATA.family.hashkafa}</p>
+               </div>
+            </section>
+
+            <Separator className="my-8" />
+
+            {/* Education */}
+            <section className="space-y-4">
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Education / Yeshiva Background</h2>
+               <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground">
+                  {SHIDDUCH_DATA.education.map((edu, i) => (
+                     <li key={i}>{edu}</li>
+                  ))}
+               </ul>
+            </section>
+
+            <Separator className="my-8" />
+
+            {/* Occupation */}
+            <section className="space-y-4">
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Current Occupation</h2>
+               <div className="space-y-2 text-lg">
+                  <p className="font-medium text-primary">{SHIDDUCH_DATA.occupation.title}</p>
+                  <p className="text-muted-foreground">Employer Reference: {SHIDDUCH_DATA.occupation.reference}</p>
+               </div>
+            </section>
+
+            <Separator className="my-8" />
+
+            {/* References */}
+            <section className="space-y-4">
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h2>
+               <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground">
+                  {SHIDDUCH_DATA.references.map((ref, i) => (
+                     <li key={i}>{ref}</li>
+                  ))}
+               </ul>
+            </section>
+
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
