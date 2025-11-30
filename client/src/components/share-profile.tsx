@@ -25,7 +25,7 @@ export function ShareProfile() {
     professional: `${origin}/#/resume`,
     shidduch: `${origin}/#/shidduch`,
     combined: `${origin}/#/combined`,
-    jswipe: `${origin}/#/combined`
+    jswipe: `${origin}/#/jswipe`
   };
 
   const messages = {

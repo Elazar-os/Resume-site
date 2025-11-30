@@ -9,6 +9,7 @@ import ShidduchPage from "@/pages/shidduch-page";
 import CombinedPage from "@/pages/combined-page";
 import LandingPage from "@/pages/landing-page";
 import SmartPhotoSelector from "@/pages/photo-selector-page";
+import JSwipePage from "@/pages/jswipe-page";
 import { useState, useEffect } from "react";
 
 // Custom hook for hash-based routing
@@ -38,6 +39,7 @@ function Router() {
         <Route path="/shidduch" component={ShidduchPage} />
         <Route path="/combined" component={CombinedPage} />
         <Route path="/photo-selector" component={SmartPhotoSelector} />
+        <Route path="/jswipe" component={JSwipePage} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
