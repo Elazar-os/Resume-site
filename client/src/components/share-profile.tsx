@@ -24,16 +24,18 @@ export function ShareProfile() {
   const links = {
     professional: `${origin}/#/resume`,
     shidduch: `${origin}/#/shidduch`,
-    combined: `${origin}/#/combined`
+    combined: `${origin}/#/combined`,
+    jswipe: `${origin}/#/combined`
   };
 
   const messages = {
     professional: `Hi, here is my professional resume and portfolio: ${links.professional}`,
     shidduch: `Hi, here is my shidduch profile: ${links.shidduch}`,
-    combined: `Hi, here is my full profile (Elazar OS): ${links.combined}`
+    combined: `Hi, here is my full profile (Elazar OS): ${links.combined}`,
+    jswipe: `Check out my JSwipe-style profile card! 🃏 : ${links.jswipe}`
   };
 
-  const shareVia = (method: 'sms' | 'whatsapp' | 'email', type: 'professional' | 'shidduch' | 'combined') => {
+  const shareVia = (method: 'sms' | 'whatsapp' | 'email', type: 'professional' | 'shidduch' | 'combined' | 'jswipe') => {
     const message = messages[type];
     const encodedMessage = encodeURIComponent(message);
     let url = '';
@@ -78,10 +80,11 @@ export function ShareProfile() {
         </DialogHeader>
         
         <Tabs defaultValue="professional" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-4">
+          <TabsList className="grid w-full grid-cols-4 mb-4">
             <TabsTrigger value="professional">Work</TabsTrigger>
             <TabsTrigger value="shidduch">Shidduch</TabsTrigger>
             <TabsTrigger value="combined">Full</TabsTrigger>
+            <TabsTrigger value="jswipe">JSwipe</TabsTrigger>
           </TabsList>
           
           <TabsContent value="professional" className="space-y-4">
@@ -196,6 +199,45 @@ export function ShareProfile() {
                 <MessageSquare className="w-3 h-3 mr-1.5" /> WA
               </Button>
               <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('email', 'combined')}>
+                <Mail className="w-3 h-3 mr-1.5" /> Email
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="jswipe" className="space-y-4">
+            <div className="flex flex-col items-center justify-center p-6 bg-muted/30 rounded-lg border border-dashed mb-2">
+              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-2">
+                <Smartphone className="w-6 h-6" />
+              </div>
+              <h3 className="font-medium text-sm">JSwipe Card</h3>
+              <p className="text-xs text-muted-foreground text-center mt-1">
+                Shares the JSwipe-style snapshot card. <br/>
+                (Fun, quick summary view)
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="link-jswipe">Profile Link</Label>
+              <div className="flex items-center space-x-2">
+                <Input id="link-jswipe" value={links.jswipe} readOnly />
+                <Button size="sm" className="px-3" onClick={() => copyToClipboard(links.jswipe, "JSwipe Card")}>
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <Button variant="secondary" className="w-full text-xs mb-3" onClick={() => copyToClipboard(messages.jswipe, "Message")}>
+              Copy Pre-written Message
+            </Button>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('sms', 'jswipe')}>
+                <Smartphone className="w-3 h-3 mr-1.5" /> SMS
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('whatsapp', 'jswipe')}>
+                <MessageSquare className="w-3 h-3 mr-1.5" /> WA
+              </Button>
+              <Button variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => shareVia('email', 'jswipe')}>
                 <Mail className="w-3 h-3 mr-1.5" /> Email
               </Button>
             </div>
