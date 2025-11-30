@@ -32,7 +32,7 @@ export function ShareProfile() {
     professional: `Hi, here is my professional resume and portfolio: ${links.professional}`,
     shidduch: `Hi, here is my shidduch profile: ${links.shidduch}`,
     combined: `Hi, here is my full profile (Elazar OS): ${links.combined}`,
-    jswipe: `Check out my JSwipe-style profile card! 🃏 : ${links.jswipe}`
+    jswipe: `Check out my JSwipe profile! 🃏 : ${links.jswipe}`
   };
 
   const shareVia = (method: 'sms' | 'whatsapp' | 'email', type: 'professional' | 'shidduch' | 'combined' | 'jswipe') => {

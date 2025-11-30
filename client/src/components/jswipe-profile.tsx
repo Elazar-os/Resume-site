@@ -1,9 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X, Heart } from "lucide-react";
 
 export function JSwipeProfile() {
   return (
-    <div className="flex justify-center p-4">
+    <div className="flex flex-col items-center space-y-4">
       <Card className="w-[380px] bg-[#101b2d] text-slate-100 border-none shadow-2xl overflow-hidden rounded-[18px]">
         {/* Photo Area */}
         <div className="h-[420px] bg-black relative">
@@ -79,6 +80,24 @@ export function JSwipeProfile() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Swipe Buttons */}
+      <div className="flex items-center gap-6 mt-4 pb-8">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="w-16 h-16 rounded-full border-4 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-300 shadow-lg bg-[#101b2d]"
+        >
+          <X className="w-8 h-8" />
+        </Button>
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="w-16 h-16 rounded-full border-4 border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-300 shadow-lg bg-[#101b2d]"
+        >
+          <Heart className="w-8 h-8 fill-current" />
+        </Button>
+      </div>
     </div>
   );
 }
