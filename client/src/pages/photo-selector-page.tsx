@@ -123,12 +123,12 @@ export default function SmartPhotoSelector() {
         // Simple heuristic scoring
         let bestCategory: keyof typeof CATEGORIES = "casual";
         let maxScore = 0;
-        const allTags = predictions.map(p => p.className.toLowerCase());
+        const allTags = predictions.map((p: any) => p.className.toLowerCase());
 
         Object.entries(CATEGORIES).forEach(([key, data]) => {
           let score = 0;
           data.keywords.forEach(keyword => {
-            if (allTags.some(tag => tag.includes(keyword))) {
+            if (allTags.some((tag: string) => tag.includes(keyword))) {
               score += 1;
             }
           });
@@ -143,7 +143,7 @@ export default function SmartPhotoSelector() {
           url: img.src,
           category: bestCategory,
           confidence: predictions[0].probability,
-          tags: predictions.slice(0, 3).map(p => p.className.split(',')[0])
+          tags: predictions.slice(0, 3).map((p: any) => p.className.split(',')[0])
         });
       };
       img.onerror = reject;
