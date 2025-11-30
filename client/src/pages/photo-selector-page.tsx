@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as tf from "@tensorflow/tfjs";
 import { Link } from "wouter";
+
+// Declare globals for CDN loaded libraries
+declare global {
+  interface Window {
+    tf: any;
+    mobilenet: any;
+  }
+}
 
 // Define categories and their keywords
 const CATEGORIES = {
@@ -44,7 +50,7 @@ interface ScoredImage {
 
 export default function SmartPhotoSelector() {
   const { toast } = useToast();
-  const [model, setModel] = useState<mobilenet.MobileNet | null>(null);
+  const [model, setModel] = useState<any>(null);
   const [isLoadingModel, setIsLoadingModel] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedImages, setAnalyzedImages] = useState<ScoredImage[]>([]);
@@ -54,10 +60,20 @@ export default function SmartPhotoSelector() {
   useEffect(() => {
     async function loadModel() {
       try {
-        await tf.ready();
-        const loadedModel = await mobilenet.load();
-        setModel(loadedModel);
-        setIsLoadingModel(false);
+        // Wait for globals to be available
+        if (!window.tf || !window.mobilenet) {
+           console.log("Waiting for TF/MobileNet globals...");
+           await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        if (window.tf && window.mobilenet) {
+           await window.tf.ready();
+           const loadedModel = await window.mobilenet.load();
+           setModel(loadedModel);
+           setIsLoadingModel(false);
+        } else {
+           throw new Error("TensorFlow libraries not loaded");
+        }
       } catch (error) {
         console.error("Failed to load TF model:", error);
         toast({
