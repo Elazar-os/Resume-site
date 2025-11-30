@@ -58,6 +58,8 @@ const containerVariants = {
 
 import { CalmReset } from "@/components/calm-reset";
 
+import { JSwipeProfile } from "@/components/jswipe-profile";
+
 function TabsView() {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
@@ -186,9 +188,10 @@ function TabsView() {
           {/* Main Content (Right Column) */}
           <main className="lg:col-span-8 pt-6 lg:pt-0">
             <Tabs defaultValue="professional" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="professional">Professional Profile</TabsTrigger>
-                <TabsTrigger value="personal">Personal & Shidduch</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="professional">Professional</TabsTrigger>
+                <TabsTrigger value="personal">Shidduch</TabsTrigger>
+                <TabsTrigger value="jswipe">JSwipe Card</TabsTrigger>
               </TabsList>
 
               {/* PROFESSIONAL TAB */}
@@ -385,6 +388,17 @@ function TabsView() {
                    </div>
                 </motion.section>
 
+              </TabsContent>
+
+              {/* JSWIPE TAB */}
+              <TabsContent value="jswipe" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                 <div className="flex flex-col items-center space-y-6">
+                    <div className="text-center space-y-2">
+                       <h2 className="text-2xl font-bold font-heading text-primary">Quick Resume Card</h2>
+                       <p className="text-muted-foreground">A snapshot view of everything important.</p>
+                    </div>
+                    <JSwipeProfile />
+                 </div>
               </TabsContent>
             </Tabs>
           </main>
