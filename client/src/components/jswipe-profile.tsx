@@ -113,7 +113,7 @@ export function JSwipeProfile() {
             {/* Parents */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Parents</h3>
-              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Father:</span> Moishy Greisman — Tax Lawyer</div>
+              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Father:</span> Moshie Greisman — Tax Lawyer</div>
               <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Mother:</span> Elisheva Greisman — Teacher</div>
             </div>
 
@@ -123,8 +123,8 @@ export function JSwipeProfile() {
               <ul className="text-sm space-y-1">
                 <li>• Esther Baila (24) — Married, Software Developer</li>
                 <li>• Hillel (21) — Single, Car Sales & Auto Leasing</li>
-                <li>• Shloimy (17) — Mesivta Torah Maier</li>
-                <li>• Perri (14) — Ashirah</li>
+                <li>• Shloimy (17) — Mesivta Toras Maier</li>
+                <li>• Perri (14) — Bais Yaakov D'Rav Hirsch</li>
               </ul>
             </div>
 

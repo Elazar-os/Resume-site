@@ -50,8 +50,6 @@ export default function ShidduchPage() {
                         ))}
                      </ul>
                   </div>
-                  
-                  <p className="pt-2"><span className="font-semibold text-primary/80">Family Hashkafa:</span> {SHIDDUCH_DATA.family.hashkafa}</p>
                </div>
             </section>
 
