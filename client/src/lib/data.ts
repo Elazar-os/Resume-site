@@ -75,15 +75,14 @@ export const SHIDDUCH_DATA = {
     email: "elazar.greisman@outlook.com"
   },
   family: {
-    father: "Moishy Greisman — Tax Lawyer",
+    father: "Moshie Greisman — Tax Lawyer",
     mother: "Elisheva Greisman — Teacher",
     siblings: [
       "Esther Baila (24) — Married; Software Developer",
       "Hillel (21) — Single; Car Sales & Auto Leasing",
-      "Shloimy (17) — Mesivta Torah Maier",
-      "Perri (14) — Ashirah"
-    ],
-    hashkafa: "you got this Baila"
+      "Shloimy (17) — Mesivta Toras Maier",
+      "Perri (14) — Bais Yaakov D'Rav Hirsch"
+    ]
   },
   education: [
     "Mesivta of North Jersey",
