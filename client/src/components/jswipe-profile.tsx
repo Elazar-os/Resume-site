@@ -96,11 +96,11 @@ export function JSwipeProfile() {
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#101b2d] to-transparent h-24" />
           </div>
 
-          <CardContent className="p-5 space-y-5 relative z-10 -mt-4">
+            <CardContent className="p-5 space-y-5 relative z-10 -mt-4">
             {/* Header */}
             <div>
               <div className="text-2xl font-bold text-white">Elazar Greisman</div>
-              <div className="text-lg text-slate-300">22 • 5'5" • Passaic, NJ</div>
+              <div className="text-lg text-slate-300">22 • 5'6" • Passaic, NJ</div>
             </div>
 
             {/* Contact */}
@@ -113,18 +113,18 @@ export function JSwipeProfile() {
             {/* Parents */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Parents</h3>
-              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Father:</span> Moshie Greisman — Tax Lawyer</div>
-              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Mother:</span> Elisheva Greisman — Teacher</div>
+              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Father:</span> Moshie Greisman — Goldman Sachs</div>
+              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Mother:</span> Elisheva Greisman — YKP</div>
             </div>
 
             {/* Siblings */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Siblings</h3>
               <ul className="text-sm space-y-1">
-                <li>• Esther Baila (24) — Married, Software Developer</li>
-                <li>• Hillel (21) — Single, Car Sales & Auto Leasing</li>
-                <li>• Shloimy (17) — Mesivta Toras Maier</li>
-                <li>• Perri (14) — Bais Yaakov D'Rav Hirsch</li>
+                <li>• Esther Baila (24) — Software Developer</li>
+                <li>• Hillel (21) — Gold Road Auto</li>
+                <li>• Shloimy (17) — Mesivta Toras Maeir</li>
+                <li>• Perri (14) — Breuer’s Bais Yaakov</li>
               </ul>
             </div>
 
