@@ -69,35 +69,44 @@ export const SHIDDUCH_DATA = {
     name: "Elazar Greisman",
     age: 22,
     dob: "February 10, 2003",
-    height: "5'5\"",
+    height: "5'6\"",
     location: "Passaic, NJ",
     phone: "201-321-6587",
     email: "elazar.greisman@outlook.com"
   },
   family: {
-    father: "Moshie Greisman — Tax Lawyer",
-    mother: "Elisheva Greisman — Teacher",
+    father: "Moshie Greisman — Tax Attorney at Goldman Sachs",
+    mother: "Elisheva (Schechter) Greisman — Resource Room Teacher at YKP",
     siblings: [
-      "Esther Baila (24) — Married; Software Developer",
-      "Hillel (21) — Single; Car Sales & Auto Leasing",
-      "Shloimy (17) — Mesivta Toras Maier",
-      "Perri (14) — Bais Yaakov D'Rav Hirsch"
+      "Esther Baila (24) — Married to Shmuel Levenson (BMG); Software Developer",
+      "Hillel (21) — Gold Road Auto",
+      "Shloimy (17) — Yeshivas Toras Maeir",
+      "Perri (14) — Breuer’s Bais Yaakov"
+    ],
+    grandparents: [
+      "Meyer and Toby (Fink) Greisman, Lakewood",
+      "Dov and Miriam (Seidman), a”h Schechter, Lakewood"
     ]
   },
   education: [
+    "Yeshiva K’tana of Passaic",
     "Mesivta of North Jersey",
     "Yeshiva Tiferes Avner",
     "Mesivta of Las Vegas",
-    "Morning Kollel – Yeshivas Ner Baruch (PTI)"
+    "Yeshivas Ner Boruch Morning Kollel (current)"
   ],
   occupation: {
     title: "General Manager – King of Delancey Restaurant",
     reference: "Daniel Mayer — 201-988-6929"
   },
   references: [
-    "Ronit Gottesman, Family Friend — 908-303-4261",
-    "Rabbi Baruch Bodenheim, Rav — 862-371-3186",
-    "(Employer listed above)"
+    "Rabbi Dovid Hirsch, Rav Kehilas Bais Yosef — 973-769-2718",
+    "Meir & Devorah Levenson, Mechutanim — 732-364-7839",
+    "Aron & Ronit Gottesman — 908-303-4261",
+    "Baruch & Malki Adler — 973-472-9640",
+    "Rabbi Baruch Bodenheim, Rosh Kollel — 862-371-3186",
+    "Moshe Klagsbrun, Friend — 551-206-0727",
+    "Shaya Weisenfeld, Friend — 201-779-4525"
   ]
 };
 

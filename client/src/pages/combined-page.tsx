@@ -322,6 +322,15 @@ function TabsView() {
                           <p><span className="font-semibold text-primary/80">Mother:</span> {SHIDDUCH_DATA.family.mother}</p>
                           
                           <div className="pt-2">
+                             <span className="font-semibold text-primary/80 block mb-1">Grandparents:</span>
+                             <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
+                                {SHIDDUCH_DATA.family.grandparents?.map((gp, i) => (
+                                   <li key={i}>{gp}</li>
+                                ))}
+                             </ul>
+                          </div>
+
+                          <div className="pt-2">
                              <span className="font-semibold text-primary/80 block mb-1">Siblings:</span>
                              <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground">
                                 {SHIDDUCH_DATA.family.siblings.map((sibling, i) => (
