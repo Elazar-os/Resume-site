@@ -1,12 +1,15 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Briefcase, Heart, Layout } from "lucide-react";
+import { Briefcase, Heart, Layout, Grid3X3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { TopNavigation } from "@/components/top-navigation";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen bg-background">
+      <TopNavigation />
+      <div className="flex items-center justify-center p-4 min-h-[calc(100vh-64px)]">
       <div className="max-w-4xl w-full space-y-12 text-center">
         
         <motion.div 
@@ -27,7 +30,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           <Link href="/resume">
             <Card className="group relative overflow-hidden border-2 border-transparent hover:border-accent/50 transition-all duration-300 hover:shadow-xl bg-card cursor-pointer h-full">
@@ -77,11 +80,28 @@ export default function LandingPage() {
             </Card>
           </Link>
 
+          <Link href="/apps">
+            <Card className="group relative overflow-hidden border-2 border-transparent hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl bg-card cursor-pointer h-full">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="p-8 flex flex-col items-center justify-center space-y-6 h-full relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Grid3X3 className="w-8 h-8 text-purple-500" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-primary">Apps</h3>
+                  <p className="text-sm text-muted-foreground">KOD, PTI, Shadchan & More</p>
+                </div>
+                <Button variant="outline" className="w-full group-hover:bg-purple-500 group-hover:text-white">View Apps</Button>
+              </div>
+            </Card>
+          </Link>
+
         </motion.div>
 
         <footer className="text-sm text-muted-foreground/50">
           © 2025 Elazar Greisman. All rights reserved.
         </footer>
+      </div>
       </div>
     </div>
   );

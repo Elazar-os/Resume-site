@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { RESUME_DATA, PROFILE_SUMMARY } from "@/lib/data";
+import { TopNavigation } from "@/components/top-navigation";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,6 +30,7 @@ const itemVariants = {
 export default function ResumePage() {
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
+      <TopNavigation />
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
         <motion.div 
           initial="hidden"
