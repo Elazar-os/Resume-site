@@ -8,22 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RESUME_DATA, PROFILE_SUMMARY } from "@/lib/data";
 import ResumePage from "./resume-page";
 import ShidduchPage from "./shidduch-page";
-
-// Extracting the content parts from the pages to avoid full page duplication if we were to refactor, 
-// but for now we will just reuse the structure or simplify. 
-// Actually, reusing the pages as components might duplicate the sidebar.
-// Let's create a combined view that just renders the tabs in the main area and a shared sidebar.
+import { TopNavigation } from "@/components/top-navigation";
 
 export default function CombinedPage() {
-  // We'll use the ResumePage component's internal structure but wrapped in tabs.
-  // Since we can't easily import "partial" components without refactoring, 
-  // I will copy the relevant Tab logic from the previous home.tsx which I have in memory/history.
-  // Wait, I can just import the data and rebuild the layout.
-
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
-        {/* To save time and code, we are essentially re-implementing the "Home" component from the previous step 
-            which already had the tabs. I will just restore that logic here. */}
+        <TopNavigation />
         <TabsView />
     </div>
   );

@@ -10,6 +10,8 @@ import CombinedPage from "@/pages/combined-page";
 import LandingPage from "@/pages/landing-page";
 import SmartPhotoSelector from "@/pages/photo-selector-page";
 import JSwipePage from "@/pages/jswipe-page";
+import AppsHubPage from "@/pages/apps-hub-page";
+import AppRedirectPage from "@/pages/app-redirect-page";
 import { useState, useEffect } from "react";
 
 // Custom hook for hash-based routing
@@ -40,6 +42,11 @@ function Router() {
         <Route path="/combined" component={CombinedPage} />
         <Route path="/photo-selector" component={SmartPhotoSelector} />
         <Route path="/jswipe" component={JSwipePage} />
+        <Route path="/apps" component={AppsHubPage} />
+        <Route path="/kod" component={AppRedirectPage} />
+        <Route path="/pti" component={AppRedirectPage} />
+        <Route path="/shadchan" component={AppRedirectPage} />
+        <Route path="/gary" component={AppRedirectPage} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>

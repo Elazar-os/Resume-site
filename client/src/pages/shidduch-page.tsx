@@ -2,10 +2,13 @@ import { motion } from "framer-motion";
 import { SHIDDUCH_DATA } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { TopNavigation } from "@/components/top-navigation";
 
 export default function ShidduchPage() {
   return (
-    <div className="min-h-screen bg-background font-sans p-4 md:p-8 lg:p-12 flex justify-center">
+    <div className="min-h-screen bg-background font-sans">
+      <TopNavigation />
+      <div className="p-4 md:p-8 lg:p-12 flex justify-center">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -100,6 +103,7 @@ export default function ShidduchPage() {
           </CardContent>
         </Card>
       </motion.div>
+      </div>
     </div>
   );
 }
