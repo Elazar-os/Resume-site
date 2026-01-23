@@ -61,7 +61,7 @@ export default function AppsHubPage() {
                 <motion.div key={app.id} variants={itemVariants}>
                   <Card 
                     className="h-full overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
-                    onClick={() => window.open(`https://${app.subdomain}`, "_blank")}
+                    onClick={() => window.open(app.replitUrl, "_blank")}
                     data-testid={`app-card-${app.id}`}
                   >
                     {/* Gradient Header */}
@@ -106,7 +106,7 @@ export default function AppsHubPage() {
                           asChild
                         >
                           <a 
-                            href={`https://${app.subdomain}`}
+                            href={app.replitUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}

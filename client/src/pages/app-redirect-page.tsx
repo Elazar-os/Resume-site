@@ -10,7 +10,7 @@ export default function AppRedirectPage() {
 
   useEffect(() => {
     if (app) {
-      window.location.href = `https://${app.subdomain}`;
+      window.location.href = app.replitUrl;
     }
   }, [app]);
 
