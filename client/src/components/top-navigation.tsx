@@ -68,7 +68,7 @@ export function TopNavigation() {
               return (
                 <a
                   key={app.id}
-                  href={`https://${app.subdomain}`}
+                  href={app.replitUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
@@ -134,7 +134,7 @@ export function TopNavigation() {
                   return (
                     <a
                       key={app.id}
-                      href={`https://${app.subdomain}`}
+                      href={app.replitUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => setIsMenuOpen(false)}
