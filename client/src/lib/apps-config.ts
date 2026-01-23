@@ -17,7 +17,7 @@ export const APPS: AppConfig[] = [
     name: "KOD Menu",
     description: "King of Delancey restaurant menu and ordering system. Real-time menu sync and screen display.",
     subdomain: "kod.elazaros.com",
-    replitUrl: "https://replit.com/@hdg4bz496c/Menu-SyncScreen?s=app",
+    replitUrl: "https://menu-sync-screen--hdg4bz496c.replit.app/",
     icon: UtensilsCrossed,
     color: "text-orange-500",
     gradient: "from-orange-500 to-amber-500"
@@ -27,7 +27,7 @@ export const APPS: AppConfig[] = [
     name: "PTI Young Pros",
     description: "Yeshivas Ner Boruch PTI Young Professionals community platform and event management.",
     subdomain: "pti.elazaros.com",
-    replitUrl: "https://replit.com/@hdg4bz496c/PtiYoungPros?s=app",
+    replitUrl: "https://pti-young-pros--hdg4bz496c.replit.app/",
     icon: Users,
     color: "text-blue-500",
     gradient: "from-blue-500 to-cyan-500"
@@ -37,7 +37,7 @@ export const APPS: AppConfig[] = [
     name: "Shadchan",
     description: "Privacy-first matchmaking platform. Secure and confidential shidduch networking.",
     subdomain: "shadchan.elazaros.com",
-    replitUrl: "https://replit.com/@hdg4bz496c/PrivacyFirstMatchmaking?s=app",
+    replitUrl: "https://privacy-first-matchmaking--hdg4bz496c.replit.app/",
     icon: Heart,
     color: "text-pink-500",
     gradient: "from-pink-500 to-rose-500"
@@ -47,7 +47,7 @@ export const APPS: AppConfig[] = [
     name: "Gary King",
     description: "AI-powered chatbot assistant. Your friendly helper for questions and conversations.",
     subdomain: "gary.elazaros.com",
-    replitUrl: "https://replit.com/@hdg4bz496c/GaryKingChatbot?s=app",
+    replitUrl: "https://gary-king-chatbot-hdg4bz496c.replit.app/",
     icon: MessageCircle,
     color: "text-purple-500",
     gradient: "from-purple-500 to-violet-500"
