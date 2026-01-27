@@ -1,18 +1,49 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
-import { Loader2 } from "lucide-react";
+import { Loader2, PauseCircle, ArrowLeft } from "lucide-react";
 import { getAppById } from "@/lib/apps-config";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function AppRedirectPage() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const appId = location.split('/').filter(Boolean)[0] || "";
   const app = getAppById(appId);
 
   useEffect(() => {
-    if (app) {
+    if (app && app.active) {
       window.location.href = app.replitUrl;
     }
   }, [app]);
+
+  // Show paused message for inactive apps
+  if (app && !app.active) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="max-w-md w-full shadow-xl">
+          <CardContent className="p-8">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center">
+                <PauseCircle className="w-8 h-8 text-amber-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-primary">{app.name}</h2>
+              <p className="text-muted-foreground">
+                {app.pausedMessage || "This app is temporarily unavailable."}
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => setLocation("/apps")}
+                className="mt-4"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Apps
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!app) {
     return (

@@ -9,6 +9,8 @@ export interface AppConfig {
   icon: typeof UtensilsCrossed;
   color: string;
   gradient: string;
+  active: boolean;
+  pausedMessage?: string;
 }
 
 export const APPS: AppConfig[] = [
@@ -20,7 +22,8 @@ export const APPS: AppConfig[] = [
     replitUrl: "https://menu-sync-screen--hdg4bz496c.replit.app/",
     icon: UtensilsCrossed,
     color: "text-orange-500",
-    gradient: "from-orange-500 to-amber-500"
+    gradient: "from-orange-500 to-amber-500",
+    active: true
   },
   {
     id: "pti",
@@ -30,7 +33,9 @@ export const APPS: AppConfig[] = [
     replitUrl: "https://pti-young-pros--hdg4bz496c.replit.app/",
     icon: Users,
     color: "text-blue-500",
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-blue-500 to-cyan-500",
+    active: false,
+    pausedMessage: "PTI Young Pros is temporarily paused. Check back soon!"
   },
   {
     id: "shadchan",
@@ -40,7 +45,9 @@ export const APPS: AppConfig[] = [
     replitUrl: "https://privacy-first-matchmaking--hdg4bz496c.replit.app/",
     icon: Heart,
     color: "text-pink-500",
-    gradient: "from-pink-500 to-rose-500"
+    gradient: "from-pink-500 to-rose-500",
+    active: false,
+    pausedMessage: "Shadchan is temporarily paused for maintenance. Check back soon!"
   },
   {
     id: "gary",
@@ -50,9 +57,14 @@ export const APPS: AppConfig[] = [
     replitUrl: "https://gary-king-chatbot-hdg4bz496c.replit.app/",
     icon: MessageCircle,
     color: "text-purple-500",
-    gradient: "from-purple-500 to-violet-500"
+    gradient: "from-purple-500 to-violet-500",
+    active: false,
+    pausedMessage: "Gary King is taking a break. Check back soon!"
   }
 ];
+
+export const ACTIVE_APPS = APPS.filter(app => app.active);
+export const INACTIVE_APPS = APPS.filter(app => !app.active);
 
 export const NAV_PAGES = [
   { id: "home", name: "Home", path: "/", icon: Home },
