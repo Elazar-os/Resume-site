@@ -66,9 +66,38 @@ Preferred communication style: Simple, everyday language.
 
 ### External App Integrations
 The platform links to externally hosted Replit applications:
-- KOD Menu (restaurant menu system)
-- PTI Young Pros (community platform)
-- Shadchan (matchmaking platform)
-- Gary King (AI chatbot)
+- KOD Menu (restaurant menu system) - **ACTIVE**
+- PTI Young Pros (community platform) - **PAUSED**
+- Shadchan (matchmaking platform) - **PAUSED**
+- Gary King (AI chatbot) - **PAUSED**
 
-These are configured via subdomain CNAME records pointing to Replit deployment URLs.
+These are configured in `client/src/lib/apps-config.ts` with an `active` boolean flag.
+
+## App Status Management
+
+Apps can be toggled between active and inactive (paused) states in `apps-config.ts`:
+
+```typescript
+{
+  id: "appname",
+  active: true,  // or false to pause
+  pausedMessage: "Custom message for paused apps"
+}
+```
+
+**Inactive app behavior:**
+- Cards appear greyed out with "Paused" badge
+- Clicking shows a friendly modal with the pause message
+- Direct URL access (`/#/appname`) shows a dedicated paused page
+- No backend logic, database queries, or external requests are triggered
+- Desktop nav only shows active apps; mobile nav shows all with paused indicator
+
+## Cost Optimization Notes
+
+**Current architecture is already cost-optimized:**
+- **No database usage**: App uses in-memory storage (`MemStorage`), not PostgreSQL
+- **No API routes**: Backend only serves static files - no data processing
+- **Client-side only**: All logic runs in the browser
+- **Static-compatible**: Can be deployed to free static hosting (Cloudflare Pages, Netlify)
+- **No autoscaling needed**: Single instance sufficient for this static site
+- **External apps hosted separately**: No resource consumption when inactive
