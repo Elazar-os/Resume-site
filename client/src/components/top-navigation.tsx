@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Menu, X, ExternalLink } from "lucide-react";
+import { Menu, X, ExternalLink, PauseCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NAV_PAGES, APPS } from "@/lib/apps-config";
+import { NAV_PAGES, APPS, ACTIVE_APPS } from "@/lib/apps-config";
 import { cn } from "@/lib/utils";
 
 export function TopNavigation() {
@@ -62,8 +62,8 @@ export function TopNavigation() {
             {/* Separator */}
             <div className="w-px h-6 bg-border mx-2" />
 
-            {/* App Links */}
-            {APPS.map((app) => {
+            {/* App Links - Only show active apps in nav */}
+            {ACTIVE_APPS.map((app) => {
               const Icon = app.icon;
               return (
                 <a
@@ -131,6 +131,22 @@ export function TopNavigation() {
                 <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Apps</p>
                 {APPS.map((app) => {
                   const Icon = app.icon;
+                  const isInactive = !app.active;
+                  
+                  if (isInactive) {
+                    return (
+                      <div
+                        key={app.id}
+                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
+                        data-testid={`mobile-nav-app-${app.id}`}
+                      >
+                        <Icon className="w-4 h-4 text-gray-400" />
+                        {app.name}
+                        <PauseCircle className="w-3 h-3 ml-auto text-amber-500" />
+                      </div>
+                    );
+                  }
+                  
                   return (
                     <a
                       key={app.id}

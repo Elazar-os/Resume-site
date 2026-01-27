@@ -1,9 +1,10 @@
-import { motion } from "framer-motion";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ExternalLink, ArrowRight, PauseCircle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { APPS } from "@/lib/apps-config";
+import { APPS, type AppConfig } from "@/lib/apps-config";
 import { cn } from "@/lib/utils";
 import { TopNavigation } from "@/components/top-navigation";
 
@@ -28,9 +29,61 @@ const itemVariants = {
 };
 
 export default function AppsHubPage() {
+  const [pausedAppMessage, setPausedAppMessage] = useState<AppConfig | null>(null);
+
+  const handleAppClick = (app: AppConfig) => {
+    if (app.active) {
+      window.open(app.replitUrl, "_blank");
+    } else {
+      setPausedAppMessage(app);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background font-sans">
       <TopNavigation />
+
+      {/* Paused App Modal */}
+      <AnimatePresence>
+        {pausedAppMessage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            onClick={() => setPausedAppMessage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-card rounded-xl shadow-2xl max-w-md w-full p-6 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setPausedAppMessage(null)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+                data-testid="close-paused-modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                  <PauseCircle className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-bold text-primary">{pausedAppMessage.name}</h3>
+                <p className="text-muted-foreground">
+                  {pausedAppMessage.pausedMessage || "This app is temporarily unavailable."}
+                </p>
+                <Button variant="outline" onClick={() => setPausedAppMessage(null)}>
+                  Got it
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
         <motion.div
@@ -57,17 +110,24 @@ export default function AppsHubPage() {
           >
             {APPS.map((app) => {
               const Icon = app.icon;
+              const isInactive = !app.active;
+              
               return (
                 <motion.div key={app.id} variants={itemVariants}>
                   <Card 
-                    className="h-full overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
-                    onClick={() => window.open(app.replitUrl, "_blank")}
+                    className={cn(
+                      "h-full overflow-hidden border-none shadow-lg transition-all duration-300 group",
+                      isInactive 
+                        ? "opacity-60 grayscale cursor-not-allowed" 
+                        : "hover:shadow-xl cursor-pointer"
+                    )}
+                    onClick={() => handleAppClick(app)}
                     data-testid={`app-card-${app.id}`}
                   >
                     {/* Gradient Header */}
                     <div className={cn(
                       "h-2 bg-gradient-to-r",
-                      app.gradient
+                      isInactive ? "from-gray-400 to-gray-500" : app.gradient
                     )} />
                     
                     <CardHeader className="pb-2">
@@ -75,15 +135,25 @@ export default function AppsHubPage() {
                         <div className={cn(
                           "w-12 h-12 rounded-xl flex items-center justify-center",
                           "bg-gradient-to-br shadow-md",
-                          app.gradient
+                          isInactive ? "from-gray-400 to-gray-500" : app.gradient
                         )}>
                           <Icon className="w-6 h-6 text-white" />
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                          App
-                        </Badge>
+                        {isInactive ? (
+                          <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 border-amber-200">
+                            <PauseCircle className="w-3 h-3 mr-1" />
+                            Paused
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-xs">
+                            App
+                          </Badge>
+                        )}
                       </div>
-                      <CardTitle className="text-xl font-heading mt-3 group-hover:text-primary transition-colors">
+                      <CardTitle className={cn(
+                        "text-xl font-heading mt-3 transition-colors",
+                        isInactive ? "text-muted-foreground" : "group-hover:text-primary"
+                      )}>
                         {app.name}
                       </CardTitle>
                     </CardHeader>
@@ -97,25 +167,38 @@ export default function AppsHubPage() {
                         <span className="text-xs text-muted-foreground font-mono">
                           {app.subdomain}
                         </span>
-                        <Button 
-                          size="sm" 
-                          className={cn(
-                            "bg-gradient-to-r text-white border-none",
-                            app.gradient
-                          )}
-                          asChild
-                        >
-                          <a 
-                            href={app.replitUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
+                        {isInactive ? (
+                          <Button 
+                            size="sm" 
+                            variant="secondary"
+                            className="opacity-50"
+                            disabled
                             data-testid={`open-app-${app.id}`}
                           >
-                            Open App
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </a>
-                        </Button>
+                            <PauseCircle className="w-4 h-4 mr-1" />
+                            Paused
+                          </Button>
+                        ) : (
+                          <Button 
+                            size="sm" 
+                            className={cn(
+                              "bg-gradient-to-r text-white border-none",
+                              app.gradient
+                            )}
+                            asChild
+                          >
+                            <a 
+                              href={app.replitUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              data-testid={`open-app-${app.id}`}
+                            >
+                              Open App
+                              <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                            </a>
+                          </Button>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
