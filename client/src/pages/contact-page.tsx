@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Send, User, MessageSquare, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Send, CheckCircle2, Loader2, AlertCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,18 +12,18 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
       delayChildren: 0.2
     }
   }
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 24, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: "spring" as const, stiffness: 50 }
+    transition: { type: "spring" as const, stiffness: 40, damping: 12 }
   }
 };
 
@@ -80,163 +79,161 @@ export default function ContactPage() {
     <div className="min-h-screen bg-background font-sans">
       <TopNavigation />
 
-      <div className="max-w-2xl mx-auto p-4 md:p-8 lg:p-12">
+      <div className="max-w-xl mx-auto px-5 py-12 md:py-20">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="space-y-8"
+          className="space-y-10"
         >
-          <motion.div variants={itemVariants} className="text-center space-y-3">
-            <h1 className="text-4xl md:text-5xl font-bold font-heading text-primary">
-              Get in Touch
+          <motion.div variants={itemVariants} className="text-center space-y-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading tracking-tight text-foreground">
+              Start the Conversation.
             </h1>
-            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-              Have a question or want to connect? Send me a message.
+            <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+              Have an idea, opportunity, or project in mind? Send a message below and I'll personally respond within 24 hours.
             </p>
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="shadow-xl border-none">
-              <CardHeader className="text-center pb-2">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <Mail className="w-7 h-7 text-primary" />
+            {status === "sent" ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 40, damping: 12 }}
+                className="text-center py-16 space-y-5"
+              >
+                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8 text-green-500" />
                 </div>
-                <CardTitle className="text-xl font-heading">Contact Form</CardTitle>
-                <CardDescription>
-                  Fill out the form below and your message will be sent directly to me.
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                {status === "sent" ? (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-8 space-y-4"
+                <h3 className="text-2xl font-bold text-foreground" data-testid="text-success">Message Sent.</h3>
+                <p className="text-muted-foreground max-w-sm mx-auto">
+                  Thanks for reaching out. I'll get back to you within 24 hours.
+                </p>
+                <div className="pt-6">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setStatus("idle")}
+                    className="rounded-full px-8"
+                    data-testid="button-send-another"
                   >
-                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                      <CheckCircle2 className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-primary" data-testid="text-success">Message Sent!</h3>
-                    <p className="text-muted-foreground">
-                      Thanks for reaching out. I'll get back to you soon.
-                    </p>
-                    <div className="pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setStatus("idle")}
-                        data-testid="button-send-another"
-                      >
-                        Send Another Message
-                      </Button>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        Your Name
-                      </Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="John Doe"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        disabled={status === "sending"}
-                        data-testid="input-name"
-                      />
-                    </div>
+                    Send Another Message
+                  </Button>
+                </div>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-7">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium text-foreground">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    disabled={status === "sending"}
+                    className="h-12 bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    data-testid="input-name"
+                  />
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
-                        Your Email
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="john@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        disabled={status === "sending"}
-                        data-testid="input-email"
-                      />
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={status === "sending"}
+                    className="h-12 bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    data-testid="input-email"
+                  />
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="subject" className="flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                        Subject
-                      </Label>
-                      <Input
-                        id="subject"
-                        type="text"
-                        placeholder="What's this about?"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        disabled={status === "sending"}
-                        data-testid="input-subject"
-                      />
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subject" className="text-sm font-medium text-foreground">
+                    Subject
+                  </Label>
+                  <Input
+                    id="subject"
+                    type="text"
+                    placeholder="What's this about?"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    disabled={status === "sending"}
+                    className="h-12 bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    data-testid="input-subject"
+                  />
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea
-                        id="message"
-                        placeholder="Type your message here..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        required
-                        rows={5}
-                        className="resize-none"
-                        disabled={status === "sending"}
-                        data-testid="input-message"
-                      />
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-sm font-medium text-foreground">
+                    Message
+                  </Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Tell me what you have in mind..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                    rows={6}
+                    className="resize-none bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    disabled={status === "sending"}
+                    data-testid="input-message"
+                  />
+                </div>
 
-                    {status === "error" && (
-                      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-md" data-testid="text-error">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        {errorMsg}
-                      </div>
-                    )}
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      size="lg"
-                      disabled={status === "sending"}
-                      data-testid="button-submit-contact"
-                    >
-                      {status === "sending" ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Send Message
-                        </>
-                      )}
-                    </Button>
-                  </form>
+                {status === "error" && (
+                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg" data-testid="text-error">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {errorMsg}
+                  </div>
                 )}
-              </CardContent>
-            </Card>
+
+                <div className="space-y-4 pt-2">
+                  <Button
+                    type="submit"
+                    className="w-full h-13 text-base font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                    size="lg"
+                    disabled={status === "sending"}
+                    data-testid="button-submit-contact"
+                  >
+                    {status === "sending" ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5 mr-2" />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
+                    <Lock className="w-3 h-3" />
+                    Your information is private and will never be shared.
+                  </p>
+                </div>
+              </form>
+            )}
           </motion.div>
 
-          <motion.div variants={itemVariants} className="text-center">
+          <motion.div variants={itemVariants} className="text-center pt-2">
             <p className="text-sm text-muted-foreground">
-              Or email me directly at{" "}
+              Prefer email?{" "}
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
-                className="text-primary font-medium hover:underline"
+                className="text-primary font-medium hover:underline underline-offset-4"
                 data-testid="link-footer-email"
               >
                 {CONTACT_EMAIL}
