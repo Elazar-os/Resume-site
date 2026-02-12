@@ -12,6 +12,7 @@ import SmartPhotoSelector from "@/pages/photo-selector-page";
 import JSwipePage from "@/pages/jswipe-page";
 import AppsHubPage from "@/pages/apps-hub-page";
 import AppRedirectPage from "@/pages/app-redirect-page";
+import ContactPage from "@/pages/contact-page";
 import { useState, useEffect } from "react";
 
 // Custom hook for hash-based routing
@@ -43,6 +44,7 @@ function Router() {
         <Route path="/photo-selector" component={SmartPhotoSelector} />
         <Route path="/jswipe" component={JSwipePage} />
         <Route path="/apps" component={AppsHubPage} />
+        <Route path="/contact" component={ContactPage} />
         <Route path="/kod" component={AppRedirectPage} />
         <Route path="/pti" component={AppRedirectPage} />
         <Route path="/shadchan" component={AppRedirectPage} />
