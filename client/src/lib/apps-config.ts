@@ -1,4 +1,4 @@
-import { UtensilsCrossed, Users, Heart, MessageCircle, Briefcase, GraduationCap, Lock, Home, Grid3X3 } from "lucide-react";
+import { UtensilsCrossed, Users, Heart, MessageCircle, Briefcase, GraduationCap, Lock, Home, Grid3X3, Mail } from "lucide-react";
 
 export interface AppConfig {
   id: string;
@@ -19,7 +19,7 @@ export const APPS: AppConfig[] = [
     name: "KOD Menu",
     description: "King of Delancey restaurant menu and ordering system. Real-time menu sync and screen display.",
     subdomain: "kod.elazaros.com",
-    replitUrl: "https://menu-sync-screen--hdg4bz496c.replit.app/",
+    replitUrl: "https://menu-sync-screen.replit.app",
     icon: UtensilsCrossed,
     color: "text-orange-500",
     gradient: "from-orange-500 to-amber-500",
@@ -71,7 +71,8 @@ export const NAV_PAGES = [
   { id: "professional", name: "Professional", path: "/resume", icon: Briefcase },
   { id: "personal", name: "Personal", path: "/shidduch", icon: Heart },
   { id: "full-access", name: "Full Access", path: "/combined", icon: Lock },
-  { id: "apps", name: "Apps", path: "/apps", icon: Grid3X3 }
+  { id: "apps", name: "Apps", path: "/apps", icon: Grid3X3 },
+  { id: "contact", name: "Contact", path: "/contact", icon: Mail }
 ];
 
 export function getAppById(id: string): AppConfig | undefined {
