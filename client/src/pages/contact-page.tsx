@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Send, User, MessageSquare, CheckCircle2 } from "lucide-react";
+import { Mail, Send, User, MessageSquare, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,24 +29,51 @@ const itemVariants = {
 };
 
 const CONTACT_EMAIL = "Elazar.greisman@outlook.com";
+const WEB3FORMS_KEY = "d93b8781-85c1-4e72-bc4a-28e68fe1ab04";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus("sending");
+    setErrorMsg("");
 
-    const mailtoSubject = encodeURIComponent(subject || "Contact from Elazar OS");
-    const mailtoBody = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\n${message}`
-    );
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name,
+          email,
+          subject: subject || "Contact from Elazar OS",
+          message,
+          from_name: "Elazar OS Contact Form",
+        }),
+      });
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${mailtoSubject}&body=${mailtoBody}`;
-    setSent(true);
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus("sent");
+        setName("");
+        setEmail("");
+        setSubject("");
+        setMessage("");
+      } else {
+        setStatus("error");
+        setErrorMsg(data.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setStatus("error");
+      setErrorMsg("Could not send the message. Please try again or email directly.");
+    }
   };
 
   return (
@@ -77,12 +104,12 @@ export default function ContactPage() {
                 </div>
                 <CardTitle className="text-xl font-heading">Contact Form</CardTitle>
                 <CardDescription>
-                  Fill out the form below and it will open your email app to send.
+                  Fill out the form below and your message will be sent directly to me.
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
-                {sent ? (
+                {status === "sent" ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -91,28 +118,14 @@ export default function ContactPage() {
                     <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                       <CheckCircle2 className="w-8 h-8 text-green-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-primary">Email App Opened</h3>
+                    <h3 className="text-xl font-bold text-primary" data-testid="text-success">Message Sent!</h3>
                     <p className="text-muted-foreground">
-                      Your email client should have opened with the message ready to send.
-                      If it didn't open, you can email me directly at:
+                      Thanks for reaching out. I'll get back to you soon.
                     </p>
-                    <a
-                      href={`mailto:${CONTACT_EMAIL}`}
-                      className="text-primary font-medium hover:underline"
-                      data-testid="link-direct-email"
-                    >
-                      {CONTACT_EMAIL}
-                    </a>
                     <div className="pt-4">
                       <Button
                         variant="outline"
-                        onClick={() => {
-                          setSent(false);
-                          setName("");
-                          setEmail("");
-                          setSubject("");
-                          setMessage("");
-                        }}
+                        onClick={() => setStatus("idle")}
                         data-testid="button-send-another"
                       >
                         Send Another Message
@@ -133,6 +146,7 @@ export default function ContactPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
+                        disabled={status === "sending"}
                         data-testid="input-name"
                       />
                     </div>
@@ -149,6 +163,7 @@ export default function ContactPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={status === "sending"}
                         data-testid="input-email"
                       />
                     </div>
@@ -164,6 +179,7 @@ export default function ContactPage() {
                         placeholder="What's this about?"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
+                        disabled={status === "sending"}
                         data-testid="input-subject"
                       />
                     </div>
@@ -178,18 +194,36 @@ export default function ContactPage() {
                         required
                         rows={5}
                         className="resize-none"
+                        disabled={status === "sending"}
                         data-testid="input-message"
                       />
                     </div>
+
+                    {status === "error" && (
+                      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-md" data-testid="text-error">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                        {errorMsg}
+                      </div>
+                    )}
 
                     <Button
                       type="submit"
                       className="w-full"
                       size="lg"
+                      disabled={status === "sending"}
                       data-testid="button-submit-contact"
                     >
-                      <Send className="w-4 h-4 mr-2" />
-                      Send Message
+                      {status === "sending" ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Send Message
+                        </>
+                      )}
                     </Button>
                   </form>
                 )}
