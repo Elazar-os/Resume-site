@@ -29,7 +29,7 @@ const itemVariants = {
 };
 
 const CONTACT_EMAIL = "Elazar.greisman@outlook.com";
-const WEB3FORMS_KEY = "d93b8781-85c1-4e72-bc4a-28e68fe1ab04";
+const WEB3FORMS_KEY = "069c632f-2df7-4f2d-8ffb-767be8d1d12e";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
