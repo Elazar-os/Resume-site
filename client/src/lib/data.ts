@@ -67,7 +67,7 @@ export const RESUME_DATA = {
 export const SHIDDUCH_DATA = {
   basics: {
     name: "Elazar Greisman",
-    age: 22,
+    age: 23,
     dob: "February 10, 2003",
     height: "5'6\"",
     location: "Passaic, NJ",
