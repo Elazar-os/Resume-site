@@ -100,7 +100,7 @@ export function JSwipeProfile() {
             {/* Header */}
             <div>
               <div className="text-2xl font-bold text-white">Elazar Greisman</div>
-              <div className="text-lg text-slate-300">22 • 5'6" • Passaic, NJ</div>
+              <div className="text-lg text-slate-300">23 • 5'6" • Passaic, NJ</div>
             </div>
 
             {/* Contact */}

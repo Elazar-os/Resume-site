@@ -75,7 +75,7 @@ const RESUME_DATA = {
 
 const SHIDDUCH_DATA = {
   basics: {
-    age: 22,
+    age: 23,
     hebrewName: "Elazar",
     location: "Passaic, NJ"
   },
