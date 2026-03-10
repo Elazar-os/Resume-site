@@ -92,6 +92,14 @@ Apps can be toggled between active and inactive (paused) states in `apps-config.
 - No backend logic, database queries, or external requests are triggered
 - Desktop nav only shows active apps; mobile nav shows all with paused indicator
 
+## Offline / Self-Archiving
+
+A Service Worker (`client/public/sw.js`) is registered in `client/src/main.tsx`. It uses a **network-first with cache fallback** strategy:
+- On every visit, it fetches the latest version from the server and caches it.
+- If the server is unreachable (site goes down), it serves the last cached version seamlessly.
+- Static assets (photos, favicon, etc.) are pre-cached on first load.
+- Old caches are automatically cleaned up when a new version is deployed (bump `CACHE_NAME` in `sw.js`).
+
 ## Cost Optimization Notes
 
 **Current architecture is already cost-optimized:**
