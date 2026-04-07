@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles, BookOpen, Users } from "lucide-react";
+import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, CheckCircle2, User, Star, Zap, Target, Sparkles, BookOpen, Users, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -246,6 +246,20 @@ export default function Home() {
 
               {/* PROFESSIONAL TAB */}
               <TabsContent value="professional" className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Download Button */}
+                <div className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => { window.location.hash = "/resume-pdf"; }}
+                    data-testid="button-download-resume"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Resume PDF
+                  </Button>
+                </div>
+
                 {/* Summary */}
                 <motion.section variants={itemVariants} className="space-y-4">
                   <div className="flex items-center justify-between border-b pb-2">
