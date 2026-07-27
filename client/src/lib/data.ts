@@ -78,10 +78,10 @@ export const SHIDDUCH_DATA = {
     father: "Moshie Greisman — Tax Attorney at Goldman Sachs",
     mother: "Elisheva (Schechter) Greisman — Resource Room Teacher at YKP",
     siblings: [
-      "Esther Baila (24) — Married to Shmuel Levenson (BMG); Software Developer",
-      "Hillel (21) — Gold Road Auto",
-      "Shloimy (17) — Yeshivas Toras Maeir",
-      "Perri (14) — Breuer’s Bais Yaakov"
+      "Esther Baila (25) — Married to Shmuel Levenson (BMG); Software Developer",
+      "Hillel (22) — Hamptons Healthcare",
+      "Shloimy (18) — Yeshivas Toras Maeir",
+      "Perri (15) — Breuer’s Bais Yaakov"
     ],
     grandparents: [
       "Meyer and Toby (Fink) Greisman, Lakewood",
