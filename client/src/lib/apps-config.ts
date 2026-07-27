@@ -19,7 +19,7 @@ export const APPS: AppConfig[] = [
     name: "KOD Menu",
     description: "King of Delancey restaurant menu and ordering system. Real-time menu sync and screen display.",
     subdomain: "kod.elazaros.com",
-    replitUrl: "https://menu-sync-screen.replit.app",
+    replitUrl: "https://elazaros.onrender.com/",
     icon: UtensilsCrossed,
     color: "text-orange-500",
     gradient: "from-orange-500 to-amber-500",
