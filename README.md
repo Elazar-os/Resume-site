@@ -8,30 +8,21 @@ Personal portfolio for Elazar Greisman (Professional resume, Shidduch profile, A
 
 ## Deploy to Cloudflare (same URL)
 
-This project is configured to deploy as a **Cloudflare Worker with static assets** so it stays on:
+This project deploys as a **Cloudflare Worker with static assets** and stays on:
 
 `https://elazaros-app.elazar-greisman.workers.dev`
 
-### One-time setup
+### Automatic deploys
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+Every push to the `main` branch automatically builds and deploys via GitHub Actions.
 
-2. Log in to Cloudflare (if you haven’t already):
-   ```bash
-   npx wrangler login
-   ```
-
-### Deploy
+### Manual deploy (from your computer)
 
 ```bash
+npm install
+npx wrangler login   # only needed once
 npm run deploy
 ```
-
-This runs `vite build` and then `wrangler deploy`.  
-Because the Worker name is set to `elazaros-app`, it will update the existing deployment on the same URL.
 
 ---
 
@@ -46,8 +37,8 @@ npm run dev
 
 - React 19 + TypeScript + Vite
 - Tailwind CSS + shadcn/ui
-- Hash-based routing (works perfectly on static hosts)
-- Deployed via Cloudflare Workers static assets
+- Hash-based routing
+- Cloudflare Workers (static assets)
 
 ## Notes
 
