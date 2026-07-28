@@ -86,7 +86,7 @@ export function JSwipeProfile() {
         <Card className="w-[380px] bg-[#101b2d] text-slate-100 border-none shadow-2xl overflow-hidden rounded-[18px] select-none">
           <div className="h-[420px] bg-black relative pointer-events-none">
             <img 
-              src="/photos/dating-1.jpg" 
+              src="/photos/profile-formal.jpg" 
               alt="Profile Photo" 
               loading="lazy"
               className="w-full h-full object-cover"
