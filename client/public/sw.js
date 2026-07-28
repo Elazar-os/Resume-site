@@ -1,15 +1,12 @@
-const CACHE_NAME = "elazar-os-v1";
+const CACHE_NAME = "elazar-os-v2";
 
 const PRECACHE_URLS = [
   "/",
   "/favicon.png",
   "/opengraph.jpg",
-  "/photos/pro-1.png",
-  "/photos/pro-2.png",
-  "/photos/pro-3.png",
-  "/photos/dating-1.png",
-  "/photos/dating-2.png",
-  "/photos/dating-3.png",
+  "/photos/profile-formal.jpg",
+  "/photos/with-friend.jpg",
+  "/photos/torah-writing.jpg",
 ];
 
 self.addEventListener("install", (event) => {
