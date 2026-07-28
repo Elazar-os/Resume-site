@@ -22,7 +22,7 @@ export const RESUME_DATA = {
   experience: [
     {
       company: "King of Delancey Restaurant",
-      role: "Manager",
+      role: "General Manager",
       dates: "June 2022 – May 2025",
       location: "Passaic, NJ",
       achievements: [
