@@ -16,7 +16,7 @@ const RESUME_DATA = {
     phone: "201 321 6587",
     location: "Passaic, NJ",
   },
-  summary: "Dedicated management professional with 3+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
+  summary: "Dedicated management professional with 4+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
   skills: [
     "Team Leadership",
     "Inventory Management",
@@ -33,7 +33,7 @@ const RESUME_DATA = {
     {
       company: "King of Delancey Restaurant",
       role: "General Manager",
-      dates: "June 2022 – Present",
+      dates: "June 2022 – July 2026",
       location: "Passaic, NJ",
       achievements: [
         "Orchestrated daily restaurant operations, ensuring strict adherence to service standards and food quality protocols.",
@@ -111,7 +111,7 @@ const PROFILE_SUMMARY = {
   highlights: [
     "Founded a local study network",
     "Certified Swim Instructor & Lifeguard",
-    "3+ Years in Restaurant Management",
+    "4+ Years in Restaurant Management",
     "Active Morning Kollel Member",
     "Aspiring Tech Professional"
   ],
@@ -269,7 +269,7 @@ export default function Home() {
                 <motion.section variants={itemVariants} className="space-y-4">
                   <div className="flex items-center justify-between border-b pb-2">
                     <h2 className="text-2xl font-bold font-heading text-primary">Professional Summary</h2>
-                    <Badge variant="secondary" className="text-xs font-mono">Updated 2025</Badge>
+                    <Badge variant="secondary" className="text-xs font-mono">Updated 2026</Badge>
                   </div>
                   <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
                     {RESUME_DATA.summary}
