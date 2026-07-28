@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 const RESUME_DATA = {
   personalInfo: {
@@ -138,6 +139,8 @@ const itemVariants = {
 };
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState("professional");
+
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
@@ -162,7 +165,9 @@ export default function Home() {
                 <CardContent className="pt-16 pb-6 px-6 text-center space-y-6">
                   <div>
                     <h1 className="text-2xl font-bold font-heading text-primary">{RESUME_DATA.personalInfo.name}</h1>
-                    <p className="text-sm font-medium text-accent mt-1">{RESUME_DATA.personalInfo.title}</p>
+                    <p className="text-sm font-medium text-accent mt-1">
+                      {activeTab === "professional" ? "General Manager" : "Resume"}
+                    </p>
                   </div>
 
                   <div className="space-y-4 text-left">
@@ -238,7 +243,7 @@ export default function Home() {
 
           {/* Main Content (Right Column) */}
           <main className="lg:col-span-8 pt-6 lg:pt-0">
-            <Tabs defaultValue="professional" className="space-y-6">
+            <Tabs defaultValue="professional" className="space-y-6" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="professional">Professional Profile</TabsTrigger>
                 <TabsTrigger value="personal">Personal & Shidduch</TabsTrigger>
