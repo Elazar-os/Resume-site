@@ -1,5 +1,2 @@
-# This folder holds the Professional and Dating photos
-# Upload your three mother-approved photos here as:
-# pro-1.jpg / dating-1.jpg  (formal portrait)
-# pro-2.jpg / dating-2.jpg  (with friend)
-# pro-3.jpg / dating-3.jpg  (Torah writing)
+# Photos folder
+# Force rebuild $(date)
