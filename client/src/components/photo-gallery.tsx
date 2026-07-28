@@ -5,14 +5,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const PHOTOS = {
   professional: [
-    { src: "/photos/pro-1.png", alt: "Professional photo 1" },
-    { src: "/photos/pro-2.png", alt: "Professional photo 2" },
-    { src: "/photos/pro-3.png", alt: "Professional photo 3" }
+    { src: "/photos/pro-1.jpg", alt: "Professional photo 1" },
+    { src: "/photos/pro-2.jpg", alt: "Professional photo 2" },
+    { src: "/photos/pro-3.jpg", alt: "Professional photo 3" }
   ],
   dating: [
-    { src: "/photos/dating-1.png", alt: "Dating photo 1" },
-    { src: "/photos/dating-2.png", alt: "Dating photo 2" },
-    { src: "/photos/dating-3.png", alt: "Dating photo 3" }
+    { src: "/photos/dating-1.jpg", alt: "Dating photo 1" },
+    { src: "/photos/dating-2.jpg", alt: "Dating photo 2" },
+    { src: "/photos/dating-3.jpg", alt: "Dating photo 3" }
   ]
 };
 
