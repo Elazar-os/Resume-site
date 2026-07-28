@@ -49,13 +49,12 @@ export function JSwipeProfile() {
     } else {
       setTimeout(() => {
         resetCard();
-      }, 500); // Quick reset for left swipe
+      }, 500);
     }
   };
 
   return (
     <div className="flex flex-col items-center space-y-4 relative">
-      {/* Match Popup Overlay */}
       <AnimatePresence>
         {showMatch && (
           <motion.div 
@@ -85,10 +84,9 @@ export function JSwipeProfile() {
         className="touch-none cursor-grab active:cursor-grabbing z-10"
       >
         <Card className="w-[380px] bg-[#101b2d] text-slate-100 border-none shadow-2xl overflow-hidden rounded-[18px] select-none">
-          {/* Photo Area */}
           <div className="h-[420px] bg-black relative pointer-events-none">
             <img 
-              src="/photos/dating-1.png" 
+              src="/photos/profile-formal.jpg" 
               alt="Profile Photo" 
               loading="lazy"
               className="w-full h-full object-cover"
@@ -97,27 +95,23 @@ export function JSwipeProfile() {
           </div>
 
             <CardContent className="p-5 space-y-5 relative z-10 -mt-4">
-            {/* Header */}
             <div>
               <div className="text-2xl font-bold text-white">Elazar Greisman</div>
               <div className="text-lg text-slate-300">23 • 5'6" • Passaic, NJ</div>
             </div>
 
-            {/* Contact */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Contact</h3>
               <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Phone:</span> 201-321-6587</div>
               <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Email:</span> elazar.greisman@outlook.com</div>
             </div>
 
-            {/* Parents */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Parents</h3>
               <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Father:</span> Moshie Greisman — Goldman Sachs</div>
               <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Mother:</span> Elisheva Greisman — YKP</div>
             </div>
 
-            {/* Siblings */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Siblings</h3>
               <ul className="text-sm space-y-1">
@@ -128,7 +122,6 @@ export function JSwipeProfile() {
               </ul>
             </div>
 
-            {/* Education */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Education</h3>
               <ul className="text-sm space-y-1">
@@ -139,13 +132,11 @@ export function JSwipeProfile() {
               </ul>
             </div>
 
-            {/* Work */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Work</h3>
               <div className="text-sm">General Manager — King of Delancey</div>
             </div>
 
-            {/* References */}
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">References</h3>
               <ul className="text-sm space-y-1">
@@ -162,7 +153,6 @@ export function JSwipeProfile() {
         </Card>
       </motion.div>
 
-      {/* Swipe Buttons */}
       <div className="flex items-center gap-6 mt-4 pb-8 z-20">
         <Button 
           variant="outline" 
