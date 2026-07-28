@@ -8,41 +8,41 @@ const PHOTOS = {
   professional: [
     {
       src: "/photos/pro-1.png",
-      alt: "Suit & Jacket",
-      tags: ["Formal", "Executive", "Serious"],
+      alt: "Clean Formal Portrait",
+      tags: ["Profile Ready", "Natural", "Approachable"],
       rating: "Top Pick"
     },
     {
       src: "/photos/pro-2.png",
-      alt: "Clean Button Down",
-      tags: ["Smart Casual", "Approachable", "Clean"],
+      alt: "With Community Friend",
+      tags: ["Warm", "Respectful", "Jewish Values"],
       rating: "Strong"
     },
     {
       src: "/photos/pro-3.png",
-      alt: "Checked Shirt Smile",
-      tags: ["Friendly", "Daily Wear", "Warm"],
-      rating: "Good"
+      alt: "Torah Writing",
+      tags: ["Serious", "Ben Torah", "Meaningful"],
+      rating: "Excellent"
     }
   ],
   dating: [
     {
       src: "/photos/dating-1.png",
-      alt: "Warm Smile",
+      alt: "Warm Natural Smile",
       tags: ["Profile Pic", "Inviting", "Confident"],
       rating: "Best Profile"
     },
     {
       src: "/photos/dating-2.png",
-      alt: "Candid Laughing",
-      tags: ["Authentic", "Personality", "Joy"],
+      alt: "With Close Friend",
+      tags: ["Authentic", "Community", "Warm"],
       rating: "Personality"
     },
     {
       src: "/photos/dating-3.png",
-      alt: "Vacation Vibe",
-      tags: ["Fun", "Relaxed", "Travel"],
-      rating: "Variety"
+      alt: "Torah Moment",
+      tags: ["Values", "Focused", "Respectful"],
+      rating: "Meaningful"
     }
   ]
 };
