@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const RESUME_DATA = {
   personalInfo: {
     name: "Elazar Greisman",
-    title: "Restaurant Operations & Management Specialist",
+    title: "General Manager",
     email: "elazar.greisman@outlook.com",
     phone: "201 321 6587",
     location: "Passaic, NJ",
@@ -31,8 +31,8 @@ const RESUME_DATA = {
   experience: [
     {
       company: "King of Delancey Restaurant",
-      role: "Manager",
-      dates: "June 2022 – May 2025",
+      role: "General Manager",
+      dates: "June 2022 – Present",
       location: "Passaic, NJ",
       achievements: [
         "Orchestrated daily restaurant operations, ensuring strict adherence to service standards and food quality protocols.",
@@ -369,7 +369,7 @@ export default function Home() {
                 <motion.section variants={itemVariants} className="bg-accent/5 p-6 rounded-xl border border-accent/10">
                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                         <h2 className="text-2xl font-bold font-heading text-primary">Personal Profile</h2>
+                         <h2 className="text-2xl font-bold font-heading text-primary">Elazar Greisman · Resume</h2>
                          <p className="text-muted-foreground mt-1">Age {SHIDDUCH_DATA.basics.age} • {SHIDDUCH_DATA.basics.location}</p>
                       </div>
                       <div className="text-right hidden md:block">
