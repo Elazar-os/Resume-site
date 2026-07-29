@@ -46,7 +46,7 @@ export default function ResumePage() {
                 <div className="h-32 bg-gradient-to-br from-primary to-accent relative">
                   <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
                      <div className="w-24 h-24 rounded-full border-4 border-card bg-muted flex items-center justify-center shadow-md overflow-hidden photo-hover">
-                        <img src="/photos/dating-1.png" alt="Profile" loading="lazy" className="w-full h-full object-cover" />
+                        <img src="/photos/profile-formal.jpg" alt="Profile" loading="lazy" className="w-full h-full object-cover" />
                      </div>
                   </div>
                 </div>
