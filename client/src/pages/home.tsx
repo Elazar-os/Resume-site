@@ -6,16 +6,17 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 const RESUME_DATA = {
   personalInfo: {
     name: "Elazar Greisman",
-    title: "Restaurant Operations & Management Specialist",
+    title: "General Manager",
     email: "elazar.greisman@outlook.com",
     phone: "201 321 6587",
     location: "Passaic, NJ",
   },
-  summary: "Dedicated management professional with 3+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
+  summary: "Dedicated management professional with 4+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
   skills: [
     "Team Leadership",
     "Inventory Management",
@@ -31,8 +32,8 @@ const RESUME_DATA = {
   experience: [
     {
       company: "King of Delancey Restaurant",
-      role: "Manager",
-      dates: "June 2022 – May 2025",
+      role: "General Manager",
+      dates: "June 2022 – July 2026",
       location: "Passaic, NJ",
       achievements: [
         "Orchestrated daily restaurant operations, ensuring strict adherence to service standards and food quality protocols.",
@@ -110,7 +111,7 @@ const PROFILE_SUMMARY = {
   highlights: [
     "Founded a local study network",
     "Certified Swim Instructor & Lifeguard",
-    "3+ Years in Restaurant Management",
+    "4+ Years in Restaurant Management",
     "Active Morning Kollel Member",
     "Aspiring Tech Professional"
   ],
@@ -138,6 +139,8 @@ const itemVariants = {
 };
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState("professional");
+
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
@@ -162,7 +165,9 @@ export default function Home() {
                 <CardContent className="pt-16 pb-6 px-6 text-center space-y-6">
                   <div>
                     <h1 className="text-2xl font-bold font-heading text-primary">{RESUME_DATA.personalInfo.name}</h1>
-                    <p className="text-sm font-medium text-accent mt-1">{RESUME_DATA.personalInfo.title}</p>
+                    <p className="text-sm font-medium text-accent mt-1">
+                      {activeTab === "professional" ? "General Manager" : "Resume"}
+                    </p>
                   </div>
 
                   <div className="space-y-4 text-left">
@@ -238,7 +243,7 @@ export default function Home() {
 
           {/* Main Content (Right Column) */}
           <main className="lg:col-span-8 pt-6 lg:pt-0">
-            <Tabs defaultValue="professional" className="space-y-6">
+            <Tabs defaultValue="professional" className="space-y-6" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="professional">Professional Profile</TabsTrigger>
                 <TabsTrigger value="personal">Personal & Shidduch</TabsTrigger>
@@ -264,7 +269,7 @@ export default function Home() {
                 <motion.section variants={itemVariants} className="space-y-4">
                   <div className="flex items-center justify-between border-b pb-2">
                     <h2 className="text-2xl font-bold font-heading text-primary">Professional Summary</h2>
-                    <Badge variant="secondary" className="text-xs font-mono">Updated 2025</Badge>
+                    <Badge variant="secondary" className="text-xs font-mono">Updated 2026</Badge>
                   </div>
                   <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
                     {RESUME_DATA.summary}
@@ -369,7 +374,7 @@ export default function Home() {
                 <motion.section variants={itemVariants} className="bg-accent/5 p-6 rounded-xl border border-accent/10">
                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                         <h2 className="text-2xl font-bold font-heading text-primary">Personal Profile</h2>
+                         <h2 className="text-2xl font-bold font-heading text-primary">Elazar Greisman · Resume</h2>
                          <p className="text-muted-foreground mt-1">Age {SHIDDUCH_DATA.basics.age} • {SHIDDUCH_DATA.basics.location}</p>
                       </div>
                       <div className="text-right hidden md:block">

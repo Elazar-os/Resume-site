@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { TopNavigation } from "@/components/top-navigation";
 
 export default function LandingPage() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="min-h-screen bg-background">
       <TopNavigation />
@@ -82,7 +84,7 @@ export default function LandingPage() {
 
           <Link href="/apps">
             <Card className="group relative overflow-hidden border-2 border-transparent hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl bg-card cursor-pointer h-full">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="p-8 flex flex-col items-center justify-center space-y-6 h-full relative z-10">
                 <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Grid3X3 className="w-8 h-8 text-purple-500" />
@@ -99,7 +101,7 @@ export default function LandingPage() {
         </motion.div>
 
         <footer className="text-sm text-muted-foreground/50">
-          © 2025 Elazar Greisman. All rights reserved.
+          © {currentYear} Elazar Greisman. All rights reserved.
         </footer>
       </div>
       </div>

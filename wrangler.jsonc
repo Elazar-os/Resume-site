@@ -1,15 +1,10 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "elazaros-app",
-  "compatibility_date": "2026-07-29",
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "directory": "dist/public",
-    "not_found_handling": "single-page-application"
-  },
-  "compatibility_flags": [
-    "nodejs_compat"
   ]
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "elazaros-app",
+  "compatibility_date": "2026-07-27",
+  "assets": {
+    "directory": "./dist/public",
+    "not_found_handling": "single-page-application"
+  }
 }

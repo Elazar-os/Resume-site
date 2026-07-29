@@ -1,4 +1,6 @@
+ replit-agent
 const CACHE_NAME = "elazar-os-v2";
+
 
 const PRECACHE_URLS = [
   "/",

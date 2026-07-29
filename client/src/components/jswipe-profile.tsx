@@ -115,10 +115,10 @@ export function JSwipeProfile() {
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Siblings</h3>
               <ul className="text-sm space-y-1">
-                <li>• Esther Baila (24) — Software Developer</li>
-                <li>• Hillel (21) — Gold Road Auto</li>
-                <li>• Shloimy (17) — Mesivta Toras Maeir</li>
-                <li>• Perri (14) — Breuer’s Bais Yaakov</li>
+                <li>• Esther Baila (25) — Software Developer</li>
+                <li>• Hillel (22) — Hamptons Healthcare</li>
+                <li>• Shloimy (18) — Yeshivas Toras Maeir</li>
+                <li>• Perri (15) — Breuer’s Bais Yaakov</li>
               </ul>
             </div>
 
