@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Award, Briefcase, GraduationCap, Heart, ArrowRight, CheckCircle2, User, Star, Zap, Target, Sparkles, Lock, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
-import { RESUME_DATA, PROFILE_SUMMARY } from "@/lib/data";
+import { RESUME_DATA, PROFILE_SUMMARY, SHIDDUCH_DATA } from "@/lib/data";
 import { TopNavigation } from "@/components/top-navigation";
+import { PrivateAccessGate } from "@/components/private-access-gate";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -113,7 +114,7 @@ export default function ResumePage() {
                       <Mail className="w-4 h-4" />
                       Email
                     </a>
-                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '').replace(/-/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Phone className="w-4 h-4" />
                       Phone
                     </a>
@@ -122,6 +123,12 @@ export default function ResumePage() {
                       NJ
                     </div>
                   </div>
+
+                  {RESUME_DATA.personalInfo.contactName ? (
+                    <p className="text-xs text-center text-muted-foreground">
+                      Contact: {RESUME_DATA.personalInfo.contactName}
+                    </p>
+                  ) : null}
                 </CardContent>
               </Card>
             </div>
@@ -229,6 +236,54 @@ export default function ResumePage() {
                           </div>
                       </div>
                     </div>
+                </motion.section>
+
+                {/* References — gated */}
+                <motion.section variants={itemVariants} className="space-y-6">
+                  <h2 className="text-2xl font-bold font-heading text-primary border-b pb-2 flex items-center gap-2">
+                    <Users className="w-6 h-6 text-accent" /> References
+                    <a href="#/references-contact" title="View full reference contact details" className="text-primary/60 hover:text-primary">
+                      <Lock className="h-4 w-4" />
+                    </a>
+                  </h2>
+                  <PrivateAccessGate
+                    title="Reference contact details"
+                    description="Enter the passcode to view full reference contact information."
+                  >
+                    <div className="space-y-6">
+                      {/* Employer reference */}
+                      <div className="p-4 rounded-lg border bg-card">
+                        <h3 className="font-bold text-primary">Employer Reference</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{SHIDDUCH_DATA.occupation.title}</p>
+                        <p className="text-sm text-foreground mt-1">{SHIDDUCH_DATA.occupation.reference}</p>
+                      </div>
+
+                      {/* Character references */}
+                      <div className="p-4 rounded-lg border bg-card">
+                        <h3 className="font-bold text-primary mb-3">Character References</h3>
+                        <ul className="space-y-2">
+                          {SHIDDUCH_DATA.references.map((ref, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                              <span className="text-primary/40 font-bold mt-0.5">{i + 1}.</span>
+                              <span>{ref}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Contact person */}
+                      <div className="p-4 rounded-lg border bg-secondary/30">
+                        <h3 className="font-bold text-primary mb-2">Contact for Inquiries</h3>
+                        <p className="text-sm text-foreground">{RESUME_DATA.personalInfo.contactName || RESUME_DATA.personalInfo.name}</p>
+                        <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                          <Phone className="h-3 w-3" /> {RESUME_DATA.personalInfo.phone}
+                        </p>
+                        <p className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Mail className="h-3 w-3" /> {RESUME_DATA.personalInfo.email}
+                        </p>
+                      </div>
+                    </div>
+                  </PrivateAccessGate>
                 </motion.section>
             </div>
           </main>

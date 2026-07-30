@@ -62,12 +62,12 @@ export default function ReferencesContactPage() {
                 {/* Personal contact */}
                 <section className="space-y-3">
                   <h2 className="text-lg font-bold text-primary uppercase tracking-wide border-b pb-2">
-                    Personal Contact
+                    Contact for Shidduch Inquiries
                   </h2>
                   <div className="space-y-2 text-base">
                     <p className="flex items-center gap-2 text-muted-foreground">
                       <User className="h-4 w-4 text-primary/60" />
-                      <span className="font-medium text-foreground">{SHIDDUCH_DATA.basics.name}</span>
+                      <span className="font-medium text-foreground">{SHIDDUCH_DATA.basics.contactName || SHIDDUCH_DATA.basics.name}</span>
                     </p>
                     <p className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="h-4 w-4 text-primary/60" />
