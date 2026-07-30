@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { Fingerprint, Lock, ShieldCheck, Sparkles, X } from "lucide-react";
+import { Fingerprint, Lock, ShieldCheck, Sparkles, X, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -146,6 +146,7 @@ export function PrivateAccessGate({
 
   // Post-passcode biometric enrollment prompt
   const [showBiometricPrompt, setShowBiometricPrompt] = useState(false);
+  const [showPasscode, setShowPasscode] = useState(false);
 
   useEffect(() => {
     setReady(true);
@@ -330,15 +331,26 @@ export function PrivateAccessGate({
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
         <div className="space-y-2">
           <Label htmlFor="private-passcode" className="text-sm">Passcode</Label>
-          <Input
-            id="private-passcode"
-            type="password"
-            value={passcode}
-            onChange={(e) => setPasscode(e.target.value)}
-            placeholder="Enter passcode"
-            autoComplete="current-password"
-            autoFocus
-          />
+          <div className="relative">
+            <Input
+              id="private-passcode"
+              type={showPasscode ? "text" : "password"}
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              placeholder="Enter passcode"
+              autoComplete="current-password"
+              autoFocus
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPasscode(!showPasscode)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+              aria-label={showPasscode ? "Hide passcode" : "Show passcode"}
+            >
+              {showPasscode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
