@@ -75,6 +75,7 @@ export const SHIDDUCH_DATA = {
     phone: "201-394-0983",
     email: "elisheva.greisman@gmail.com",
     contactName: "Elisheva Greisman",
+    personalPhone: "201-321-6587",
     contactFormUrl: "/contact"
   },
   family: {

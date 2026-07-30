@@ -155,9 +155,9 @@ function TabsView({ revealPrivateDetails }: { revealPrivateDetails: boolean }) {
                       <Mail className="w-4 h-4" />
                       Contact
                     </a>
-                    <a href="/contact" className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                    <a href={`tel:${SHIDDUCH_DATA.basics.personalPhone}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Phone className="w-4 h-4" />
-                      Reach Out
+                      Call
                     </a>
                      <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
                       <MapPin className="w-4 h-4" />
