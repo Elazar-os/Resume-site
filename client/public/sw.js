@@ -1,5 +1,5 @@
  replit-agent
-const CACHE_NAME = "elazar-os-v2";
+const CACHE_NAME = "elazar-os-v3";
 
 
 const PRECACHE_URLS = [
