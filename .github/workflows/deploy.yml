@@ -25,6 +25,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_REFERENCES_PASSCODE: ${{ secrets.VITE_REFERENCES_PASSCODE }}
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3

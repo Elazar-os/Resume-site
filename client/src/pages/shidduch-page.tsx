@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Lock } from "lucide-react";
 import { SHIDDUCH_DATA } from "@/lib/data";
 import { isPrivateAccessAuthorized, formatPrivateContact, formatReference } from "@/lib/privacy";
 import { Card, CardContent } from "@/components/ui/card";
@@ -95,12 +96,26 @@ export default function ShidduchPage() {
 
             {/* References */}
             <section className="space-y-4">
-               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h2>
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">
+                  <span className="inline-flex items-center gap-2">
+                     References
+                     <a href="#/references-contact" title="View full reference contact details" className="text-primary/60 hover:text-primary">
+                        <Lock className="h-4 w-4" />
+                     </a>
+                  </span>
+               </h2>
                <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground">
                   {SHIDDUCH_DATA.references.map((ref, i) => (
                      <li key={i}>{formatReference(ref, revealPrivateDetails)}</li>
                   ))}
                </ul>
+               <p className="text-xs text-muted-foreground pt-2">
+                  <Lock className="inline h-3 w-3 mr-1" />
+                  Full contact details available on the{" "}
+                  <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">references page</a>{" "}
+                  or{" "}
+                  <a href="#/contact" className="font-medium text-primary hover:underline underline-offset-4">request access via the contact form</a>.
+               </p>
             </section>
 
           </CardContent>

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, User, Star, Zap, Target, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, User, Star, Zap, Target, Sparkles, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -305,7 +305,10 @@ function TabsView({ revealPrivateDetails }: { revealPrivateDetails: boolean }) {
                          <div>Location: {SHIDDUCH_DATA.basics.location}</div>
                       </div>
                       <div className="rounded-xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-                        Contact details and private references are shared through a protected channel. Approved viewers can unlock them with the private access gate.
+                        Contact details and private references are shared through a protected channel. Approved viewers can unlock them with the private access gate, or {" "}
+                        <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">view the references page</a>{" "}
+                        or {" "}
+                        <a href="#/contact" className="font-medium text-primary hover:underline underline-offset-4">request access via the contact form</a>.
                       </div>
                     </div>
 
@@ -366,7 +369,14 @@ function TabsView({ revealPrivateDetails }: { revealPrivateDetails: boolean }) {
 
                       {/* References */}
                       <section className="space-y-4">
-                         <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h3>
+                         <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">
+                           <span className="inline-flex items-center gap-2">
+                             References
+                             <a href="#/references-contact" title="View full reference contact details" className="text-primary/60 hover:text-primary">
+                               <Lock className="h-4 w-4" />
+                             </a>
+                           </span>
+                         </h3>
                          <div className="space-y-3">
                            <p className="text-sm font-medium text-primary/80">Private references</p>
                            <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-muted-foreground">
@@ -374,6 +384,11 @@ function TabsView({ revealPrivateDetails }: { revealPrivateDetails: boolean }) {
                                  <li key={i}>{formatReference(ref, revealPrivateDetails)}</li>
                               ))}
                            </ul>
+                           <p className="text-xs text-muted-foreground pt-2">
+                             <Lock className="inline h-3 w-3 mr-1" />
+                             Full contact details available on the {" "}
+                             <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">references page</a>.
+                           </p>
                          </div>
                       </section>
                     </PrivateAccessGate>
