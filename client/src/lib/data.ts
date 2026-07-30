@@ -4,6 +4,7 @@ export const RESUME_DATA = {
     title: "Restaurant Operations & Management Specialist",
     email: "elisheva.greisman@gmail.com",
     phone: "201-394-0983",
+    personalPhone: "201-321-6587",
     location: "Passaic, NJ",
     contactName: "Elisheva Greisman",
   },
