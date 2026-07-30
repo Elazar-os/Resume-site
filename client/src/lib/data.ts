@@ -72,7 +72,8 @@ export const SHIDDUCH_DATA = {
     height: "5'6\"",
     location: "Passaic, NJ",
     phone: "201-321-6587",
-    email: "elazar.greisman@outlook.com"
+    email: "elazar.greisman@outlook.com",
+    contactFormUrl: "/contact"
   },
   family: {
     father: "Moshie Greisman — Tax Attorney at Goldman Sachs",
