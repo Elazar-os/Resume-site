@@ -152,8 +152,7 @@ export default function ContactPage() {
               Start the Conversation.
             </h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-              Have an idea, opportunity, or project in mind? Send a message
-              below and I'll personally respond within 24 hours.
+              Have an idea, opportunity, or project in mind? Send a message below — I'll get back to you as soon as I can.
             </p>
           </motion.div>
 
@@ -175,7 +174,7 @@ export default function ContactPage() {
                   Message Sent.
                 </h3>
                 <p className="text-muted-foreground max-w-sm mx-auto">
-                  Thanks for reaching out. I'll get back to you within 24 hours.
+                  Thanks for reaching out. I'll get back to you as soon as I can.
                 </p>
                 <div className="pt-6">
                   <Button
