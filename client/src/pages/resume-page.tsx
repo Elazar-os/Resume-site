@@ -109,13 +109,13 @@ export default function ResumePage() {
                   <Separator />
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <a href={`mailto:${RESUME_DATA.personalInfo.email}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                    <a href={`tel:${RESUME_DATA.personalInfo.personalPhone}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                      <Phone className="w-4 h-4" />
+                      Call
+                    </a>
+                    <a href={`mailto:${RESUME_DATA.personalInfo.personalEmail}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Mail className="w-4 h-4" />
                       Email
-                    </a>
-                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
-                      <Phone className="w-4 h-4" />
-                      Phone
                     </a>
                      <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
                       <MapPin className="w-4 h-4" />

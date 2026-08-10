@@ -1,20 +1,24 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, User, Star, Zap, Target, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, User, Star, Zap, Target, Sparkles, Lock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RESUME_DATA, PROFILE_SUMMARY } from "@/lib/data";
+import { isPrivateAccessAuthorized, formatPrivateContact, formatReference } from "@/lib/privacy";
+import { PrivateAccessGate } from "@/components/private-access-gate";
 import ResumePage from "./resume-page";
 import ShidduchPage from "./shidduch-page";
 import { TopNavigation } from "@/components/top-navigation";
 
 export default function CombinedPage() {
+  const revealPrivateDetails = isPrivateAccessAuthorized();
+
   return (
     <div className="min-h-screen bg-background font-sans selection:bg-primary/10 selection:text-primary">
         <TopNavigation />
-        <TabsView />
+        <TabsView revealPrivateDetails={revealPrivateDetails} />
     </div>
   );
 }
@@ -50,7 +54,7 @@ import { CalmReset } from "@/components/calm-reset";
 
 import { JSwipeProfile } from "@/components/jswipe-profile";
 
-function TabsView() {
+function TabsView({ revealPrivateDetails }: { revealPrivateDetails: boolean }) {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
         <motion.div 
@@ -147,13 +151,13 @@ function TabsView() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <a href={`mailto:${RESUME_DATA.personalInfo.email}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                    <a href="/contact" className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Mail className="w-4 h-4" />
-                      Email
+                      Contact
                     </a>
-                    <a href={`tel:${RESUME_DATA.personalInfo.phone.replace(/\s/g, '')}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                    <a href={`tel:${SHIDDUCH_DATA.basics.personalPhone}`} className="flex flex-col items-center gap-1 p-2 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
                       <Phone className="w-4 h-4" />
-                      Phone
+                      Call
                     </a>
                      <div className="flex flex-col items-center gap-1 p-2 rounded text-muted-foreground">
                       <MapPin className="w-4 h-4" />
@@ -300,6 +304,12 @@ function TabsView() {
                          <div>Height: {SHIDDUCH_DATA.basics.height}</div>
                          <div>Location: {SHIDDUCH_DATA.basics.location}</div>
                       </div>
+                      <div className="rounded-xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+                        Contact details and private references are shared through a protected channel. Approved viewers can unlock them with the private access gate, or {" "}
+                        <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">view the references page</a>{" "}
+                        or {" "}
+                        <a href="#/contact" className="font-medium text-primary hover:underline underline-offset-4">request access via the contact form</a>.
+                      </div>
                     </div>
 
                     <Separator />
@@ -345,26 +355,43 @@ function TabsView() {
 
                     <Separator />
 
-                    {/* Occupation */}
-                    <section className="space-y-4">
-                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Current Occupation</h3>
-                       <div className="space-y-2 text-base md:text-lg">
-                          <p className="font-medium text-primary">{SHIDDUCH_DATA.occupation.title}</p>
-                          <p className="text-muted-foreground">Employer Reference: {SHIDDUCH_DATA.occupation.reference}</p>
-                       </div>
-                    </section>
+                    <PrivateAccessGate title="Authorized private access" description="Enter the approved credentials to reveal phone, email, and reference details." className="mb-2">
+                      {/* Occupation */}
+                      <section className="space-y-4">
+                         <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Current Occupation</h3>
+                         <div className="space-y-2 text-base md:text-lg">
+                            <p className="font-medium text-primary">{SHIDDUCH_DATA.occupation.title}</p>
+                            <p className="text-muted-foreground">Employer Reference: {formatReference(SHIDDUCH_DATA.occupation.reference, revealPrivateDetails)}</p>
+                         </div>
+                      </section>
 
-                    <Separator />
+                      <Separator />
 
-                    {/* References */}
-                    <section className="space-y-4">
-                       <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h3>
-                       <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-muted-foreground">
-                          {SHIDDUCH_DATA.references.map((ref, i) => (
-                             <li key={i}>{ref}</li>
-                          ))}
-                       </ul>
-                    </section>
+                      {/* References */}
+                      <section className="space-y-4">
+                         <h3 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">
+                           <span className="inline-flex items-center gap-2">
+                             References
+                             <a href="#/references-contact" title="View full reference contact details" className="text-primary/60 hover:text-primary">
+                               <Lock className="h-4 w-4" />
+                             </a>
+                           </span>
+                         </h3>
+                         <div className="space-y-3">
+                           <p className="text-sm font-medium text-primary/80">Private references</p>
+                           <ul className="list-disc list-inside space-y-2 text-base md:text-lg text-muted-foreground">
+                              {SHIDDUCH_DATA.references.map((ref, i) => (
+                                 <li key={i}>{formatReference(ref, revealPrivateDetails)}</li>
+                              ))}
+                           </ul>
+                           <p className="text-xs text-muted-foreground pt-2">
+                             <Lock className="inline h-3 w-3 mr-1" />
+                             Full contact details available on the {" "}
+                             <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">references page</a>.
+                           </p>
+                         </div>
+                      </section>
+                    </PrivateAccessGate>
 
                   </CardContent>
                 </Card>

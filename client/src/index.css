@@ -130,4 +130,13 @@
     filter: brightness(1.02);
     transform: scale(1.02);
   }
+
+  /* Hide browser-native password autofill key icon so only our
+     custom eye toggle shows on the passcode field */
+  input::-webkit-credentials-auto-fill-button {
+    -webkit-appearance: none;
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }

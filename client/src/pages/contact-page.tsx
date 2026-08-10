@@ -13,9 +13,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.12,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
 const itemVariants = {
@@ -23,25 +23,82 @@ const itemVariants = {
   visible: {
     y: 0,
     opacity: 1,
-    transition: { type: "spring" as const, stiffness: 40, damping: 12 }
-  }
+    transition: { type: "spring" as const, stiffness: 40, damping: 12 },
+  },
 };
 
-const CONTACT_EMAIL = "Elazar.greisman@outlook.com";
+// Public form key — restrict this key to your domain in the Web3Forms dashboard
 const WEB3FORMS_KEY = "069c632f-2df7-4f2d-8ffb-767be8d1d12e";
+
+const RATE_LIMIT_KEY = "elazaros_contact_submissions";
+const RATE_LIMIT_MAX = 3; // max submissions
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // per 1 hour
+
+function checkRateLimit(): { allowed: boolean; retryAfterMinutes?: number } {
+  try {
+    const raw = localStorage.getItem(RATE_LIMIT_KEY);
+    const now = Date.now();
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+    const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+
+    if (recent.length >= RATE_LIMIT_MAX) {
+      const oldest = Math.min(...recent);
+      const retryAfterMinutes = Math.ceil(
+        (RATE_LIMIT_WINDOW_MS - (now - oldest)) / 60000
+      );
+      return { allowed: false, retryAfterMinutes };
+    }
+    return { allowed: true };
+  } catch {
+    return { allowed: true };
+  }
+}
+
+function recordSubmission() {
+  try {
+    const raw = localStorage.getItem(RATE_LIMIT_KEY);
+    const now = Date.now();
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+    const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+    recent.push(now);
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(recent));
+  } catch {
+    // ignore storage errors
+  }
+}
 
 export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  // Honeypot — bots fill this; humans never see it
+  const [botField, setBotField] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "sent" | "error"
+  >("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("sending");
     setErrorMsg("");
+
+    // Honeypot: if filled, pretend success and do nothing
+    if (botField.trim() !== "") {
+      setStatus("sent");
+      return;
+    }
+
+    const rate = checkRateLimit();
+    if (!rate.allowed) {
+      setStatus("error");
+      setErrorMsg(
+        `Too many messages. Please try again in about ${rate.retryAfterMinutes} minute${rate.retryAfterMinutes === 1 ? "" : "s"}.`
+      );
+      return;
+    }
+
+    setStatus("sending");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -54,24 +111,28 @@ export default function ContactPage() {
           subject: subject || "Contact from Elazar OS",
           message,
           from_name: "Elazar OS Contact Form",
+          // Web3Forms also supports botcheck if configured in dashboard
+          botcheck: botField,
         }),
       });
 
       const data = await response.json();
 
       if (data.success) {
+        recordSubmission();
         setStatus("sent");
         setName("");
         setEmail("");
         setSubject("");
         setMessage("");
+        setBotField("");
       } else {
         setStatus("error");
         setErrorMsg(data.message || "Something went wrong. Please try again.");
       }
     } catch {
       setStatus("error");
-      setErrorMsg("Could not send the message. Please try again or email directly.");
+      setErrorMsg("Could not send the message. Please try again later.");
     }
   };
 
@@ -91,7 +152,8 @@ export default function ContactPage() {
               Start the Conversation.
             </h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
-              Have an idea, opportunity, or project in mind? Send a message below and I'll personally respond within 24 hours.
+              Have an idea, opportunity, or project in mind? Send a message
+              below and I'll personally respond within 24 hours.
             </p>
           </motion.div>
 
@@ -106,7 +168,12 @@ export default function ContactPage() {
                 <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8 text-green-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground" data-testid="text-success">Message Sent.</h3>
+                <h3
+                  className="text-2xl font-bold text-foreground"
+                  data-testid="text-success"
+                >
+                  Message Sent.
+                </h3>
                 <p className="text-muted-foreground max-w-sm mx-auto">
                   Thanks for reaching out. I'll get back to you within 24 hours.
                 </p>
@@ -124,8 +191,28 @@ export default function ContactPage() {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-7">
+                {/* Honeypot — hidden from real users */}
+                <div
+                  className="absolute -left-[9999px] opacity-0 h-0 w-0 overflow-hidden"
+                  aria-hidden="true"
+                >
+                  <label htmlFor="website">Website</label>
+                  <input
+                    id="website"
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={botField}
+                    onChange={(e) => setBotField(e.target.value)}
+                  />
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium text-foreground">
+                  <Label
+                    htmlFor="name"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Name
                   </Label>
                   <Input
@@ -142,7 +229,10 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                  <Label
+                    htmlFor="email"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Email
                   </Label>
                   <Input
@@ -159,7 +249,10 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-sm font-medium text-foreground">
+                  <Label
+                    htmlFor="subject"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Subject
                   </Label>
                   <Input
@@ -175,7 +268,10 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-sm font-medium text-foreground">
+                  <Label
+                    htmlFor="message"
+                    className="text-sm font-medium text-foreground"
+                  >
                     Message
                   </Label>
                   <Textarea
@@ -192,7 +288,10 @@ export default function ContactPage() {
                 </div>
 
                 {status === "error" && (
-                  <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg" data-testid="text-error">
+                  <div
+                    className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg"
+                    data-testid="text-error"
+                  >
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     {errorMsg}
                   </div>
@@ -226,19 +325,6 @@ export default function ContactPage() {
                 </div>
               </form>
             )}
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="text-center pt-2">
-            <p className="text-sm text-muted-foreground">
-              Prefer email?{" "}
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="text-primary font-medium hover:underline underline-offset-4"
-                data-testid="link-footer-email"
-              >
-                {CONTACT_EMAIL}
-              </a>
-            </p>
           </motion.div>
         </motion.div>
       </div>

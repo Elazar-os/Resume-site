@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -25,10 +25,13 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_REFERENCES_PASSCODE: ${{ secrets.VITE_REFERENCES_PASSCODE }}
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wrangler-version: "4"
           command: deploy

@@ -4,8 +4,10 @@ import { X, Heart } from "lucide-react";
 import { motion, useAnimation, PanInfo, useMotionValue, useTransform } from "framer-motion";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { isPrivateAccessAuthorized, formatPrivateContact, formatReference } from "@/lib/privacy";
 
 export function JSwipeProfile() {
+  const revealPrivateDetails = isPrivateAccessAuthorized();
   const controls = useAnimation();
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-10, 10]);
@@ -102,8 +104,9 @@ export function JSwipeProfile() {
 
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">Contact</h3>
-              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Phone:</span> 201-321-6587</div>
-              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Email:</span> elazar.greisman@outlook.com</div>
+              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Phone:</span> {formatPrivateContact("201-321-6587", revealPrivateDetails)}</div>
+              <div className="text-sm mb-1"><span className="font-semibold text-slate-300">Email:</span> {formatPrivateContact("elazar.greisman@outlook.com", revealPrivateDetails)}</div>
+              <a href="/contact" className="mt-2 inline-flex text-sm font-medium text-cyan-300 hover:text-cyan-200">Use the contact form →</a>
             </div>
 
             <div>
@@ -140,9 +143,9 @@ export function JSwipeProfile() {
             <div>
               <h3 className="text-sm font-bold text-slate-400 mb-1.5 uppercase tracking-wide">References</h3>
               <ul className="text-sm space-y-1">
-                <li>Daniel Mayer (Employer): 201-988-6929</li>
-                <li>Ronit Gottesman (Family Friend): 908-303-4261</li>
-                <li>Rabbi Baruch Bodenheim (Rav): 862-371-3186</li>
+                <li>{formatReference("Daniel Mayer (Employer) — 201-988-6929", revealPrivateDetails)}</li>
+                <li>{formatReference("Ronit Gottesman (Family Friend) — 908-303-4261", revealPrivateDetails)}</li>
+                <li>{formatReference("Rabbi Baruch Bodenheim (Rav) — 862-371-3186", revealPrivateDetails)}</li>
               </ul>
             </div>
 

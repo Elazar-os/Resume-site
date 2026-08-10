@@ -2,11 +2,14 @@ export const RESUME_DATA = {
   personalInfo: {
     name: "Elazar Greisman",
     title: "Restaurant Operations & Management Specialist",
-    email: "elazar.greisman@outlook.com",
-    phone: "201 321 6587",
+    email: "elisheva.greisman@gmail.com",
+    phone: "201-394-0983",
+    personalPhone: "201-321-6587",
+    personalEmail: "elazar.greisman@outlook.com",
     location: "Passaic, NJ",
+    contactName: "Elisheva Greisman",
   },
-  summary: "Dedicated management professional with 3+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
+  summary: "Dedicated management professional with 4+ years of experience driving efficiency and service excellence in the food service industry. Proven expertise in team leadership, inventory control, and customer relations, consistently delivering operational improvements. Committed to fostering positive environments that enhance both staff performance and guest satisfaction.",
   skills: [
     "Team Leadership",
     "Inventory Management",
@@ -23,7 +26,7 @@ export const RESUME_DATA = {
     {
       company: "King of Delancey Restaurant",
       role: "General Manager",
-      dates: "June 2022 – May 2025",
+      dates: "June 2022 – August 2026",
       location: "Passaic, NJ",
       achievements: [
         "Orchestrated daily restaurant operations, ensuring strict adherence to service standards and food quality protocols.",
@@ -71,8 +74,11 @@ export const SHIDDUCH_DATA = {
     dob: "February 10, 2003",
     height: "5'6\"",
     location: "Passaic, NJ",
-    phone: "201-321-6587",
-    email: "elazar.greisman@outlook.com"
+    phone: "201-394-0983",
+    email: "elisheva.greisman@gmail.com",
+    contactName: "Elisheva Greisman",
+    personalPhone: "201-321-6587",
+    contactFormUrl: "/contact"
   },
   family: {
     father: "Moshie Greisman — Tax Attorney at Goldman Sachs",
@@ -122,7 +128,7 @@ export const PROFILE_SUMMARY = {
   highlights: [
     "Founded a local study network",
     "Certified Swim Instructor & Lifeguard",
-    "3+ Years in Restaurant Management",
+    "4+ Years in Restaurant Management",
     "Active Morning Kollel Member",
     "Aspiring Tech Professional"
   ],

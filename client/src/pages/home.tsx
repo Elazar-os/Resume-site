@@ -33,7 +33,7 @@ const RESUME_DATA = {
     {
       company: "King of Delancey Restaurant",
       role: "General Manager",
-      dates: "June 2022 – July 2026",
+      dates: "June 2022 – August 2026",
       location: "Passaic, NJ",
       achievements: [
         "Orchestrated daily restaurant operations, ensuring strict adherence to service standards and food quality protocols.",

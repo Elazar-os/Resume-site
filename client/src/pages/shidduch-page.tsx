@@ -1,10 +1,14 @@
 import { motion } from "framer-motion";
+import { Lock } from "lucide-react";
 import { SHIDDUCH_DATA } from "@/lib/data";
+import { isPrivateAccessAuthorized, formatPrivateContact, formatReference } from "@/lib/privacy";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TopNavigation } from "@/components/top-navigation";
 
 export default function ShidduchPage() {
+  const revealPrivateDetails = isPrivateAccessAuthorized();
+
   return (
     <div className="min-h-screen bg-background font-sans">
       <TopNavigation />
@@ -30,9 +34,9 @@ export default function ShidduchPage() {
               </div>
               
               <div className="flex flex-col md:flex-row justify-center gap-4 text-accent font-medium pt-2">
-                 <a href={`tel:${SHIDDUCH_DATA.basics.phone}`} className="hover:underline">{SHIDDUCH_DATA.basics.phone}</a>
+                 <a href={SHIDDUCH_DATA.basics.contactFormUrl} className="hover:underline">Contact form</a>
                  <span className="hidden md:inline">•</span>
-                 <a href={`mailto:${SHIDDUCH_DATA.basics.email}`} className="hover:underline">{SHIDDUCH_DATA.basics.email}</a>
+                 <span className="text-muted-foreground">{formatPrivateContact(SHIDDUCH_DATA.basics.email, revealPrivateDetails)}</span>
               </div>
             </div>
 
@@ -84,7 +88,7 @@ export default function ShidduchPage() {
                <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">Current Occupation</h2>
                <div className="space-y-2 text-lg">
                   <p className="font-medium text-primary">{SHIDDUCH_DATA.occupation.title}</p>
-                  <p className="text-muted-foreground">Employer Reference: {SHIDDUCH_DATA.occupation.reference}</p>
+                  <p className="text-muted-foreground">Employer Reference: {formatReference(SHIDDUCH_DATA.occupation.reference, revealPrivateDetails)}</p>
                </div>
             </section>
 
@@ -92,12 +96,26 @@ export default function ShidduchPage() {
 
             {/* References */}
             <section className="space-y-4">
-               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">References</h2>
+               <h2 className="text-xl font-bold text-primary uppercase tracking-wide border-b pb-2">
+                  <span className="inline-flex items-center gap-2">
+                     References
+                     <a href="#/references-contact" title="View full reference contact details" className="text-primary/60 hover:text-primary">
+                        <Lock className="h-4 w-4" />
+                     </a>
+                  </span>
+               </h2>
                <ul className="list-disc list-inside space-y-2 text-lg text-muted-foreground">
                   {SHIDDUCH_DATA.references.map((ref, i) => (
-                     <li key={i}>{ref}</li>
+                     <li key={i}>{formatReference(ref, revealPrivateDetails)}</li>
                   ))}
                </ul>
+               <p className="text-xs text-muted-foreground pt-2">
+                  <Lock className="inline h-3 w-3 mr-1" />
+                  Full contact details available on the{" "}
+                  <a href="#/references-contact" className="font-medium text-primary hover:underline underline-offset-4">references page</a>{" "}
+                  or{" "}
+                  <a href="#/contact" className="font-medium text-primary hover:underline underline-offset-4">request access via the contact form</a>.
+               </p>
             </section>
 
           </CardContent>
