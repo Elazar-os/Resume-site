@@ -10,30 +10,28 @@ export default defineConfig({
     tailwindcss(),
     metaImagesPlugin(),
   ],
-    resolve: {
-      alias: {
-        "@": path.resolve(import.meta.dirname, "client", "src"),
-        "@shared": path.resolve(import.meta.dirname, "shared"),
-        "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-      },
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
-    css: {
-      postcss: {
-        plugins: [],
-      },
+  },
+  css: {
+    postcss: {
+      plugins: [],
     },
-    root: path.resolve(import.meta.dirname, "client"),
-    build: {
-      outDir: path.resolve(import.meta.dirname, "dist/public"),
-      emptyOutDir: true,
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+  server: {
+    host: "0.0.0.0",
+    allowedHosts: true,
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
     },
-    server: {
-      host: "0.0.0.0",
-      allowedHosts: true,
-      fs: {
-        strict: true,
-        deny: ["**/.*"],
-      },
-    },
-
+  },
 });
