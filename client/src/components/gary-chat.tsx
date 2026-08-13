@@ -12,9 +12,7 @@ import {
 } from "@/lib/gary-types";
 
 interface GaryChatProps {
-  /** When true, render as a full-page chat instead of a floating widget */
   fullPage?: boolean;
-  /** Force a starting mode (overrides auto-detect) */
   initialMode?: GaryMode;
 }
 
@@ -23,7 +21,9 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [open, setOpen] = useState(fullPage);
   const [mode, setMode] = useState<GaryMode>(() => {
     if (initialMode) return initialMode;
-    const fromQuery = modeFromQuery(window.location.hash.split("?")[1] || "");
+    const hash = window.location.hash || "";
+    const queryPart = hash.includes("?") ? hash.split("?")[1] : "";
+    const fromQuery = modeFromQuery(queryPart);
     if (fromQuery) return fromQuery;
     return detectModeFromPath(location);
   });
@@ -39,7 +39,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Keep mode in sync with route when not on the dedicated Gary page
   useEffect(() => {
     if (fullPage || initialMode) return;
     setMode(detectModeFromPath(location));
@@ -69,9 +68,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         body: JSON.stringify({ messages: nextMessages, mode }),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
       setMessages((prev) => [
@@ -107,7 +104,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           : "fixed bottom-24 right-4 z-50 w-[min(100vw-2rem,380px)] h-[min(70vh,520px)] rounded-2xl"
       )}
     >
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-primary/5">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold">
@@ -120,7 +116,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Mode selector */}
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as GaryMode)}
@@ -148,15 +143,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={cn(
-              "flex",
-              msg.role === "user" ? "justify-end" : "justify-start"
-            )}
+            className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}
           >
             <div
               className={cn(
@@ -181,7 +172,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="border-t p-3 flex gap-2">
         <input
           ref={inputRef}
@@ -206,13 +196,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     </div>
   );
 
-  if (fullPage) {
-    return chatPanel;
-  }
+  if (fullPage) return chatPanel;
 
   return (
     <>
-      {/* Floating button */}
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
@@ -224,8 +211,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       >
         <MessageCircle className="w-6 h-6" />
       </button>
-
-      {/* Chat panel */}
       {open && chatPanel}
     </>
   );

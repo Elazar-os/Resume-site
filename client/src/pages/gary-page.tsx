@@ -3,10 +3,9 @@ import { GaryChat } from "@/components/gary-chat";
 import { modeFromQuery, type GaryMode } from "@/lib/gary-types";
 
 export default function GaryPage() {
-  const query = window.location.hash.includes("?")
-    ? window.location.hash.split("?")[1]
-    : "";
-  const initialMode: GaryMode | undefined = modeFromQuery(query) ?? undefined;
+  const hash = window.location.hash || "";
+  const queryPart = hash.includes("?") ? hash.split("?")[1] : "";
+  const initialMode: GaryMode | undefined = modeFromQuery(queryPart) ?? undefined;
 
   return (
     <div className="min-h-screen bg-background">
