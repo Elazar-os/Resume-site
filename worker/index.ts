@@ -211,12 +211,10 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders() });
     }
 
-    // Gary API
     if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
         if (!env.GEMINI_API_KEY) {
@@ -253,7 +251,6 @@ export default {
       }
     }
 
-    // Everything else → static assets
     return env.ASSETS.fetch(request);
   },
 };
