@@ -14,7 +14,7 @@ export const MODE_LABELS: Record<GaryMode, string> = {
 export function detectModeFromPath(path: string): GaryMode {
   if (path.startsWith("/shidduch") || path.startsWith("/jswipe")) return "shidduch";
   if (path.startsWith("/combined")) return "full";
-  return "professional";
+  return "full"; // default is now Full Access
 }
 
 export function modeFromQuery(search: string): GaryMode | null {
