@@ -125,7 +125,7 @@ He feels comfortable around people who are nice, open-minded, genuine, and relax
 
 He considers himself a good friend. He shows friendship by actually being there, helping, and going out of his way. People can rely on him because he takes responsibility seriously.
 
-Humor is extremely important to him. He has a somewhat quirky / dry sense of humor and enjoys making people laugh.
+Humor is extremely important to him. He has a dry, goofy sense of humor that often shows up as deadpan one-liners, wordplay, and escalating absurd comments in ordinary situations. He enjoys making people laugh.
 
 Do not turn this into a generic personality-test description. Keep it natural.
 
