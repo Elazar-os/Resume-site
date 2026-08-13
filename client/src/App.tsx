@@ -18,21 +18,26 @@ import GaryPage from "@/pages/gary-page";
 import { GaryChat } from "@/components/gary-chat";
 import { useState, useEffect } from "react";
 
+// Strip query string so routes like /gary?mode=full still match /gary
+function cleanHashPath(): string {
+  const raw = window.location.hash.replace(/^#/, "") || "/";
+  return raw.split("?")[0] || "/";
+}
+
 // Custom hook for hash-based routing
-// This ensures the app works on static hosts or servers without SPA rewrite support
 const useHashLocation = () => {
-  const [loc, setLoc] = useState(window.location.hash.replace(/^#/, "") || "/");
-  
+  const [loc, setLoc] = useState(cleanHashPath);
+
   useEffect(() => {
-    const handler = () => setLoc(window.location.hash.replace(/^#/, "") || "/");
-    
-    // Subscribe to hash changes
+    const handler = () => setLoc(cleanHashPath());
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
   }, []);
 
-  const navigate = (to: string) => (window.location.hash = to);
-  
+  const navigate = (to: string) => {
+    window.location.hash = to;
+  };
+
   return [loc, navigate] as [string, (to: string) => void];
 };
 
@@ -60,7 +65,6 @@ function Router() {
 }
 
 function App() {
-  // Hide the floating widget when already on the dedicated Gary page
   const [loc] = useHashLocation();
   const onGaryPage = loc.startsWith("/gary");
 
