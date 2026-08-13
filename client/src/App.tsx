@@ -13,8 +13,9 @@ import JSwipePage from "@/pages/jswipe-page";
 import AppsHubPage from "@/pages/apps-hub-page";
 import AppRedirectPage from "@/pages/app-redirect-page";
 import ContactPage from "@/pages/contact-page";
-import ReferencesContactPage from "@/pages/references-contact-page";
 import ResumePDF from "@/pages/resume-pdf";
+import GaryPage from "@/pages/gary-page";
+import { GaryChat } from "@/components/gary-chat";
 import { useState, useEffect } from "react";
 
 // Custom hook for hash-based routing
@@ -47,12 +48,11 @@ function Router() {
         <Route path="/jswipe" component={JSwipePage} />
         <Route path="/apps" component={AppsHubPage} />
         <Route path="/contact" component={ContactPage} />
-        <Route path="/references-contact" component={ReferencesContactPage} />
         <Route path="/resume-pdf" component={ResumePDF} />
+        <Route path="/gary" component={GaryPage} />
         <Route path="/kod" component={AppRedirectPage} />
         <Route path="/pti" component={AppRedirectPage} />
         <Route path="/shadchan" component={AppRedirectPage} />
-        <Route path="/gary" component={AppRedirectPage} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
@@ -60,11 +60,16 @@ function Router() {
 }
 
 function App() {
+  // Hide the floating widget when already on the dedicated Gary page
+  const [loc] = useHashLocation();
+  const onGaryPage = loc.startsWith("/gary");
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Router />
+        {!onGaryPage && <GaryChat />}
       </TooltipProvider>
     </QueryClientProvider>
   );
