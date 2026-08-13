@@ -352,7 +352,7 @@ export default {
 
         const body = (await request.json()) as GaryRequest;
         const mode: GaryMode =
-          body.mode === "shidduch" || body.mode === "full" ? body.mode : "professional";
+          body.mode === "shidduch" || body.mode === "professional" ? body.mode : "full";
         const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
 
         if (messages.length === 0) {
