@@ -11,6 +11,8 @@ export interface AppConfig {
   gradient: string;
   active: boolean;
   pausedMessage?: string;
+  /** If true, open as an internal hash route instead of external URL */
+  internal?: boolean;
 }
 
 export const APPS: AppConfig[] = [
@@ -51,15 +53,15 @@ export const APPS: AppConfig[] = [
   },
   {
     id: "gary",
-    name: "Gary King",
-    description: "AI-powered chatbot assistant. Your friendly helper for questions and conversations.",
+    name: "Gary",
+    description: "AI portfolio assistant for ElazarOS. Ask about Elazar’s background, projects, and approach.",
     subdomain: "gary.elazaros.com",
-    replitUrl: "https://gary-king-chatbot-hdg4bz496c.replit.app/",
+    replitUrl: "#/gary",
     icon: MessageCircle,
     color: "text-purple-500",
     gradient: "from-purple-500 to-violet-500",
-    active: false,
-    pausedMessage: "Gary King is taking a break. Check back soon!"
+    active: true,
+    internal: true
   }
 ];
 
