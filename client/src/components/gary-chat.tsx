@@ -16,6 +16,19 @@ interface GaryChatProps {
   initialMode?: GaryMode;
 }
 
+const WELCOME_MESSAGES: Record<GaryMode, string> = {
+  professional:
+    "Hi — I’m Gary, Elazar’s AI assistant on ElazarOS. I can tell you about his background, projects, and how he approaches building things. What would you like to know?",
+  shidduch:
+    "Hi, I’m Gary. I’m here to help you get a real sense of who Elazar is — his personality, values, background, and how he approaches life. Feel free to ask anything.",
+  full:
+    "Hi — I’m Gary, Elazar’s AI assistant. I can answer questions about his background, projects, personality, values, and more. What would you like to know?",
+};
+
+function welcomeFor(mode: GaryMode): ChatMessage {
+  return { role: "assistant", content: WELCOME_MESSAGES[mode] };
+}
+
 export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [location] = useLocation();
   const [open, setOpen] = useState(fullPage);
@@ -27,22 +40,37 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (fromQuery) return fromQuery;
     return detectModeFromPath(location);
   });
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: "assistant",
-      content:
-        "Hi — I’m Gary, Elazar’s AI assistant on ElazarOS. I can tell you about his background, projects, and how he approaches building things. What would you like to know?",
-    },
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
+    welcomeFor(
+      initialMode ??
+        (() => {
+          const hash = window.location.hash || "";
+          const queryPart = hash.includes("?") ? hash.split("?")[1] : "";
+          return modeFromQuery(queryPart) ?? detectModeFromPath(location);
+        })()
+    ),
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const prevModeRef = useRef(mode);
 
+  // Keep mode in sync with the current page (floating widget only)
   useEffect(() => {
     if (fullPage || initialMode) return;
-    setMode(detectModeFromPath(location));
+    const detected = detectModeFromPath(location);
+    setMode(detected);
   }, [location, fullPage, initialMode]);
+
+  // When mode changes, reset to the matching welcome message
+  useEffect(() => {
+    if (prevModeRef.current !== mode) {
+      prevModeRef.current = mode;
+      setMessages([welcomeFor(mode)]);
+      setInput("");
+    }
+  }, [mode]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
