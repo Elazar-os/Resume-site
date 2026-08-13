@@ -32,11 +32,15 @@ export default function AppsHubPage() {
   const [pausedAppMessage, setPausedAppMessage] = useState<AppConfig | null>(null);
 
   const handleAppClick = (app: AppConfig) => {
-    if (app.active) {
-      window.open(app.replitUrl, "_blank");
-    } else {
+    if (!app.active) {
       setPausedAppMessage(app);
+      return;
     }
+    if (app.internal) {
+      window.location.hash = app.replitUrl.replace(/^#/, "");
+      return;
+    }
+    window.open(app.replitUrl, "_blank");
   };
 
   return (
@@ -99,7 +103,7 @@ export default function AppsHubPage() {
               Elazar's Apps
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A collection of apps and tools I've built. Click on any app to open it in a new tab.
+              A collection of apps and tools I've built. Click on any app to open it.
             </p>
           </motion.div>
 
@@ -185,18 +189,14 @@ export default function AppsHubPage() {
                               "bg-gradient-to-r text-white border-none",
                               app.gradient
                             )}
-                            asChild
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAppClick(app);
+                            }}
+                            data-testid={`open-app-${app.id}`}
                           >
-                            <a 
-                              href={app.replitUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              data-testid={`open-app-${app.id}`}
-                            >
-                              Open App
-                              <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                            </a>
+                            Open App
+                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                           </Button>
                         )}
                       </div>
@@ -230,7 +230,7 @@ export default function AppsHubPage() {
                   <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/kod</code> → KOD Menu</li>
                   <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/pti</code> → PTI Young Pros</li>
                   <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/shadchan</code> → Shadchan</li>
-                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/gary</code> → Gary King</li>
+                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/gary</code> → Gary</li>
                 </ul>
               </CardContent>
             </Card>
