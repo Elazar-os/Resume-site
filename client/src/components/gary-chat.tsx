@@ -1,7 +1,20 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import { MessageCircle, X, Send, Loader2, Fingerprint, ShieldX } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  Send,
+  Loader2,
+  Fingerprint,
+  ShieldX,
+  ShieldCheck,
+  Lock,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   type GaryMode,
@@ -25,13 +38,18 @@ const WELCOME_MESSAGES: Record<GaryMode, string> = {
     "Hi — I’m Gary, Elazar’s AI assistant. I can answer questions about his background, projects, personality, values, and more. What would you like to know?",
 };
 
-/** Keywords / patterns that trigger the fake biometric lock (private info). */
+/** One-time setup password (client-side theater only). */
+const GARY_SETUP_PASSWORD = "12Crazy34!";
+
+const GARY_BIO_ENABLED_KEY = "gary-biometric-enabled";
+const GARY_BIO_CRED_ID_KEY = "gary-biometric-cred-id";
+
 const PRIVATE_PATTERNS: RegExp[] = [
   /\b(phone|cell|mobile|number|call me|text me)\b/i,
   /\b(address|home address|where (does|do) he live|street|apartment|apt)\b/i,
   /\b(email|e-mail|@outlook|contact (info|details|information))\b/i,
   /\b(ssn|social security|passport|driver.?s? license)\b/i,
-  /\b(bank|account number|routing|credit card|ssn)\b/i,
+  /\b(bank|account number|routing|credit card)\b/i,
   /\b(exact (location|address)|precise (location|address)|home (phone|number))\b/i,
   /\b(private (info|information|details|data)|confidential|secret)\b/i,
   /\b(what is his (phone|number|address|email))\b/i,
@@ -51,80 +69,308 @@ function welcomeFor(mode: GaryMode): ChatMessage {
   return { role: "assistant", content: WELCOME_MESSAGES[mode] };
 }
 
-/** Fake biometric modal that always fails. Pure theater. */
-function BiometricFailModal({
+function isGaryBiometricEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(GARY_BIO_ENABLED_KEY) === "true";
+}
+
+function getGaryCredId(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(GARY_BIO_CRED_ID_KEY);
+}
+
+function setGaryBiometricRegistered(credentialId: string): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(GARY_BIO_ENABLED_KEY, "true");
+  window.localStorage.setItem(GARY_BIO_CRED_ID_KEY, credentialId);
+}
+
+async function isPlatformBiometricAvailable(): Promise<boolean> {
+  if (typeof window === "undefined" || !("PublicKeyCredential" in window)) return false;
+  try {
+    return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+  } catch {
+    return false;
+  }
+}
+
+async function registerGaryBiometric(): Promise<string | null> {
+  if (typeof window === "undefined" || !("PublicKeyCredential" in window)) return null;
+
+  const challenge = new Uint8Array(32);
+  crypto.getRandomValues(challenge);
+  const userId = new Uint8Array(16);
+  crypto.getRandomValues(userId);
+
+  try {
+    const credential = (await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: "Elazar OS — Gary" },
+        user: {
+          id: userId,
+          name: "elazar",
+          displayName: "Elazar Greisman",
+        },
+        pubKeyCredParams: [
+          { type: "public-key", alg: -7 },
+          { type: "public-key", alg: -257 },
+        ],
+        timeout: 60000,
+        attestation: "none",
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          userVerification: "required",
+          residentKey: "preferred",
+        },
+      },
+    })) as PublicKeyCredential | null;
+
+    if (!credential) return null;
+    const rawId = new Uint8Array(credential.rawId);
+    return btoa(String.fromCharCode(...rawId));
+  } catch {
+    return null;
+  }
+}
+
+async function unlockWithGaryBiometric(): Promise<boolean> {
+  if (typeof window === "undefined" || !("PublicKeyCredential" in window)) return false;
+  const stored = getGaryCredId();
+  if (!stored) return false;
+
+  const rawId = Uint8Array.from(atob(stored), (c) => c.charCodeAt(0));
+  const challenge = new Uint8Array(32);
+  crypto.getRandomValues(challenge);
+
+  try {
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        timeout: 60000,
+        rpId: window.location.hostname,
+        userVerification: "required",
+        allowCredentials: [
+          { id: rawId, type: "public-key", transports: ["internal"] },
+        ],
+      },
+    });
+    return Boolean(assertion);
+  } catch {
+    return false;
+  }
+}
+
+type ModalPhase =
+  | "idle"
+  | "setup-password"
+  | "setup-register"
+  | "unlock"
+  | "success-gag"
+  | "failed";
+
+function GaryPrivateGateModal({
   open,
-  onComplete,
+  onClose,
 }: {
   open: boolean;
-  onComplete: () => void;
+  onClose: (result: "success" | "failed" | "cancelled") => void;
 }) {
-  const [phase, setPhase] = useState<"scanning" | "failed">("scanning");
+  const [phase, setPhase] = useState<ModalPhase>("idle");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [bioAvailable, setBioAvailable] = useState(false);
 
   useEffect(() => {
     if (!open) {
-      setPhase("scanning");
+      setPhase("idle");
+      setPassword("");
+      setError("");
+      setBusy(false);
       return;
     }
 
-    // Scan for ~1.6s then fail
-    const scanTimer = setTimeout(() => setPhase("failed"), 1600);
-    const doneTimer = setTimeout(() => {
-      onComplete();
-    }, 2800);
+    void isPlatformBiometricAvailable().then((ok) => {
+      setBioAvailable(ok);
+      if (isGaryBiometricEnabled()) {
+        setPhase("unlock");
+      } else {
+        setPhase("setup-password");
+      }
+    });
+  }, [open]);
 
-    return () => {
-      clearTimeout(scanTimer);
-      clearTimeout(doneTimer);
-    };
-  }, [open, onComplete]);
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (password !== GARY_SETUP_PASSWORD) {
+      setError("Incorrect password.");
+      return;
+    }
+    if (!bioAvailable) {
+      setError("This device does not support Face ID / Touch ID.");
+      return;
+    }
+    setPhase("setup-register");
+    setBusy(true);
+    const credId = await registerGaryBiometric();
+    setBusy(false);
+    if (credId) {
+      setGaryBiometricRegistered(credId);
+      // After successful registration, still run the gag
+      setPhase("success-gag");
+    } else {
+      setError("Biometric registration was cancelled or failed. Try again.");
+      setPhase("setup-password");
+    }
+  };
 
-  if (!open) return null;
+  const handleUnlock = async () => {
+    setBusy(true);
+    setError("");
+    const ok = await unlockWithGaryBiometric();
+    setBusy(false);
+    if (ok) {
+      setPhase("success-gag");
+    } else {
+      setPhase("failed");
+    }
+  };
+
+  if (!open || phase === "idle") return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-card border shadow-2xl rounded-2xl w-full max-w-sm overflow-hidden">
-        <div className="px-6 pt-6 pb-4 text-center space-y-1">
-          <p className="text-sm font-semibold text-primary">Biometric Verification</p>
+        <div className="px-6 pt-6 pb-2 text-center space-y-1">
+          <p className="text-sm font-semibold text-primary">Private information locked</p>
           <p className="text-xs text-muted-foreground">
-            Private information requires owner verification
+            {phase === "setup-password" || phase === "setup-register"
+              ? "One-time setup required"
+              : "Owner verification required"}
           </p>
         </div>
 
-        <div className="flex flex-col items-center justify-center py-8 gap-4">
-          {phase === "scanning" ? (
-            <>
+        <div className="px-6 py-5 space-y-4">
+          {/* SETUP: password */}
+          {phase === "setup-password" && (
+            <form onSubmit={handlePasswordSubmit} className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="gary-setup-pw" className="text-sm">
+                  Enter setup password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="gary-setup-pw"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    autoFocus
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary"
+                    aria-label={showPassword ? "Hide" : "Show"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+              {error && <p className="text-sm text-red-600">{error}</p>}
+              <Button type="submit" className="w-full" disabled={busy || !password}>
+                <Lock className="mr-2 h-4 w-4" />
+                Continue to Face ID setup
+              </Button>
+            </form>
+          )}
+
+          {/* SETUP: registering biometric */}
+          {phase === "setup-register" && (
+            <div className="flex flex-col items-center gap-4 py-4">
               <div className="relative">
                 <div className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center">
                   <Fingerprint className="w-10 h-10 text-primary animate-pulse" />
                 </div>
-                <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                <div className="absolute inset-0 rounded-full border-2 border-t-primary border-transparent animate-spin" />
               </div>
-              <p className="text-sm text-muted-foreground">Scanning…</p>
-            </>
-          ) : (
-            <>
-              <div className="w-20 h-20 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center">
-                <ShieldX className="w-10 h-10 text-red-500" />
+              <p className="text-sm text-muted-foreground text-center">
+                Follow the prompt to register your Face ID / Touch ID…
+              </p>
+            </div>
+          )}
+
+          {/* UNLOCK with existing biometric */}
+          {phase === "unlock" && (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center gap-3 py-2">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Fingerprint className="w-8 h-8 text-primary" />
+                </div>
+                <p className="text-sm text-muted-foreground text-center">
+                  Use Face ID / Touch ID to unlock private details
+                </p>
               </div>
-              <div className="text-center space-y-1">
+              {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+              <Button className="w-full" onClick={handleUnlock} disabled={busy}>
+                <Fingerprint className="mr-2 h-4 w-4" />
+                {busy ? "Authenticating…" : "Use Face ID"}
+              </Button>
+            </div>
+          )}
+
+          {/* SUCCESS GAG — biometric worked but still no data */}
+          {phase === "success-gag" && (
+            <div className="flex flex-col items-center gap-4 py-2 text-center">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center">
+                <ShieldCheck className="w-8 h-8 text-emerald-600" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-primary">Identity verified</p>
+                <p className="text-xs text-muted-foreground">
+                  Nice try. Even authenticated, Gary still doesn’t hand out private details.
+                </p>
+              </div>
+              <Button className="w-full" onClick={() => onClose("success")}>
+                OK
+              </Button>
+            </div>
+          )}
+
+          {/* FAILED */}
+          {phase === "failed" && (
+            <div className="flex flex-col items-center gap-4 py-2 text-center">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center">
+                <ShieldX className="w-8 h-8 text-red-500" />
+              </div>
+              <div className="space-y-1">
                 <p className="text-sm font-semibold text-red-600">Verification failed</p>
                 <p className="text-xs text-muted-foreground">Access denied</p>
               </div>
-            </>
+              <Button variant="outline" className="w-full" onClick={() => onClose("failed")}>
+                OK
+              </Button>
+            </div>
           )}
         </div>
 
-        <div className="px-6 pb-5">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={onComplete}
-            disabled={phase === "scanning"}
-          >
-            {phase === "scanning" ? "Please wait…" : "OK"}
-          </Button>
-        </div>
+        {phase !== "success-gag" && phase !== "failed" && phase !== "setup-register" && (
+          <div className="px-6 pb-5">
+            <Button
+              variant="ghost"
+              className="w-full text-muted-foreground"
+              onClick={() => onClose("cancelled")}
+              disabled={busy}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -153,20 +399,18 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showBiometric, setShowBiometric] = useState(false);
+  const [showGate, setShowGate] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevModeRef = useRef(mode);
 
-  // Keep mode in sync with the current page (floating widget only)
   useEffect(() => {
     if (fullPage || initialMode) return;
     const detected = detectModeFromPath(location);
     setMode(detected);
   }, [location, fullPage, initialMode]);
 
-  // When mode changes, reset to the matching welcome message
   useEffect(() => {
     if (prevModeRef.current !== mode) {
       prevModeRef.current = mode;
@@ -183,41 +427,48 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (open) inputRef.current?.focus();
   }, [open]);
 
-  function handleBiometricComplete() {
-    setShowBiometric(false);
+  const handleGateClose = useCallback((result: "success" | "failed" | "cancelled") => {
+    setShowGate(false);
     const text = pendingPrivateRef.current;
     pendingPrivateRef.current = null;
-
     if (!text) return;
 
-    // Add the user message (if not already added) and the denial reply
+    let reply: string;
+    if (result === "success") {
+      reply =
+        "Identity verified ✓\n\nNice try. Even with Face ID, that information stays private. Gary doesn’t hand out personal contact details.";
+    } else if (result === "failed") {
+      reply =
+        "Biometric verification failed. Access denied. That information is locked to Elazar only.";
+    } else {
+      reply = "Verification cancelled. That information remains locked.";
+    }
+
     setMessages((prev) => {
-      const alreadyHasUser = prev.some(
-        (m, i) => i === prev.length - 1 && m.role === "user" && m.content === text
-      );
+      const last = prev[prev.length - 1];
+      const alreadyHasUser = last?.role === "user" && last.content === text;
       const base = alreadyHasUser ? prev : [...prev, { role: "user" as const, content: text }];
-      return [
-        ...base,
-        {
-          role: "assistant" as const,
-          content:
-            "Biometric verification failed. That information is locked and only accessible to Elazar. Access denied.",
-        },
-      ];
+      return [...base, { role: "assistant" as const, content: reply }];
     });
-  }
+  }, []);
 
   async function sendMessage() {
     const text = input.trim();
     if (!text || loading) return;
 
-    // Private query → show fake biometric that always fails
     if (isPrivateQuery(text)) {
       setInput("");
       pendingPrivateRef.current = text;
-      // Optimistically show the user message
-      setMessages((prev) => [...prev, { role: "user", content: text }]);
-      setShowBiometric(true);
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: text },
+        {
+          role: "assistant",
+          content:
+            "That information is protected.\n\nUse Face ID to unlock (owner verification required).",
+        },
+      ]);
+      setShowGate(true);
       return;
     }
 
@@ -345,14 +596,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
-          disabled={loading || showBiometric}
+          disabled={loading || showGate}
           className="flex-1 rounded-xl border bg-background px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
         />
         <Button
           size="icon"
           className="rounded-xl shrink-0"
           onClick={sendMessage}
-          disabled={loading || !input.trim() || showBiometric}
+          disabled={loading || !input.trim() || showGate}
           aria-label="Send"
         >
           <Send className="w-4 h-4" />
@@ -361,30 +612,27 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     </div>
   );
 
-  if (fullPage) {
-    return (
-      <>
-        {chatPanel}
-        <BiometricFailModal open={showBiometric} onComplete={handleBiometricComplete} />
-      </>
-    );
-  }
-
   return (
     <>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className={cn(
-          "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all",
-          "bg-gradient-to-br from-purple-500 to-violet-600 text-white hover:scale-105 active:scale-95",
-          open && "scale-0 opacity-0 pointer-events-none"
-        )}
-        aria-label="Open Gary chat"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
-      {open && chatPanel}
-      <BiometricFailModal open={showBiometric} onComplete={handleBiometricComplete} />
+      {fullPage ? (
+        chatPanel
+      ) : (
+        <>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className={cn(
+              "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all",
+              "bg-gradient-to-br from-purple-500 to-violet-600 text-white hover:scale-105 active:scale-95",
+              open && "scale-0 opacity-0 pointer-events-none"
+            )}
+            aria-label="Open Gary chat"
+          >
+            <MessageCircle className="w-6 h-6" />
+          </button>
+          {open && chatPanel}
+        </>
+      )}
+      <GaryPrivateGateModal open={showGate} onClose={handleGateClose} />
     </>
   );
 }
