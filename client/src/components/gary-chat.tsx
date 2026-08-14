@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Fingerprint, ShieldX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -25,8 +25,109 @@ const WELCOME_MESSAGES: Record<GaryMode, string> = {
     "Hi — I’m Gary, Elazar’s AI assistant. I can answer questions about his background, projects, personality, values, and more. What would you like to know?",
 };
 
+/** Keywords / patterns that trigger the fake biometric lock (private info). */
+const PRIVATE_PATTERNS: RegExp[] = [
+  /\b(phone|cell|mobile|number|call me|text me)\b/i,
+  /\b(address|home address|where (does|do) he live|street|apartment|apt)\b/i,
+  /\b(email|e-mail|@outlook|contact (info|details|information))\b/i,
+  /\b(ssn|social security|passport|driver.?s? license)\b/i,
+  /\b(bank|account number|routing|credit card|ssn)\b/i,
+  /\b(exact (location|address)|precise (location|address)|home (phone|number))\b/i,
+  /\b(private (info|information|details|data)|confidential|secret)\b/i,
+  /\b(what is his (phone|number|address|email))\b/i,
+  /\b(give me (his )?(phone|number|address|email|contact))\b/i,
+  /\b(family.*(private|personal|details|info)|siblings.*(phone|number|address))\b/i,
+  /\b(mother|father|parents).*(phone|number|address|email)\b/i,
+  /\b(how (can|do) i (reach|contact|get in touch))\b/i,
+];
+
+function isPrivateQuery(text: string): boolean {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) return false;
+  return PRIVATE_PATTERNS.some((re) => re.test(normalized));
+}
+
 function welcomeFor(mode: GaryMode): ChatMessage {
   return { role: "assistant", content: WELCOME_MESSAGES[mode] };
+}
+
+/** Fake biometric modal that always fails. Pure theater. */
+function BiometricFailModal({
+  open,
+  onComplete,
+}: {
+  open: boolean;
+  onComplete: () => void;
+}) {
+  const [phase, setPhase] = useState<"scanning" | "failed">("scanning");
+
+  useEffect(() => {
+    if (!open) {
+      setPhase("scanning");
+      return;
+    }
+
+    // Scan for ~1.6s then fail
+    const scanTimer = setTimeout(() => setPhase("failed"), 1600);
+    const doneTimer = setTimeout(() => {
+      onComplete();
+    }, 2800);
+
+    return () => {
+      clearTimeout(scanTimer);
+      clearTimeout(doneTimer);
+    };
+  }, [open, onComplete]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-card border shadow-2xl rounded-2xl w-full max-w-sm overflow-hidden">
+        <div className="px-6 pt-6 pb-4 text-center space-y-1">
+          <p className="text-sm font-semibold text-primary">Biometric Verification</p>
+          <p className="text-xs text-muted-foreground">
+            Private information requires owner verification
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center py-8 gap-4">
+          {phase === "scanning" ? (
+            <>
+              <div className="relative">
+                <div className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center">
+                  <Fingerprint className="w-10 h-10 text-primary animate-pulse" />
+                </div>
+                <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+              </div>
+              <p className="text-sm text-muted-foreground">Scanning…</p>
+            </>
+          ) : (
+            <>
+              <div className="w-20 h-20 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center">
+                <ShieldX className="w-10 h-10 text-red-500" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="text-sm font-semibold text-red-600">Verification failed</p>
+                <p className="text-xs text-muted-foreground">Access denied</p>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="px-6 pb-5">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={onComplete}
+            disabled={phase === "scanning"}
+          >
+            {phase === "scanning" ? "Please wait…" : "OK"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
@@ -52,6 +153,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showBiometric, setShowBiometric] = useState(false);
+  const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevModeRef = useRef(mode);
@@ -80,9 +183,43 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  function handleBiometricComplete() {
+    setShowBiometric(false);
+    const text = pendingPrivateRef.current;
+    pendingPrivateRef.current = null;
+
+    if (!text) return;
+
+    // Add the user message (if not already added) and the denial reply
+    setMessages((prev) => {
+      const alreadyHasUser = prev.some(
+        (m, i) => i === prev.length - 1 && m.role === "user" && m.content === text
+      );
+      const base = alreadyHasUser ? prev : [...prev, { role: "user" as const, content: text }];
+      return [
+        ...base,
+        {
+          role: "assistant" as const,
+          content:
+            "Biometric verification failed. That information is locked and only accessible to Elazar. Access denied.",
+        },
+      ];
+    });
+  }
+
   async function sendMessage() {
     const text = input.trim();
     if (!text || loading) return;
+
+    // Private query → show fake biometric that always fails
+    if (isPrivateQuery(text)) {
+      setInput("");
+      pendingPrivateRef.current = text;
+      // Optimistically show the user message
+      setMessages((prev) => [...prev, { role: "user", content: text }]);
+      setShowBiometric(true);
+      return;
+    }
 
     const nextMessages: ChatMessage[] = [...messages, { role: "user", content: text }];
     setMessages(nextMessages);
@@ -208,14 +345,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
-          disabled={loading}
+          disabled={loading || showBiometric}
           className="flex-1 rounded-xl border bg-background px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
         />
         <Button
           size="icon"
           className="rounded-xl shrink-0"
           onClick={sendMessage}
-          disabled={loading || !input.trim()}
+          disabled={loading || !input.trim() || showBiometric}
           aria-label="Send"
         >
           <Send className="w-4 h-4" />
@@ -224,7 +361,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     </div>
   );
 
-  if (fullPage) return chatPanel;
+  if (fullPage) {
+    return (
+      <>
+        {chatPanel}
+        <BiometricFailModal open={showBiometric} onComplete={handleBiometricComplete} />
+      </>
+    );
+  }
 
   return (
     <>
@@ -240,6 +384,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <MessageCircle className="w-6 h-6" />
       </button>
       {open && chatPanel}
+      <BiometricFailModal open={showBiometric} onComplete={handleBiometricComplete} />
     </>
   );
 }
