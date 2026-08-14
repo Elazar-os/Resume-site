@@ -219,7 +219,6 @@ function GaryPrivateGateModal({
     setBusy(false);
     if (credId) {
       setGaryBiometricRegistered(credId);
-      // After successful registration, still run the gag
       setPhase("success-gag");
     } else {
       setError("Biometric registration was cancelled or failed. Try again.");
@@ -245,16 +244,15 @@ function GaryPrivateGateModal({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-card border shadow-2xl rounded-2xl w-full max-w-sm overflow-hidden">
         <div className="px-6 pt-6 pb-2 text-center space-y-1">
-          <p className="text-sm font-semibold text-primary">Private information locked</p>
+          <p className="text-sm font-semibold text-primary">I have that information</p>
           <p className="text-xs text-muted-foreground">
             {phase === "setup-password" || phase === "setup-register"
-              ? "One-time setup required"
-              : "Owner verification required"}
+              ? "Owner setup required to release it"
+              : "Unlock required to release it"}
           </p>
         </div>
 
         <div className="px-6 py-5 space-y-4">
-          {/* SETUP: password */}
           {phase === "setup-password" && (
             <form onSubmit={handlePasswordSubmit} className="space-y-3">
               <div className="space-y-2">
@@ -290,7 +288,6 @@ function GaryPrivateGateModal({
             </form>
           )}
 
-          {/* SETUP: registering biometric */}
           {phase === "setup-register" && (
             <div className="flex flex-col items-center gap-4 py-4">
               <div className="relative">
@@ -305,7 +302,6 @@ function GaryPrivateGateModal({
             </div>
           )}
 
-          {/* UNLOCK with existing biometric */}
           {phase === "unlock" && (
             <div className="space-y-4">
               <div className="flex flex-col items-center gap-3 py-2">
@@ -313,27 +309,26 @@ function GaryPrivateGateModal({
                   <Fingerprint className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-sm text-muted-foreground text-center">
-                  Use Face ID / Touch ID to unlock private details
+                  Use Face ID to unlock and release this information
                 </p>
               </div>
               {error && <p className="text-sm text-red-600 text-center">{error}</p>}
               <Button className="w-full" onClick={handleUnlock} disabled={busy}>
                 <Fingerprint className="mr-2 h-4 w-4" />
-                {busy ? "Authenticating…" : "Use Face ID"}
+                {busy ? "Authenticating…" : "Use Face ID to unlock"}
               </Button>
             </div>
           )}
 
-          {/* SUCCESS GAG — biometric worked but still no data */}
           {phase === "success-gag" && (
             <div className="flex flex-col items-center gap-4 py-2 text-center">
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center">
                 <ShieldCheck className="w-8 h-8 text-emerald-600" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-primary">Identity verified</p>
+                <p className="text-sm font-semibold text-primary">Unlocked</p>
                 <p className="text-xs text-muted-foreground">
-                  Nice try. Even authenticated, Gary still doesn’t hand out private details.
+                  Identity confirmed. Still not sharing it — some things stay between me and Elazar.
                 </p>
               </div>
               <Button className="w-full" onClick={() => onClose("success")}>
@@ -342,15 +337,16 @@ function GaryPrivateGateModal({
             </div>
           )}
 
-          {/* FAILED */}
           {phase === "failed" && (
             <div className="flex flex-col items-center gap-4 py-2 text-center">
               <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/40 flex items-center justify-center">
                 <ShieldX className="w-8 h-8 text-red-500" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-red-600">Verification failed</p>
-                <p className="text-xs text-muted-foreground">Access denied</p>
+                <p className="text-sm font-semibold text-red-600">Couldn’t verify</p>
+                <p className="text-xs text-muted-foreground">
+                  I have the info, but I’m not releasing it without the owner.
+                </p>
               </div>
               <Button variant="outline" className="w-full" onClick={() => onClose("failed")}>
                 OK
@@ -436,17 +432,19 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     let reply: string;
     if (result === "success") {
       reply =
-        "Identity verified ✓\n\nNice try. Even with Face ID, that information stays private. Gary doesn’t hand out personal contact details.";
+        "Unlocked ✓\n\nI have it — but I’m still not sharing. Some things stay between me and Elazar.";
     } else if (result === "failed") {
       reply =
-        "Biometric verification failed. Access denied. That information is locked to Elazar only.";
+        "Couldn’t verify you.\n\nI do have that information, but I’m not releasing it without the owner.";
     } else {
-      reply = "Verification cancelled. That information remains locked.";
+      reply =
+        "Cancelled.\n\nI have the information, but it stays locked unless the owner unlocks it.";
     }
 
     setMessages((prev) => {
       const last = prev[prev.length - 1];
-      const alreadyHasUser = last?.role === "user" && last.content === text;
+      // The previous assistant message was the "I have it / use Face ID" one — replace the flow cleanly
+      const alreadyHasUser = prev.some((m) => m.role === "user" && m.content === text);
       const base = alreadyHasUser ? prev : [...prev, { role: "user" as const, content: text }];
       return [...base, { role: "assistant" as const, content: reply }];
     });
@@ -465,7 +463,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         {
           role: "assistant",
           content:
-            "That information is protected.\n\nUse Face ID to unlock (owner verification required).",
+            "I have that information.\n\nI’m not allowed to share it unless the owner unlocks it with Face ID.",
         },
       ]);
       setShowGate(true);
