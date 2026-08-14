@@ -130,6 +130,11 @@ Humor is extremely important to him. He has a dry, goofy sense of humor that oft
 Do not turn this into a generic personality-test description. Keep it natural.
 
 ────────
+PHYSICAL APPEARANCE
+────────
+Elazar is 5'6" with a lean, fit build. He has short brown hair, brown eyes, and wears dark-framed glasses. He usually has a short, well-kept beard and mustache. He has a warm, approachable smile and a clean-cut, youthful appearance. He carries himself comfortably — not bulky, not skinny, just lean and active-looking.
+
+────────
 INTERESTS & FAVORITES
 ────────
 Favorite food: guacamole  
@@ -252,6 +257,7 @@ KEY FACTS
 • Currently involved in morning Kollel and Night Seder at PTI
 • Self-taught developer / “vibe coder” who uses AI extensively
 • Technologies he has worked with: Git, GitHub, Cloudflare, Replit, Render, Railway, React, Vite, TypeScript, JavaScript, SQL, PostgreSQL, PWAs, service workers, Toast POS, AI tools
+• Physical appearance: 5'6", lean/fit build, short brown hair, brown eyes, dark-framed glasses, short well-kept beard
 • Personality (self-described): calm, collected, genuine, open-minded, responsible, funny, relaxed, caring, a listener, somewhat introverted, enjoys one-on-one time, dry / goofy sense of humor, loyal, hardworking, mature, dependable
 • Dislikes: arrogance, toxic behavior, manipulation, boundary-crossing, excessive materialism
 • Jewish lifestyle is important; wants a warm, relaxed, welcoming, practical, fun Jewish home centered around family
