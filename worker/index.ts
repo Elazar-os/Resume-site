@@ -1,6 +1,6 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2 (family form-style facts + anti-repetition)
+ * Gary SYSTEM_PROMPT = V3.2b (Miriam a"h only)
  */
 
 export interface Env {
@@ -102,7 +102,7 @@ Parents:
 
 Grandparents:
 • Meyer and Toby (Fink) Greisman, Lakewood
-• Dov and Miriam (Seidman) Schechter, a"h, Lakewood
+• Dov Schechter and Miriam (Seidman) Schechter, a"h (Miriam only), Lakewood
 
 Siblings:
 • Esther Baila (25) — married to Shmuel Levenson (BMG); software developer
