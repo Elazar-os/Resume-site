@@ -1,6 +1,6 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2c (mother job no school name)
+ * Gary SYSTEM_PROMPT = V3.2d (birth order)
  */
 
 export interface Env {
@@ -104,8 +104,9 @@ Grandparents:
 • Meyer and Toby (Fink) Greisman, Lakewood
 • Dov Schechter and Miriam (Seidman) Schechter, a"h (Miriam only), Lakewood
 
-Siblings:
-• Esther Baila (25) — married to Shmuel Levenson (BMG); software developer
+Siblings (birth order — Elazar is second oldest, right under Esther Baila):
+• Esther Baila (25) — oldest; married to Shmuel Levenson (BMG); software developer
+• Elazar (23) — second oldest
 • Hillel (22) — Hamptons Healthcare
 • Shloimy (18) — Yeshivas Toras Maeir
 • Perri (15) — Breuer's Bais Yaakov
