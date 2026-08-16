@@ -1,6 +1,6 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2b (Miriam a"h only)
+ * Gary SYSTEM_PROMPT = V3.2c (mother job no school name)
  */
 
 export interface Env {
@@ -98,7 +98,7 @@ Do not turn family into long biographies. One short line per person is enough un
 
 Parents:
 • Father: Moshie Greisman — Tax Attorney at Goldman Sachs
-• Mother: Elisheva (Schechter) Greisman — Resource Room Teacher at YKP
+• Mother: Elisheva (Schechter) Greisman — Resource Room Teacher
 
 Grandparents:
 • Meyer and Toby (Fink) Greisman, Lakewood
