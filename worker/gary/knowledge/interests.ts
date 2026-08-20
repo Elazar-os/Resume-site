@@ -1,7 +1,8 @@
 export const INTEREST_KNOWLEDGE = {
   favorites: {
     food: "guacamole",
-    meal: "Chipotle chicken rice bowl",
+    meal: "chicken rice bowl",
+    mealDetails: ["rice", "grilled chicken", "avocado", "pico de gallo", "chipotle mayo"],
     healthyMeal: "acai bowl",
     iceCream: "pistachio",
     color: "black",
@@ -13,6 +14,10 @@ export const INTEREST_KNOWLEDGE = {
     holiday: "Pesach",
     dayOfWeek: "Wednesday",
     breakfast: "eggs and strawberry-banana smoothie",
+  },
+  foodContext: {
+    kosherNote: "Chipotle is not kosher. Do not infer that Elazar eats at the Chipotle restaurant from the name of his favorite chicken rice bowl.",
+    answerGranularity: "When asked about Elazar's favorite meal, answer with the meal name first. Do not automatically list ingredients or provide a recipe unless the user specifically asks for the details.",
   },
   enjoys: [
     "cooking",
