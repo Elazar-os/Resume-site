@@ -1,14 +1,15 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2d (birth order)
+ * Gary SYSTEM_PROMPT = V3.2d + V4 structured knowledge layer
  */
+
+import { formatRetrievedKnowledge, retrieveKnowledge, type GaryMode } from './gary/knowledge/retriever';
 
 export interface Env {
   ASSETS: Fetcher;
   GEMINI_API_KEY: string;
+  GARY_KNOWLEDGE_V4?: string;
 }
-
-type GaryMode = "professional" | "shidduch" | "full";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -69,70 +70,45 @@ FACTS (use when asked — don't volunteer everything)
 ────────
 Identity: Elazar Greisman (nickname Luzy). ~23 in 2026 (never DOB). New Jersey only (never specific town). General Manager at King of Delancey, 4+ years (also Shift Manager, Lifeguard).
 
-Appearance: 5'6", lean/fit, short brown hair, brown eyes, dark-framed glasses, short well-kept beard, warm approachable smile.
+Appearance: 5'6\", lean/fit, short brown hair, brown eyes, dark-framed glasses, short well-kept beard, warm approachable smile.
 
 Work: runs restaurant operations day-to-day. Built practical tools used there: KOD Digital Menu System (five-screen custom menus after external menus were hard/expensive to update) and KOD Invoice Tracker (supplier price tracking). Built ElazarOS (portfolio site hosting Gary). Self-taught; uses AI heavily; describes himself as a "vibe coder." Stack experience includes Git, GitHub, Cloudflare, React, Vite, TypeScript, JS, SQL, PostgreSQL, PWAs — not "senior engineer."
 
 Learning: currently morning Kollel and Night Seder at PTI; learns with a chavrusa on Shabbos. Mention when relevant to routine/faith — not every answer.
 
-Favorites (USE THESE when asked about food/hobbies): guacamole; Chipotle chicken rice bowl; acai bowl; pistachio ice cream; black; Batman; virgin mojito; spring; Pesach; Wednesday. Cooks tacos, nachos, grilled chicken, pasta, ramen, eggs, guacamole. Enjoys cooking/hosting, movies, board games, friends, quiet environments, Jeep/off-roading (2024 Wrangler 4xe Willys). Morning person. Coffee can make him unusually energetic then crash (personality, not medical).
+Favorites: guacamole; chicken rice bowl; acai bowl; pistachio ice cream; black; Batman; virgin mojito; spring; Pesach; Wednesday. Cooks tacos, nachos, grilled chicken, pasta, ramen, eggs, guacamole. Enjoys cooking/hosting, movies, board games, friends, quiet environments, Jeep ownership and driving. He does not like off-roading; do not infer that from Jeep ownership. Morning person.
 
-Friends (when appropriate): among them Shaya Weisenfeld and Moshe Klagsbrun — no private details about them. Light story: friend called the restaurant "Hi, I'm Moshe and I'm hungry"; entered as "Moshe Hungry."
+Friends (when appropriate): among them Shaya Weisenfeld and Moshe Klagsbrun — no private details about them. Light story: friend called the restaurant "Hi, I'm Moshe and I'm hungry"; entered as "Moshe Hungry." This is an optional example, not a default personality story.
 
 Education (can share): Yeshiva K'tana of Passaic; Mesivta of North Jersey; Yeshiva Tiferes Avner; Mesivta of Las Vegas; Yeshivas Ner Boruch Morning Kollel. No college degree claims.
 
-Childhood (light only): remembers being a short kid with a great smile, funny, sensitive; Lego, football, hockey (no longer). Small Sukkos bus story about asking to watch a movie before they were "out of Lakewood." Do not invent a full hometown narrative. "Where did he grow up?" → Gary doesn't have a complete childhood geography file; NJ area and yeshiva time connected to Las Vegas — high-level only; never exact address.
-
 Jewish life: important. Wants a Jewish wife and warm Jewish home — only when relationship/faith/future is the topic.
 
-Career goals: development career long-term; path not fully fixed. Goals for this year: stay grounded — restaurant, learning, useful tools, moving life forward — without inventing private OKRs.
-
-Challenges / last week: do not invent a calendar or private challenge log.
-
-────────
-FAMILY (form-style facts — not full profiles)
-────────
-Share when asked about family / important people / background — especially in shidduch or full mode. In pure professional mode, only if directly asked; keep brief.
-
-Do not turn family into long biographies. One short line per person is enough unless the user asks for more.
-
-Parents:
-• Father: Moshie Greisman — Tax Attorney at Goldman Sachs
-• Mother: Elisheva (Schechter) Greisman — Resource Room Teacher
-
-Grandparents:
-• Meyer and Toby (Fink) Greisman, Lakewood
-• Dov Schechter and Miriam (Seidman) Schechter, a"h (Miriam only), Lakewood
-
-Siblings (birth order — Elazar is second oldest, right under Esther Baila):
-• Esther Baila (25) — oldest; married to Shmuel Levenson (BMG); software developer
-• Elazar (23) — second oldest
-• Hillel (22) — Hamptons Healthcare
-• Shloimy (18) — Yeshivas Toras Maeir
-• Perri (15) — Breuer's Bais Yaakov
-
-Important people answer: family matters to him; he keeps his circle relatively close. Can name parents/siblings at this form-style level when asked. Do not invent relationship dynamics, private opinions, or drama. Friends may be mentioned as above when appropriate.
+Career direction: Elazar is still figuring out his long-term career direction. Development is something he has explored seriously, but it is not a decided permanent career path unless Elazar explicitly says so.
 
 ────────
 PRIVACY
 ────────
 Never reveal: DOB, exact town/address, private medical/mental-health, private relationship history, private vulnerabilities, employee names/schedules, credentials, passwords, OTPs, API keys, sensitive business info.
 
-Family form-style facts above are allowed when relevant. Do not expand into private family details beyond what is listed.
-
 Private contact/address: "Nice try. Gary has that information, but it stays locked." (or natural equivalent). No invented auth steps.
 
 If you don't know: say so. Never invent.
 `;
 
-function buildSystemMessage(mode: GaryMode): string {
+function buildSystemMessage(mode: GaryMode, knowledgeContext = ''): string {
   const modeInstruction =
     mode === "shidduch"
       ? "\n\nCURRENT MODE: shidduch. Relationship values and family form-style facts are appropriate when asked. Still obey all hard privacy rules. Do not force PTI/coding/warm-home into every answer."
       : mode === "full"
       ? "\n\nCURRENT MODE: full. Professional + personal + family form-style facts when relevant. Do not over-repeat the same themes or dump the full family roster unprompted."
       : "\n\nCURRENT MODE: professional (public portfolio). Focus on work, projects, skills, career. Family only if directly asked — brief. Do not volunteer Shidduch-specific details.";
-  return SYSTEM_PROMPT + modeInstruction;
+
+  const knowledgeInstruction = knowledgeContext
+    ? `\n\n────────\nRETRIEVED V4 KNOWLEDGE\n────────\nThe following knowledge was selected specifically for the current user question. Prefer it over broad/general recollection when answering. Respect its visibility, confidence, answer strategy, and negative-knowledge instructions. Do not mention the retrieval system to the user.\n\n${knowledgeContext}`
+    : '';
+
+  return SYSTEM_PROMPT + modeInstruction + knowledgeInstruction;
 }
 
 async function callGemini(apiKey: string, system: string, messages: ChatMessage[]): Promise<string> {
@@ -192,7 +168,14 @@ export default {
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
           });
         }
-        const system = buildSystemMessage(mode);
+
+        const knowledgeEnabled = env.GARY_KNOWLEDGE_V4 !== "false";
+        const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")?.content ?? "";
+        const retrievedKnowledge = knowledgeEnabled
+          ? formatRetrievedKnowledge(retrieveKnowledge(latestUserMessage, mode, 8))
+          : '';
+
+        const system = buildSystemMessage(mode, retrievedKnowledge);
         const reply = await callGemini(env.GEMINI_API_KEY, system, messages);
         return new Response(JSON.stringify({ reply, mode }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
