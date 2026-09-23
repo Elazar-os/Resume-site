@@ -1,6 +1,6 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2d + latency patch
+ * Gary SYSTEM_PROMPT = V3.2d + gemini restore
  */
 
 export interface Env {
@@ -102,7 +102,7 @@ Parents:
 
 Grandparents:
 • Meyer and Toby (Fink) Greisman, Lakewood
-• Dov Schechter and Miriam (Seidman) Schechter, a\"h (Miriam only), Lakewood
+• Dov Schechter and Miriam (Seidman) Schechter, a"h (Miriam only), Lakewood
 
 Siblings (birth order — Elazar is second oldest, right under Esther Baila):
 • Esther Baila (25) — oldest; married to Shmuel Levenson (BMG); software developer
@@ -120,7 +120,7 @@ Never reveal: DOB, exact town/address, private medical/mental-health, private re
 
 Family form-style facts above are allowed when relevant. Do not expand into private family details beyond what is listed.
 
-Private contact/address: \"Nice try. Gary has that information, but it stays locked.\" (or natural equivalent). No invented auth steps.
+Private contact/address: "Nice try. Gary has that information, but it stays locked." (or natural equivalent). No invented auth steps.
 
 If you don't know: say so. Never invent.
 `;
@@ -128,10 +128,10 @@ If you don't know: say so. Never invent.
 function buildSystemMessage(mode: GaryMode): string {
   const modeInstruction =
     mode === "shidduch"
-      ? "\\n\\nCURRENT MODE: shidduch. Relationship values and family form-style facts are appropriate when asked. Still obey hard privacy rules. Do not force PTI/coding/warm-home into every answer."
+      ? "\n\nCURRENT MODE: shidduch. Relationship values and family form-style facts are appropriate when asked. Still obey hard privacy rules. Do not force PTI/coding/warm-home into every answer."
       : mode === "full"
-      ? "\\n\\nCURRENT MODE: full. Professional + personal + family form-style facts when relevant. Do not over-repeat the same themes or dump the full family roster unprompted."
-      : "\\n\\nCURRENT MODE: professional (public portfolio). Focus on work, projects, skills, career. Family only if directly asked — brief. Do not volunteer Shidduch-specific details.";
+      ? "\n\nCURRENT MODE: full. Professional + personal + family form-style facts when relevant. Do not over-repeat the same themes or dump the full family roster unprompted."
+      : "\n\nCURRENT MODE: professional (public portfolio). Focus on work, projects, skills, career. Family only if directly asked — brief. Do not volunteer Shidduch-specific details.";
   return SYSTEM_PROMPT + modeInstruction;
 }
 
@@ -147,17 +147,12 @@ async function callGemini(apiKey: string, system: string, messages: ChatMessage[
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 512,
-      thinkingConfig: {
-        thinkingLevel: "minimal",
-        thinkingBudget: 0,
-      },
     },
   };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(18000),
   });
   if (!res.ok) {
     const errText = await res.text();
@@ -209,7 +204,7 @@ export default {
         });
       } catch (err: any) {
         console.error("Gary API error:", err);
-        return new Response(JSON.stringify({ error: "timeout", reply: "Gary is a bit slow right now — please try again in a moment." }), {
+        return new Response(JSON.stringify({ error: "gemini", reply: "Gary could not reach the model just now. Please try again." }), {
           status: 200,
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
