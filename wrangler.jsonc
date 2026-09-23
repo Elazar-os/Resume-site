@@ -3,9 +3,17 @@
   "name": "elazaros-app",
   "compatibility_date": "2026-07-27",
   "main": "worker/index.ts",
+  "workers_dev": true,
+  "keep_vars": true,
   "assets": {
     "directory": "./dist/public",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "secrets": {
+    "required": ["GEMINI_API_KEY"]
   }
 }
