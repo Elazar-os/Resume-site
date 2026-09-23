@@ -44,3 +44,5 @@ npm run dev
 
 - Replit has been completely removed from the workflow.
 - The site is now a pure static frontend.
+
+<!-- Cloudflare deployment verification -->
