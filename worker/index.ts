@@ -1,6 +1,6 @@
 /**
  * ElazarOS Cloudflare Worker
- * Gary SYSTEM_PROMPT = V3.2d + gemini restore
+ * Gary SYSTEM_PROMPT = V3.2d + multi-model fallback
  */
 
 export interface Env {
@@ -18,6 +18,25 @@ interface ChatMessage {
 interface GaryRequest {
   messages: ChatMessage[];
   mode?: GaryMode;
+  model?: string;
+}
+
+const MODEL_ALIASES: Record<string, string[]> = {
+  auto: [
+    "gemini-2.5-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.5-flash-lite",
+  ],
+  fast: ["gemini-2.5-flash-lite", "gemini-3.1-flash-lite"],
+  lite: ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-2.5-flash-lite"],
+  quality: ["gemini-3.8-flash", "gemini-3.5-flash-lite"],
+};
+
+function resolveModels(requested?: string): string[] {
+  const key = (requested || "auto").trim().toLowerCase();
+  if (MODEL_ALIASES[key]) return MODEL_ALIASES[key];
+  if (key.startsWith("gemini-")) return [key];
+  return MODEL_ALIASES.auto;
 }
 
 const SYSTEM_PROMPT = `You are Gary, the AI portfolio and personal information assistant for Elazar Greisman.
@@ -135,12 +154,12 @@ function buildSystemMessage(mode: GaryMode): string {
   return SYSTEM_PROMPT + modeInstruction;
 }
 
-async function callGemini(apiKey: string, system: string, messages: ChatMessage[]): Promise<string> {
+async function callGeminiModel(apiKey: string, model: string, system: string, messages: ChatMessage[]): Promise<string> {
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents,
@@ -156,13 +175,29 @@ async function callGemini(apiKey: string, system: string, messages: ChatMessage[
   });
   if (!res.ok) {
     const errText = await res.text();
-    console.error("Gemini error:", res.status, errText);
+    console.error("Gemini error:", model, res.status, errText);
     throw new Error(`Gemini API error: ${res.status}`);
   }
   const data = (await res.json()) as any;
   const parts = data?.candidates?.[0]?.content?.parts ?? [];
   const text = parts.map((p: any) => p?.text).filter(Boolean).join("\n").trim();
-  return text || "I couldn’t generate a reply right now. Please try again.";
+  if (!text) throw new Error("empty gemini reply");
+  return text;
+}
+
+async function callGemini(apiKey: string, system: string, messages: ChatMessage[], requested?: string): Promise<{ reply: string; model: string }> {
+  const models = resolveModels(requested);
+  let lastError: unknown;
+  for (const model of models) {
+    try {
+      const reply = await callGeminiModel(apiKey, model, system, messages);
+      return { reply, model };
+    } catch (err) {
+      lastError = err;
+      console.error("Gary model failed:", model, err);
+    }
+  }
+  throw lastError || new Error("All Gemini models failed");
 }
 
 function corsHeaders(): HeadersInit {
@@ -198,8 +233,8 @@ export default {
           });
         }
         const system = buildSystemMessage(mode);
-        const reply = await callGemini(env.GEMINI_API_KEY, system, messages);
-        return new Response(JSON.stringify({ reply, mode }), {
+        const { reply, model } = await callGemini(env.GEMINI_API_KEY, system, messages, body.model);
+        return new Response(JSON.stringify({ reply, mode, model }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
       } catch (err: any) {
