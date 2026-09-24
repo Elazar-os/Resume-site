@@ -74,6 +74,17 @@ const SCOPE_OPTIONS: Array<{
   },
 ];
 
+const loadingPhrases = [
+  "Thinking it through...",
+  "Pulling that together...",
+  "One sec...",
+  "Let me think on that...",
+  "Working on it...",
+  "Give me a beat...",
+  "Piecing that together...",
+  "Just a moment...",
+];
+
 const SUGGESTED_QUESTIONS: Record<GaryMode, string[]> = {
   professional: [
     "What does he do at King of Delancey?",
@@ -519,7 +530,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     ),
   ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);\n  const [loadingPhrase, setLoadingPhrase] = useState(loadingPhrases[0]);
   const [showGate, setShowGate] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
@@ -796,7 +807,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               <GaryAvatar active />
             </div>
             <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-muted-foreground">
-              Gary is thinking…
+              {loadingPhrase}
             </div>
           </div>
         )}
