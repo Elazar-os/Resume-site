@@ -21,6 +21,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import {
   type GaryMode,
   type ChatMessage,
   detectModeFromPath,
@@ -818,57 +825,48 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         </Button>
       </div>
 
-      {scopeOpen && (
-        <div
-          className="fixed inset-0 z-[80] flex items-end justify-center bg-black/45 backdrop-blur-[2px]"
-          onClick={() => setScopeOpen(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-t-3xl border bg-background p-4 pb-6 shadow-2xl animate-in slide-in-from-bottom-4 duration-300"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Choose Gary scope"
-          >
-            <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
-            <div className="mb-3 px-1">
-              <p className="text-sm font-bold">Choose a Gary scope</p>
-              <p className="text-xs text-muted-foreground">A new conversation starts when you switch.</p>
-            </div>
-            <div className="space-y-2">
-              {SCOPE_OPTIONS.map((option) => {
-                const Icon = option.icon;
-                const active = option.mode === mode;
-                return (
-                  <button
-                    key={option.mode}
-                    type="button"
-                    onClick={() => selectMode(option.mode)}
-                    className={cn(
-                      "w-full flex items-center gap-3 rounded-2xl border p-3 text-left transition",
-                      active
-                        ? "border-[#1737c8]/35 bg-[#1737c8]/10"
-                        : "border-border bg-background hover:bg-muted/50"
-                    )}
-                  >
-                    <span className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                      active ? "bg-[#1737c8] text-white" : "bg-muted text-muted-foreground"
-                    )}>
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold">{option.label}</span>
-                      <span className="block text-xs text-muted-foreground">{option.description}</span>
-                    </span>
-                    {active && <Check className="h-5 w-5 shrink-0 text-[#1737c8]" />}
-                  </button>
-                );
-              })}
-            </div>
+      <Sheet open={scopeOpen} onOpenChange={setScopeOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl px-4 pb-8 pt-3">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
+          <SheetHeader className="mb-3 text-left">
+            <SheetTitle className="text-sm font-bold">Choose a Gary scope</SheetTitle>
+            <SheetDescription className="text-xs">
+              A new conversation starts when you switch.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-2">
+            {SCOPE_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              const active = option.mode === mode;
+              return (
+                <button
+                  key={option.mode}
+                  type="button"
+                  onClick={() => selectMode(option.mode)}
+                  className={cn(
+                    "w-full flex items-center gap-3 rounded-2xl border p-3 text-left transition",
+                    active
+                      ? "border-[#1737c8]/35 bg-[#1737c8]/10"
+                      : "border-border bg-background hover:bg-muted/50"
+                  )}
+                >
+                  <span className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                    active ? "bg-[#1737c8] text-white" : "bg-muted text-muted-foreground"
+                  )}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">{option.label}</span>
+                    <span className="block text-xs text-muted-foreground">{option.description}</span>
+                  </span>
+                  {active && <Check className="h-5 w-5 shrink-0 text-[#1737c8]" />}
+                </button>
+              );
+            })}
           </div>
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 
