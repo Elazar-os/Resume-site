@@ -565,7 +565,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}
+            className={cn("flex flex-col", msg.role === "user" ? "items-end" : "items-start")}
           >
             <div
               className={cn(
