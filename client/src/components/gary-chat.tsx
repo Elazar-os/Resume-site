@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import {
   MessageCircle,
+  Plus,
   X,
   Send,
   Loader2,
@@ -506,6 +507,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     }
   }
 
+  function startNewChat() {
+    setMessages([welcomeFor(mode)]);
+    setInput("");
+    setLastTiming(null);
+    setLoading(false);
+    inputRef.current?.focus();
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -546,6 +555,17 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               </option>
             ))}
           </select>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={startNewChat}
+            aria-label="Start new chat"
+            title="New chat"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
 
           {!fullPage && (
             <Button
