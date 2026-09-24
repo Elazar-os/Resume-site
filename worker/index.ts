@@ -49,8 +49,10 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
     all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
   }
   if (openrouter) {
-    all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
+    // Prefer the smaller Qwen free model for fast everyday replies.
+    // Keep Llama as a fallback if Qwen fails.
     all.push({ provider: "openrouter", model: "qwen/qwen3-8b:free" });
+    all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
   }
   if (gemini) {
     all.push({ provider: "gemini", model: "gemini-3.1-flash-lite" });
