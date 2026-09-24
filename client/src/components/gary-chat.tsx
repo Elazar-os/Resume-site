@@ -39,8 +39,8 @@ const WELCOME_MESSAGES: Record<GaryMode, string> = {
     "Hi — I’m Gary, Elazar’s AI assistant. I can answer questions about his background, projects, personality, values, and more. What would you like to know?",
 };
 
-/** One-time setup password (client-side theater only). */
-const GARY_SETUP_PASSWORD = "12Crazy34!";
+/** SHA-256 digest of the one-time setup password; plaintext is not stored in the client bundle. */
+const GARY_SETUP_PASSWORD_HASH = "3122572bc12b28d2117cf015eb0e4b5959d00be20429a60448c6de54cdbbf531";
 
 const GARY_BIO_ENABLED_KEY = "gary-biometric-enabled";
 const GARY_BIO_CRED_ID_KEY = "gary-biometric-cred-id";
@@ -206,7 +206,14 @@ function GaryPrivateGateModal({
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (password !== GARY_SETUP_PASSWORD) {
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(password),
+    );
+    const hash = Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+    if (hash !== GARY_SETUP_PASSWORD_HASH) {
       setError("Incorrect password.");
       return;
     }
@@ -581,7 +588,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -589,10 +596,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           >
             <div
               className={cn(
-                "max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed whitespace-pre-wrap",
+                "max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap shadow-sm",
                 msg.role === "user"
                   ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-secondary text-foreground rounded-bl-md"
+                  : "bg-secondary text-foreground rounded-bl-md border border-border/60"
               )}
             >
               {msg.content}
@@ -615,7 +622,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t p-3 flex gap-2">
+      <div className="border-t bg-background/95 p-3 flex gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -624,11 +631,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
           disabled={loading || showGate}
-          className="flex-1 rounded-xl border bg-background px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+          className="flex-1 h-10 rounded-2xl border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
         />
         <Button
           size="icon"
-          className="rounded-xl shrink-0"
+          className="h-10 w-10 rounded-2xl shrink-0"
           onClick={sendMessage}
           disabled={loading || !input.trim() || showGate}
           aria-label="Send"
