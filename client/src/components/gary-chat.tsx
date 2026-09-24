@@ -395,6 +395,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [lastTiming, setLastTiming] = useState<{ model: string; timingMs: number } | null>(null);
   const [showGate, setShowGate] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -485,6 +486,9 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
+      if (data.model && typeof data.timingMs === "number") {
+        setLastTiming({ model: data.model, timingMs: data.timingMs });
+      }
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply || "Sorry, I didn’t get a response." },
@@ -573,6 +577,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             >
               {msg.content}
             </div>
+            {msg.role === "assistant" && i === messages.length - 1 && lastTiming && !loading && (
+              <div className="mt-1 px-1 text-[10px] text-muted-foreground/70">
+                {lastTiming.model.split(":").slice(1).join(":")} · {(lastTiming.timingMs / 1000).toFixed(1)}s
+              </div>
+            )}
           </div>
         ))}
 
