@@ -56,7 +56,7 @@ export const APPS: AppConfig[] = [
     name: "Gary",
     description: "AI portfolio assistant for ElazarOS. Ask about Elazar’s background, projects, and approach.",
     subdomain: "gary.elazaros.com",
-    replitUrl: "https://elazaros.com/#/gary",
+    replitUrl: "https://elazaros-app.elazar-greisman.workers.dev/#/gary",
     icon: MessageCircle,
     color: "text-purple-500",
     gradient: "from-purple-500 to-violet-500",
