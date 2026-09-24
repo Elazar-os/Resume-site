@@ -250,7 +250,7 @@ async function callOpenAICompat(
   });
   if (!res.ok) {
     const errText = await res.text();
-    console.error("Compat API error:", url, model, res.status, errText);
+    console.error("Compat API error:", url, model, res.status, errText.slice(0, 1000));
     throw new Error(`API error: ${res.status}`);
   }
   const data = (await res.json()) as any;
@@ -337,8 +337,8 @@ export default {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
       } catch (err: any) {
-        console.error("Gary API error:", err);
-        return new Response(JSON.stringify({ error: "gemini", reply: "Gary could not reach the model just now. Please try again." }), {
+        console.error("Gary API error:", err instanceof Error ? err.message : String(err));
+        return new Response(JSON.stringify({ error: "model_request_failed", reply: "Gary could not reach the model just now. Please try again." }), {
           status: 200,
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
