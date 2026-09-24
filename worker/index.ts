@@ -47,9 +47,9 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   // Prefer Gemini Flash Lite for fast everyday replies.
   // Other providers remain as fallbacks.
   if (gemini) {
+    all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
     all.push({ provider: "gemini", model: "gemini-2.5-flash-lite" });
     all.push({ provider: "gemini", model: "gemini-3.1-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
   }
   if (groq) {
     all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
