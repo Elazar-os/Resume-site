@@ -315,8 +315,8 @@ export default {
     }
     if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
-        if (!env.GEMINI_API_KEY) {
-          return new Response(JSON.stringify({ error: "Server misconfigured: missing API key" }), {
+        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
+          return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
             status: 500,
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
           });
