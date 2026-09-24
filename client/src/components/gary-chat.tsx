@@ -538,8 +538,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           : "fixed bottom-24 right-4 z-50 w-[min(100vw-2rem,380px)] h-[min(70vh,520px)] rounded-2xl"
       )}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b bg-primary/5">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-center justify-between gap-2 px-3 py-3 border-b bg-primary/5">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           <div className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold">
             G
           </div>
@@ -549,11 +549,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0">
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as GaryMode)}
-            className="text-xs rounded-md border bg-background px-2 py-1 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-[92px] text-xs rounded-md border bg-background px-2 py-1 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary truncate"
             title="Conversation mode"
           >
             {(Object.keys(MODE_LABELS) as GaryMode[]).map((m) => (
