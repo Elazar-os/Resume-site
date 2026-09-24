@@ -44,20 +44,20 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   const openrouter = !!openrouterKey(env);
 
   const all: ModelRoute[] = [];
+  // Prefer Gemini Flash Lite for fast everyday replies.
+  // Other providers remain as fallbacks.
+  if (gemini) {
+    all.push({ provider: "gemini", model: "gemini-2.5-flash-lite" });
+    all.push({ provider: "gemini", model: "gemini-3.1-flash-lite" });
+    all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
+  }
   if (groq) {
     all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
     all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
   }
   if (openrouter) {
-    // Prefer the smaller Qwen free model for fast everyday replies.
-    // Keep Llama as a fallback if Qwen fails.
     all.push({ provider: "openrouter", model: "qwen/qwen3-8b:free" });
     all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
-  }
-  if (gemini) {
-    all.push({ provider: "gemini", model: "gemini-3.1-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-2.5-flash-lite" });
   }
   if (openai) all.push({ provider: "openai", model: "gpt-4o-mini" });
 
