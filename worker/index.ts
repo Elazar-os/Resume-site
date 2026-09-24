@@ -210,11 +210,14 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
       maxOutputTokens: 512,
     },
   };
+  const startedAt = Date.now();
+  console.log("Gary Gemini request start:", model, "messages:", messages.length, "chars:", messages.reduce((sum, m) => sum + m.content.length, 0));
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+  console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
     const errText = await res.text();
     console.error("Gemini error:", model, res.status, errText);
@@ -286,16 +289,20 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
 }
 
 async function callAnyModel(env: Env, system: string, messages: ChatMessage[], requested?: string): Promise<{ reply: string; model: string }> {
+  const startedAt = Date.now();
   const routes = availableRoutes(env, requested);
+  console.log("Gary model selection:", requested || "auto", routes.map((r) => `${r.provider}:${r.model}`).join(" -> "));
   if (routes.length === 0) throw new Error("No model providers configured");
   let lastError: unknown;
   for (const route of routes) {
     try {
+      const routeStartedAt = Date.now();
       const reply = await callRoute(env, route, system, messages);
+      console.log("Gary model success:", route.provider, route.model, "ms:", Date.now() - routeStartedAt, "totalMs:", Date.now() - startedAt);
       return { reply, model: `${route.provider}:${route.model}` };
     } catch (err) {
       lastError = err;
-      console.error("Gary model failed:", route.provider, route.model, err);
+      console.error("Gary model failed:", route.provider, route.model, "ms:", Date.now() - startedAt, err);
     }
   }
   throw lastError || new Error("All models failed");
