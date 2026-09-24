@@ -5,8 +5,11 @@ import {
   Plus,
   X,
   Send,
-  Loader2,
   Fingerprint,
+  BriefcaseBusiness,
+  Heart,
+  ShieldKeyhole,
+  Check,
   ShieldX,
   ShieldCheck,
   Lock,
@@ -20,7 +23,6 @@ import { cn } from "@/lib/utils";
 import {
   type GaryMode,
   type ChatMessage,
-  MODE_LABELS,
   detectModeFromPath,
   modeFromQuery,
 } from "@/lib/gary-types";
@@ -38,6 +40,114 @@ const WELCOME_MESSAGES: Record<GaryMode, string> = {
   full:
     "Hi — I’m Gary, Elazar’s AI assistant. I can answer questions about his background, projects, personality, values, and more. What would you like to know?",
 };
+
+const SCOPE_OPTIONS: Array<{
+  mode: GaryMode;
+  label: string;
+  description: string;
+  icon: typeof BriefcaseBusiness;
+}> = [
+  {
+    mode: "professional",
+    label: "Professional",
+    description: "Work, projects, skills, and career background.",
+    icon: BriefcaseBusiness,
+  },
+  {
+    mode: "shidduch",
+    label: "Shidduch",
+    description: "Personality, values, relationships, and life.",
+    icon: Heart,
+  },
+  {
+    mode: "full",
+    label: "Full Access",
+    description: "A broader view of Elazar, personal and professional.",
+    icon: ShieldKeyhole,
+  },
+];
+
+const SUGGESTED_QUESTIONS: Record<GaryMode, string[]> = {
+  professional: [
+    "What does he do at King of Delancey?",
+    "What has he built?",
+    "How did he learn to code?",
+  ],
+  shidduch: [
+    "What's he like as a person?",
+    "What matters to him?",
+    "What does he do for fun?",
+  ],
+  full: [
+    "Tell me about his work",
+    "What's his personality like?",
+    "What's important to him?",
+  ],
+};
+
+type UIMessage = ChatMessage & {
+  timing?: { model: string; timingMs: number };
+};
+
+function GaryAvatar({ active = false }: { active?: boolean }) {
+  return (
+    <div className={cn(
+      "w-7 h-7 shrink-0 rounded-full overflow-hidden shadow-sm",
+      active && "gary-avatar-pulse"
+    )}>
+      <img src="/gary-favicon.svg" alt="" className="w-full h-full object-cover" />
+    </div>
+  );
+}
+
+function playPopSound() {
+  if (typeof window === "undefined" || (!(window.AudioContext) && !(window as any).webkitAudioContext)) return;
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.07);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.045, ctx.currentTime + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
+    window.setTimeout(() => void ctx.close(), 180);
+  } catch {}
+}
+
+function playReplyChime() {
+  if (typeof window === "undefined" || (!(window.AudioContext) && !(window as any).webkitAudioContext)) return;
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    [660, 880].forEach((frequency, index) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const start = now + index * 0.09;
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.17);
+    });
+    window.setTimeout(() => void ctx.close(), 420);
+  } catch {}
+}
+
+function buzz(duration = 12) {
+  try {
+    if ("vibrate" in navigator) navigator.vibrate(duration);
+  } catch {}
+}
 
 /** SHA-256 digest of the one-time setup password; plaintext is not stored in the client bundle. */
 const GARY_SETUP_PASSWORD_HASH = "3122572bc12b28d2117cf015eb0e4b5959d00be20429a60448c6de54cdbbf531";
@@ -391,7 +501,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (fromQuery) return fromQuery;
     return detectModeFromPath(location);
   });
-  const [messages, setMessages] = useState<ChatMessage[]>(() => [
+  const [messages, setMessages] = useState<UIMessage[]>(() => [
     welcomeFor(
       initialMode ??
         (() => {
@@ -403,12 +513,13 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [lastTiming, setLastTiming] = useState<{ model: string; timingMs: number } | null>(null);
   const [showGate, setShowGate] = useState(false);
+  const [scopeOpen, setScopeOpen] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevModeRef = useRef(mode);
+  const generationStartedAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (fullPage || initialMode) return;
@@ -474,9 +585,12 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     });
   }, []);
 
-  async function sendMessage() {
-    const text = input.trim();
+  async function sendMessage(prefilledText?: string) {
+    const text = (prefilledText ?? input).trim();
     if (!text || loading) return;
+
+    playPopSound();
+    buzz(12);
 
     if (isPrivateQuery(text)) {
       setInput("");
@@ -487,7 +601,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         {
           role: "assistant",
           content:
-            "I have that information.\n\nI’m not allowed to share it unless the owner unlocks it with Face ID.",
+            "I have that information.\\n\\nI’m not allowed to share it unless the owner unlocks it with Face ID.",
         },
       ]);
       setShowGate(true);
@@ -498,6 +612,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     setMessages(nextMessages);
     setInput("");
     setLoading(true);
+    generationStartedAtRef.current = performance.now();
 
     try {
       const res = await fetch("/api/gary", {
@@ -509,14 +624,25 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
-      if (data.model && typeof data.timingMs === "number") {
-        setLastTiming({ model: data.model, timingMs: data.timingMs });
-      }
+      const elapsed = performance.now() - (generationStartedAtRef.current ?? performance.now());
+      const waitFor = Math.max(0, 400 - elapsed);
+      if (waitFor > 0) await new Promise((resolve) => window.setTimeout(resolve, waitFor));
+
+      const timing =
+        data.model && typeof data.timingMs === "number"
+          ? { model: data.model, timingMs: data.timingMs }
+          : undefined;
+
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.reply || "Sorry, I didn’t get a response." },
+        { role: "assistant", content: data.reply || "Sorry, I didn’t get a response.", timing },
       ]);
+      buzz(18);
+      playReplyChime();
     } catch {
+      const elapsed = performance.now() - (generationStartedAtRef.current ?? performance.now());
+      const waitFor = Math.max(0, 400 - elapsed);
+      if (waitFor > 0) await new Promise((resolve) => window.setTimeout(resolve, waitFor));
       setMessages((prev) => [
         ...prev,
         {
@@ -524,7 +650,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           content: "Something went wrong reaching the server. Please try again in a moment.",
         },
       ]);
+      buzz(18);
+      playReplyChime();
     } finally {
+      generationStartedAtRef.current = null;
       setLoading(false);
     }
   }
@@ -532,9 +661,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   function startNewChat() {
     setMessages([welcomeFor(mode)]);
     setInput("");
-    setLastTiming(null);
     setLoading(false);
+    setScopeOpen(false);
     inputRef.current?.focus();
+  }
+
+  function selectMode(nextMode: GaryMode) {
+    setScopeOpen(false);
+    if (nextMode !== mode) setMode(nextMode);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -543,6 +677,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       sendMessage();
     }
   }
+
+  const currentScope = SCOPE_OPTIONS.find((option) => option.mode === mode) ?? SCOPE_OPTIONS[2];
 
   const chatPanel = (
     <div
@@ -556,87 +692,104 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       <div className="border-b bg-primary/5 px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-9 h-9 shrink-0 rounded-full overflow-hidden shadow-sm">
-              <img
-                src="/gary-favicon.svg"
-                alt="Gary"
-                className="w-full h-full object-cover"
-              />
+            <GaryAvatar active={loading} />
+            <div className="min-w-0">
+              <p className="font-black tracking-tight text-sm text-primary leading-tight">Gary</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground whitespace-nowrap">Your AI guide to ElazarOS</p>
             </div>
-            <p className="font-semibold text-sm text-primary leading-tight">Gary</p>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
-          <select
-            value={mode}
-            onChange={(e) => setMode(e.target.value as GaryMode)}
-            className="w-[92px] text-xs rounded-md border bg-background px-2 py-1 text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary truncate"
-            title="Conversation mode"
-          >
-            {(Object.keys(MODE_LABELS) as GaryMode[]).map((m) => (
-              <option key={m} value={m}>
-                {MODE_LABELS[m]}
-              </option>
-            ))}
-          </select>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={startNewChat}
-            aria-label="Start new chat"
-            title="New chat"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
-
-          {!fullPage && (
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={() => setScopeOpen(true)}
+              className="max-w-[150px] inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary shadow-sm hover:bg-primary/15 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              aria-label="Choose Gary scope"
+            >
+              <span className="truncate">{currentScope.label}</span>
+            </button>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => setOpen(false)}
-              aria-label="Close chat"
+              onClick={startNewChat}
+              aria-label="Start new chat"
+              title="New chat"
             >
-              <X className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
             </Button>
-          )}
+            {!fullPage && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setOpen(false)}
+                aria-label="Close chat"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </div>
-        <p className="mt-1 pl-11 text-[11px] text-muted-foreground whitespace-nowrap">
-          Your AI guide to ElazarOS
-        </p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={cn("flex flex-col", msg.role === "user" ? "items-end" : "items-start")}
-          >
-            <div
-              className={cn(
-                "max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap shadow-sm",
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-secondary text-foreground rounded-bl-md border border-border/60"
+        {messages.map((msg, i) => {
+          const isGary = msg.role === "assistant";
+          const showGaryAvatar = isGary && (i === 0 || messages[i - 1].role !== "assistant");
+          const showSuggestions = i === 0 && isGary && messages.length === 1;
+
+          return (
+            <div key={i} className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}>
+              {isGary && (
+                <div className="w-7 mr-2 shrink-0 self-start">
+                  {showGaryAvatar ? <GaryAvatar active={loading && i === messages.length - 1} /> : null}
+                </div>
               )}
-            >
-              {msg.content}
-            </div>
-            {msg.role === "assistant" && i === messages.length - 1 && lastTiming && !loading && (
-              <div className="mt-1 px-1 text-[10px] text-muted-foreground/70">
-                {lastTiming.model.split(":").slice(1).join(":")} · {(lastTiming.timingMs / 1000).toFixed(1)}s
+              <div className={cn("flex max-w-[88%] flex-col", msg.role === "user" ? "items-end" : "items-start")}>
+                <div
+                  className={cn(
+                    "rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap shadow-sm",
+                    msg.role === "user"
+                      ? "bg-[#1737c8] text-white rounded-br-md"
+                      : "bg-secondary text-foreground rounded-bl-md border border-border/60"
+                  )}
+                >
+                  {msg.content}
+                </div>
+
+                {isGary && msg.timing && (
+                  <div className="mt-1 px-1 text-[10px] text-muted-foreground/65">
+                    Gary-3.5-flash-lite · {(msg.timing.timingMs / 1000).toFixed(1)}s
+                  </div>
+                )}
+
+                {showSuggestions && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {SUGGESTED_QUESTIONS[mode].map((question) => (
+                      <button
+                        key={question}
+                        type="button"
+                        onClick={() => void sendMessage(question)}
+                        className="rounded-full border border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs font-medium text-primary transition hover:bg-primary/10 active:scale-[0.98]"
+                      >
+                        {question}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5">
-              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            <div className="w-7 mr-2 shrink-0 self-start">
+              <GaryAvatar active />
+            </div>
+            <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-muted-foreground">
+              Gary is thinking…
             </div>
           </div>
         )}
@@ -652,23 +805,82 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
           disabled={loading || showGate}
-          className="flex-1 h-10 rounded-2xl border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+          className="flex-1 h-10 rounded-2xl border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1737c8]/40 disabled:opacity-50"
         />
         <Button
           size="icon"
-          className="h-10 w-10 rounded-2xl shrink-0"
-          onClick={sendMessage}
+          className="h-10 w-10 rounded-2xl shrink-0 bg-[#1737c8] text-white hover:bg-[#122da5]"
+          onClick={() => void sendMessage()}
           disabled={loading || !input.trim() || showGate}
           aria-label="Send"
         >
           <Send className="w-4 h-4" />
         </Button>
       </div>
+
+      {scopeOpen && (
+        <div
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-black/45 backdrop-blur-[2px]"
+          onClick={() => setScopeOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-t-3xl border bg-background p-4 pb-6 shadow-2xl animate-in slide-in-from-bottom-4 duration-300"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Choose Gary scope"
+          >
+            <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
+            <div className="mb-3 px-1">
+              <p className="text-sm font-bold">Choose a Gary scope</p>
+              <p className="text-xs text-muted-foreground">A new conversation starts when you switch.</p>
+            </div>
+            <div className="space-y-2">
+              {SCOPE_OPTIONS.map((option) => {
+                const Icon = option.icon;
+                const active = option.mode === mode;
+                return (
+                  <button
+                    key={option.mode}
+                    type="button"
+                    onClick={() => selectMode(option.mode)}
+                    className={cn(
+                      "w-full flex items-center gap-3 rounded-2xl border p-3 text-left transition",
+                      active
+                        ? "border-[#1737c8]/35 bg-[#1737c8]/10"
+                        : "border-border bg-background hover:bg-muted/50"
+                    )}
+                  >
+                    <span className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                      active ? "bg-[#1737c8] text-white" : "bg-muted text-muted-foreground"
+                    )}>
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold">{option.label}</span>
+                      <span className="block text-xs text-muted-foreground">{option.description}</span>
+                    </span>
+                    {active && <Check className="h-5 w-5 shrink-0 text-[#1737c8]" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
   return (
     <>
+      <style>{`
+        @keyframes gary-avatar-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(23, 55, 200, 0.15); transform: scale(1); }
+          50% { box-shadow: 0 0 14px 4px rgba(23, 55, 200, 0.32); transform: scale(1.04); }
+        }
+        .gary-avatar-pulse { animation: gary-avatar-pulse 1.15s ease-in-out infinite; }
+      `}</style>
       {fullPage ? (
         chatPanel
       ) : (
