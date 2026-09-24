@@ -8,7 +8,7 @@ import {
   Fingerprint,
   BriefcaseBusiness,
   Heart,
-  ShieldKeyhole,
+  Shield,
   Check,
   ShieldX,
   ShieldCheck,
@@ -70,7 +70,7 @@ const SCOPE_OPTIONS: Array<{
     mode: "full",
     label: "Full Access",
     description: "A broader view of Elazar, personal and professional.",
-    icon: ShieldKeyhole,
+    icon: Shield,
   },
 ];
 
