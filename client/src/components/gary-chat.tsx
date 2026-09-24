@@ -556,7 +556,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       <div className="border-b bg-primary/5 px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-9 h-9 shrink-0 rounded-full overflow-hidden border border-border/60 shadow-sm bg-background">
+            <div className="w-9 h-9 shrink-0 rounded-full overflow-hidden shadow-sm">
               <img
                 src="/gary-favicon.svg"
                 alt="Gary"
