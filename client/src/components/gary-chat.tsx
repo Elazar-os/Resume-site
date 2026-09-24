@@ -538,18 +538,16 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           : "fixed bottom-24 right-4 z-50 w-[min(100vw-2rem,380px)] h-[min(70vh,520px)] rounded-2xl"
       )}
     >
-      <div className="flex items-center justify-between gap-2 px-3 py-3 border-b bg-primary/5">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold">
-            G
-          </div>
-          <div className="min-w-0">
+      <div className="border-b bg-primary/5 px-3 py-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-sm font-bold">
+              G
+            </div>
             <p className="font-semibold text-sm text-primary leading-tight">Gary</p>
-            <p className="text-[11px] text-muted-foreground truncate">Your AI guide to ElazarOS</p>
           </div>
-        </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as GaryMode)}
@@ -585,7 +583,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               <X className="w-4 h-4" />
             </Button>
           )}
+          </div>
         </div>
+        <p className="mt-1 pl-11 text-[11px] text-muted-foreground whitespace-nowrap">
+          Your AI guide to ElazarOS
+        </p>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
