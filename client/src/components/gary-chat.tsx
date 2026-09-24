@@ -432,6 +432,21 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  useEffect(() => {
+    const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (!favicon) return;
+
+    const previousHref = favicon.getAttribute("href");
+    const previousType = favicon.getAttribute("type");
+    favicon.setAttribute("href", "/gary-favicon.svg");
+    favicon.setAttribute("type", "image/svg+xml");
+
+    return () => {
+      if (previousHref) favicon.setAttribute("href", previousHref);
+      if (previousType) favicon.setAttribute("type", previousType);
+    };
+  }, []);
+
   const handleGateClose = useCallback((result: "success" | "failed" | "cancelled") => {
     setShowGate(false);
     const text = pendingPrivateRef.current;
