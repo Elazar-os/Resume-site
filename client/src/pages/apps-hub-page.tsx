@@ -37,7 +37,7 @@ export default function AppsHubPage() {
       return;
     }
     if (app.internal) {
-      window.location.hash = app.replitUrl.replace(/^#/, "");
+      window.location.href = app.replitUrl;
       return;
     }
     window.open(app.replitUrl, "_blank");
