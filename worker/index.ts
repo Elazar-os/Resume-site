@@ -288,7 +288,7 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
   );
 }
 
-async function callAnyModel(env: Env, system: string, messages: ChatMessage[], requested?: string): Promise<{ reply: string; model: string }> {
+async function callAnyModel(env: Env, system: string, messages: ChatMessage[], requested?: string): Promise<{ reply: string; model: string; timingMs: number }> {
   const startedAt = Date.now();
   const routes = availableRoutes(env, requested);
   console.log("Gary model selection:", requested || "auto", routes.map((r) => `${r.provider}:${r.model}`).join(" -> "));
@@ -299,7 +299,7 @@ async function callAnyModel(env: Env, system: string, messages: ChatMessage[], r
       const routeStartedAt = Date.now();
       const reply = await callRoute(env, route, system, messages);
       console.log("Gary model success:", route.provider, route.model, "ms:", Date.now() - routeStartedAt, "totalMs:", Date.now() - startedAt);
-      return { reply, model: `${route.provider}:${route.model}` };
+      return { reply, model: `${route.provider}:${route.model}`, timingMs: Date.now() - startedAt };
     } catch (err) {
       lastError = err;
       console.error("Gary model failed:", route.provider, route.model, "ms:", Date.now() - startedAt, err);
@@ -341,8 +341,8 @@ export default {
           });
         }
         const system = buildSystemMessage(mode);
-        const { reply, model } = await callAnyModel(env, system, messages, body.model);
-        return new Response(JSON.stringify({ reply, mode, model }), {
+        const { reply, model, timingMs } = await callAnyModel(env, system, messages, body.model);
+        return new Response(JSON.stringify({ reply, mode, model, timingMs }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
       } catch (err: any) {
