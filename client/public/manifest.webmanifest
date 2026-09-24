@@ -1,0 +1,13 @@
+{
+  "name": "Gary — ElazarOS",
+  "short_name": "Gary",
+  "description": "Gary, your AI guide to ElazarOS.",
+  "start_url": "/#/gary",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#08135f",
+  "theme_color": "#1029b8",
+  "icons": [
+    { "src": "/gary-favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
