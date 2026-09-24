@@ -530,7 +530,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     ),
   ]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);\n  const [loadingPhrase, setLoadingPhrase] = useState(loadingPhrases[0]);
+  const [loading, setLoading] = useState(false);
+  const [loadingPhrase, setLoadingPhrase] = useState(loadingPhrases[0]);
   const [showGate, setShowGate] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
