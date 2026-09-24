@@ -20,8 +20,8 @@
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
-  <rect x="28" y="28" width="456" height="456" rx="92" fill="url(#bg)"/>
-  <rect x="30" y="30" width="452" height="452" rx="90" fill="none" stroke="url(#rim)" stroke-width="7"/>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  <rect x="3" y="3" width="506" height="506" rx="107" fill="none" stroke="url(#rim)" stroke-width="7"/>
   <path d="M382 188c58 4 91 31 91 66 0 41-50 73-126 73-89 0-170-31-231-77" fill="none" stroke="url(#swoosh)" stroke-width="20" stroke-linecap="round" filter="url(#glow)" opacity=".95"/>
   <text x="256" y="349" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="255" font-weight="800" fill="#fff">G</text>
 </svg>
