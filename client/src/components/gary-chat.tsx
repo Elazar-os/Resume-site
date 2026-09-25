@@ -1009,11 +1009,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 Self-taught developer and builder focused on practical software, AI, and digital experiences.
               </p>
 
-              <div className="mt-5 flex items-center gap-5 text-sm">
-                <span className="text-white/70"><strong className="font-semibold text-white">0</strong> followers</span>
-                <span className="text-white/70"><strong className="font-semibold text-white">0</strong> following</span>
-              </div>
-
               <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
                 <div className="px-3 py-3 text-center">
                   <div className="text-lg font-semibold text-white">11</div>
