@@ -850,12 +850,12 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                         </div>
                       </div>
                       <div className="divide-y divide-white/10">
-                        <a href="https://github.com/Elazar-os/KOD-Invoice-Tracker-" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
+                        <div className="px-4 py-3">
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">KOD Invoice Tracker</div><div className="mt-1 text-[11px] text-white/45">Invoice and business workflow project</div></div>
-                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Project</span>
+                            <span className="shrink-0 text-[10px] font-medium text-white/35">Project</span>
                           </div>
-                        </a>
+                        </div>
                         <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">Resume Site</div><div className="mt-1 text-[11px] text-white/45">ElazarOS portfolio and apps hub</div></div>
