@@ -941,7 +941,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 </div>
               </a>
 
-              <a href="https://elazaros.onrender.com/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+              <a href="https://elazaros-production-ecfd.up.railway.app/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold text-white/90">ElazarOS Menu Site</div>
