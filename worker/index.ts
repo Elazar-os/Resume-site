@@ -213,7 +213,9 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     systemInstruction: { parts: [{ text: system }] },
     contents,
     generationConfig: {
-      temperature: 0.7,
+      thinkingConfig: {
+        thinkingLevel: "medium",
+      },
       maxOutputTokens: 512,
     },
   };
