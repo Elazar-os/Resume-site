@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Mail, Phone, MapPin, CheckCircle2, Download } from "lucide-react";
+import { Mail, Phone, MapPin, CheckCircle2 } from "lucide-react";
 
 const RESUME = {
   personalInfo: {
@@ -75,8 +75,6 @@ export default function ResumePDF() {
     document.title = "Elazar Greisman — Resume";
   }, []);
 
-  const handlePrint = () => window.print();
-
   return (
     <>
       <style>{`
@@ -98,38 +96,6 @@ export default function ResumePDF() {
           padding: 32px 16px 64px;
           background: #f4f4f5;
         }
-
-        .toolbar {
-          width: 100%;
-          max-width: 780px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .toolbar-label {
-          font-size: 13px;
-          color: #71717a;
-        }
-
-        .print-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: #18181b;
-          color: #fff;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          font-family: 'Inter', sans-serif;
-          transition: background 0.15s;
-        }
-
-        .print-btn:hover { background: #3f3f46; }
 
         .resume {
           width: 100%;
@@ -212,7 +178,6 @@ export default function ResumePDF() {
         @media print {
           body { background: #fff !important; }
           .page-wrapper { padding: 0 !important; background: #fff !important; }
-          .toolbar { display: none !important; }
           .resume {
             box-shadow: none !important;
             border-radius: 0 !important;
@@ -223,16 +188,7 @@ export default function ResumePDF() {
         }
       `}</style>
 
-      <div className="page-wrapper">
-        <div className="toolbar">
-          <span className="toolbar-label">Elazar Greisman — Resume Preview</span>
-          <button className="print-btn" onClick={handlePrint}>
-            <Download size={15} />
-            Save as PDF
-          </button>
-        </div>
-
-        <div className="resume">
+      <div className="page-wrapper">        <div className="resume">
           {/* Header */}
           <div className="header">
             <h1>{RESUME.personalInfo.name}</h1>
