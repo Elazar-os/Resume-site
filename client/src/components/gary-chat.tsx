@@ -20,6 +20,7 @@ import {
   FolderKanban,
   CalendarDays,
   FileText,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,13 +113,16 @@ type UIMessage = ChatMessage & {
   timing?: { model: string; timingMs: number };
 };
 
-interface GitHubProject {
+interface GitHubProfile {
   name: string;
-  description: string;
-  url: string;
-  language: string | null;
-  stars: number;
-  updatedAt: string | null;
+  login: string;
+  bio: string | null;
+  avatarUrl: string;
+  htmlUrl: string;
+  blog: string | null;
+  publicRepos: number;
+  followers: number;
+  following: number;
 }
 
 function GaryAvatar() {
@@ -549,8 +553,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [scopeOpen, setScopeOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [connectorsOpen, setConnectorsOpen] = useState(false);
-  const [githubProjects, setGithubProjects] = useState<GitHubProject[]>([]);
-  const [githubProjectsLoading, setGithubProjectsLoading] = useState(true);
+  const [githubOpen, setGithubOpen] = useState(false);
+  const [documentsOpen, setDocumentsOpen] = useState(false);
+  const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
+  const [githubProfileLoading, setGithubProfileLoading] = useState(true);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -579,22 +585,22 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadGitHubProjects() {
+    async function loadGitHubProfile() {
       try {
-        const res = await fetch("/api/github/projects");
+        const res = await fetch("/api/github/profile");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (!cancelled) {
-          setGithubProjects(Array.isArray(data.projects) ? data.projects : []);
+        if (!cancelled && data.profile) {
+          setGithubProfile(data.profile);
         }
       } catch {
-        if (!cancelled) setGithubProjects([]);
+        if (!cancelled) setGithubProfile(null);
       } finally {
-        if (!cancelled) setGithubProjectsLoading(false);
+        if (!cancelled) setGithubProfileLoading(false);
       }
     }
 
-    void loadGitHubProjects();
+    void loadGitHubProfile();
 
     return () => {
       cancelled = true;
@@ -945,48 +951,174 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
             <button
               type="button"
-              disabled
-              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+              onClick={() => {
+                setConnectorsOpen(false);
+                setGithubOpen(true);
+              }}
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
                 <Github className="h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-white/80">GitHub</span>
-                <span className="block text-xs leading-relaxed text-white/40">Repositories, commits, and project activity.</span>
+                <span className="block text-sm font-semibold text-white/90">GitHub</span>
+                <span className="block text-xs leading-relaxed text-white/50">Elazar-OS public profile.</span>
               </span>
-              <span className="text-[10px] text-white/35">Coming next</span>
+              <span className="text-[10px] font-medium text-[#7f8fff]">Connected</span>
             </button>
 
             <button
               type="button"
-              disabled
-              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+              onClick={() => {
+                setConnectorsOpen(false);
+                setOpen(false);
+                window.location.hash = "/contact";
+              }}
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
-                <CalendarDays className="h-5 w-5" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
+                <Mail className="h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-white/80">Calendar</span>
-                <span className="block text-xs leading-relaxed text-white/40">Future availability and scheduling.</span>
+                <span className="block text-sm font-semibold text-white/90">Contact</span>
+                <span className="block text-xs leading-relaxed text-white/50">Open ElazarOS contact form.</span>
               </span>
-              <span className="text-[10px] text-white/35">Coming next</span>
+              <span className="text-[10px] font-medium text-[#7f8fff]">Open</span>
             </button>
 
             <button
               type="button"
-              disabled
-              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+              onClick={() => {
+                setConnectorsOpen(false);
+                setDocumentsOpen(true);
+              }}
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
                 <FileText className="h-5 w-5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-white/80">Documents</span>
-                <span className="block text-xs leading-relaxed text-white/40">Selected resume and project information.</span>
+                <span className="block text-sm font-semibold text-white/90">Documents</span>
+                <span className="block text-xs leading-relaxed text-white/50">Resume and Shidduch resume.</span>
               </span>
-              <span className="text-[10px] text-white/35">Coming next</span>
+              <span className="text-[10px] font-medium text-[#7f8fff]">2</span>
             </button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={githubOpen} onOpenChange={setGithubOpen}>
+        <SheetContent side="bottom" className="z-[70] max-h-[88dvh] overflow-y-auto rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-5 text-left">
+            <SheetTitle className="flex items-center gap-3 text-base font-semibold tracking-tight text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06]">
+                <Github className="h-5 w-5 text-white/80" />
+              </span>
+              <span>
+                <span className="block">GitHub</span>
+                <span className="block text-xs font-normal text-white/45">Public profile preview</span>
+              </span>
+            </SheetTitle>
+          </SheetHeader>
+
+          {githubProfileLoading ? (
+            <div className="flex min-h-52 items-center justify-center text-sm text-white/45">Loading profile...</div>
+          ) : githubProfile ? (
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
+              <div className="p-5">
+                <div className="flex items-center gap-4">
+                  <img src={githubProfile.avatarUrl} alt="" className="h-16 w-16 rounded-2xl border border-white/10 object-cover" />
+                  <div className="min-w-0">
+                    <h2 className="truncate text-xl font-semibold text-white">{githubProfile.name}</h2>
+                    <p className="text-sm text-white/45">@{githubProfile.login}</p>
+                  </div>
+                </div>
+
+                {githubProfile.bio && (
+                  <p className="mt-5 text-sm leading-6 text-white/65">{githubProfile.bio}</p>
+                )}
+
+                {githubProfile.blog && (
+                  <a
+                    href={githubProfile.blog.startsWith("http") ? githubProfile.blog : `https://${githubProfile.blog}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 block truncate text-sm font-medium text-[#8d9aff] hover:text-white"
+                  >
+                    {githubProfile.blog.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </a>
+                )}
+
+                <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
+                  <div className="px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.publicRepos}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Repositories</div>
+                  </div>
+                  <div className="border-x border-white/10 px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.followers}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Followers</div>
+                  </div>
+                  <div className="px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.following}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Following</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-sm text-white/50">
+              GitHub profile is unavailable right now.
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={documentsOpen} onOpenChange={setDocumentsOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-5 text-left">
+            <SheetTitle className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
+              <FileText className="h-4 w-4 text-[#6b7cff]" />
+              Documents
+            </SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              Simple access to Elazar's resumes.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-2">
+            <a
+              href="#/resume-pdf"
+              onClick={() => setDocumentsOpen(false)}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
+                <FileText className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Resume</span>
+                <span className="block text-xs text-white/45">Professional resume</span>
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#7f8fff]">Open</span>
+            </a>
+
+            <a
+              href="https://docs.google.com/document/d/15zGc0hGWKOJWsRK07uosta1wMopajztiD5drKGUkhdk/export?format=pdf"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setDocumentsOpen(false)}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
+                <FileText className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Shidduch Resume</span>
+                <span className="block text-xs text-white/45">PDF from the shared document</span>
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#7f8fff]">PDF</span>
+            </a>
           </div>
         </SheetContent>
       </Sheet>
