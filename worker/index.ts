@@ -330,7 +330,7 @@ async function callAnyModel(env: Env, system: string, messages: ChatMessage[], r
 function corsHeaders(): HeadersInit {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 }
@@ -341,6 +341,55 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders() });
     }
+    if (url.pathname === "/api/github/profile" && request.method === "GET") {
+      try {
+        const githubResponse = await fetch(
+          "https://api.github.com/users/Elazar-os",
+          {
+            headers: {
+              Accept: "application/vnd.github+json",
+              "User-Agent": "ElazarOS-Gary",
+            },
+          },
+        );
+
+        if (!githubResponse.ok) {
+          throw new Error(`GitHub API error: ${githubResponse.status}`);
+        }
+
+        const profile = (await githubResponse.json()) as any;
+        return new Response(
+          JSON.stringify({
+            source: "github",
+            profile: {
+              name: profile.name || "Elazar-OS",
+              login: profile.login || "Elazar-os",
+              bio: profile.bio || null,
+              avatarUrl: profile.avatar_url || "",
+              htmlUrl: profile.html_url || "https://github.com/Elazar-os",
+              blog: profile.blog || null,
+              publicRepos: profile.public_repos || 0,
+              followers: profile.followers || 0,
+              following: profile.following || 0,
+            },
+          }),
+          {
+            headers: {
+              ...corsHeaders(),
+              "Content-Type": "application/json",
+              "Cache-Control": "public, max-age=300",
+            },
+          },
+        );
+      } catch (err: any) {
+        console.error("GitHub profile error:", err instanceof Error ? err.message : String(err));
+        return new Response(JSON.stringify({ error: "github_profile_unavailable", profile: null }), {
+          status: 200,
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        });
+      }
+    }
+
     if (url.pathname === "/api/github/projects" && request.method === "GET") {
       try {
         const githubResponse = await fetch(
