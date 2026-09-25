@@ -44,12 +44,14 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   const openrouter = !!openrouterKey(env);
 
   const all: ModelRoute[] = [];
-  // Prefer Gemini Flash Lite for fast everyday replies.
-  // Other providers remain as fallbacks.
+  // Prefer the strongest current Gemini Flash model for Gary.
+  // Keep progressively lighter Gemini models as fallbacks.
   if (gemini) {
+    all.push({ provider: "gemini", model: "gemini-3.8-flash" });
+    all.push({ provider: "gemini", model: "gemini-3.7-flash" });
+    all.push({ provider: "gemini", model: "gemini-3.6-flash" });
+    all.push({ provider: "gemini", model: "gemini-3.5-flash" });
     all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-2.5-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-3.1-flash-lite" });
   }
   if (groq) {
     all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
