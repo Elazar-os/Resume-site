@@ -853,7 +853,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       </div>
 
       <Sheet open={scopeOpen} onOpenChange={setScopeOpen}>
-        <SheetContent side="bottom" className="rounded-t-3xl px-4 pb-8 pt-3">
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
           <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
           <SheetHeader className="mb-3 text-left">
             <SheetTitle className="text-sm font-bold">Choose a Gary scope</SheetTitle>
