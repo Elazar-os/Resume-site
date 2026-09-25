@@ -1,4 +1,4 @@
-import { UtensilsCrossed, Users, Heart, MessageCircle, Briefcase, GraduationCap, Lock, Home, Grid3X3, Mail } from "lucide-react";
+import { UtensilsCrossed, Heart, MessageCircle, Briefcase, GraduationCap, Lock, Home, Grid3X3, Mail } from "lucide-react";
 
 export interface AppConfig {
   id: string;
@@ -26,30 +26,6 @@ export const APPS: AppConfig[] = [
     color: "text-orange-500",
     gradient: "from-orange-500 to-amber-500",
     active: true
-  },
-  {
-    id: "pti",
-    name: "PTI Young Pros",
-    description: "Yeshivas Ner Boruch PTI Young Professionals community platform and event management.",
-    subdomain: "pti.elazaros.com",
-    replitUrl: "https://pti-young-pros--hdg4bz496c.replit.app/",
-    icon: Users,
-    color: "text-blue-500",
-    gradient: "from-blue-500 to-cyan-500",
-    active: false,
-    pausedMessage: "PTI Young Pros is temporarily paused. Check back soon!"
-  },
-  {
-    id: "shadchan",
-    name: "Shadchan",
-    description: "Privacy-first matchmaking platform. Secure and confidential shidduch networking.",
-    subdomain: "shadchan.elazaros.com",
-    replitUrl: "https://privacy-first-matchmaking--hdg4bz496c.replit.app/",
-    icon: Heart,
-    color: "text-pink-500",
-    gradient: "from-pink-500 to-rose-500",
-    active: false,
-    pausedMessage: "Shadchan is temporarily paused for maintenance. Check back soon!"
   },
   {
     id: "gary",
