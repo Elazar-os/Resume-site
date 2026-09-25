@@ -856,7 +856,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-4 mb-3 flex gap-2">
+      <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-[calc(1rem+env(safe-area-inset-bottom))] flex gap-2">
         <Button
           type="button"
           size="icon"
