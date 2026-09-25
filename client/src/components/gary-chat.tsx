@@ -899,7 +899,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               Connectors
             </SheetTitle>
             <SheetDescription className="text-xs text-white/50">
-              Choose what Gary can pull into the conversation.
+              Explore Gary's connected information.
             </SheetDescription>
           </SheetHeader>
 
