@@ -216,7 +216,8 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
       thinkingConfig: {
         thinkingLevel: "medium",
       },
-      maxOutputTokens: 512,
+      // Enough room to finish normal answers without making every response long or expensive.
+      maxOutputTokens: 768,
     },
   };
   const startedAt = Date.now();
