@@ -805,7 +805,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                         key={question}
                         type="button"
                         onClick={() => void sendMessage(question)}
-                        className="rounded-full border border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs font-medium text-primary transition hover:bg-primary/10 active:scale-[0.98]"
+                        className="rounded-full border border-white/15 bg-[#171a22] px-3 py-2 text-left text-xs font-medium text-white/80 shadow-sm transition hover:border-[#3156e8]/50 hover:bg-[#1d2230] hover:text-white active:scale-[0.98]"
                       >
                         {question}
                       </button>
