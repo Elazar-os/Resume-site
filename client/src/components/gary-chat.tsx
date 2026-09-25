@@ -991,7 +991,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <span className="block text-sm font-semibold text-white/90">Contact</span>
                 <span className="block text-xs leading-relaxed text-white/50">Open ElazarOS contact form.</span>
               </span>
-              <span className="text-[10px] font-medium text-[#7f8fff]"<ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+              <ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
             </button>
 
             <button
