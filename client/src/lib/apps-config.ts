@@ -58,8 +58,8 @@ export const APPS: AppConfig[] = [
     subdomain: "gary.elazaros.com",
     replitUrl: "https://elazaros-app.elazar-greisman.workers.dev/#/gary",
     icon: MessageCircle,
-    color: "text-purple-500",
-    gradient: "from-purple-500 to-violet-500",
+    color: "text-[#1737c8]",
+    gradient: "from-[#1737c8] to-[#3156e8]",
     active: true,
     internal: true
   }
