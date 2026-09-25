@@ -559,10 +559,18 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   }, [messages, loading]);
 
   useEffect(() => {
-    if (!open) return;
-    chatScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
-    inputRef.current?.focus();
-    window.dispatchEvent(new Event("gary-open"));
+    if (open) {
+      document.body.classList.add("gary-panel-open");
+      chatScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+      inputRef.current?.focus();
+      window.dispatchEvent(new Event("gary-open"));
+    } else {
+      document.body.classList.remove("gary-panel-open");
+    }
+
+    return () => {
+      document.body.classList.remove("gary-panel-open");
+    };
   }, [open]);
 
   useEffect(() => {
@@ -713,8 +721,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       className={cn(
         "flex flex-col bg-background border shadow-2xl overflow-hidden",
         fullPage
-          ? "w-full h-[calc(100vh-4rem)] max-w-2xl mx-auto rounded-xl border-border"
-          : "fixed bottom-24 right-4 z-50 w-[min(100vw-2rem,380px)] h-[min(70vh,520px)] rounded-2xl"
+          ? "fixed inset-0 z-[60] w-full h-[100dvh] rounded-none border-0"
+          : "fixed inset-0 z-[60] w-full h-[100dvh] rounded-none border-0"
       )}
     >
       <div className="flex items-center justify-end gap-1 px-3 py-2 border-b">
@@ -885,6 +893,14 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   return (
     <>
       <style>{`
+        body.gary-panel-open {
+          overflow: hidden;
+        }
+        body.gary-panel-open > * nav,
+        body.gary-panel-open > * footer {
+          display: none !important;
+        }
+
         @keyframes gary-generation-glow {
           0%, 100% { opacity: 0.18; transform: scaleX(0.7); filter: blur(2px); }
           50% { opacity: 0.58; transform: scaleX(1); filter: blur(3px); }
