@@ -902,6 +902,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       <style>{`
         body.gary-panel-open {
           overflow: hidden;
+          background: #0b0d12 !important;
+        }
+        html:has(body.gary-panel-open) {
+          background: #0b0d12 !important;
         }
         body.gary-panel-open > * nav,
         body.gary-panel-open > * footer {
