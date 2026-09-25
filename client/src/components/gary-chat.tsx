@@ -977,7 +977,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       </Sheet>
 
       <Sheet open={githubOpen} onOpenChange={setGithubOpen}>
-        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+        <SheetContent side="bottom" className="z-[70] max-h-[88dvh] overflow-y-auto rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
           <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
           <SheetHeader className="mb-5 text-left">
             <SheetTitle className="flex items-center gap-3 text-base font-semibold tracking-tight text-white">
@@ -994,9 +994,11 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
             <div className="p-5">
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1737c8] to-[#3156e8] text-2xl font-bold text-white shadow-[0_0_24px_rgba(49,86,232,0.2)]">
-                  E
-                </div>
+                <img
+                  src="https://github.com/Elazar-os.png"
+                  alt=""
+                  className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
+                />
                 <div className="min-w-0">
                   <h2 className="truncate text-xl font-semibold text-white">Elazar-OS</h2>
                   <p className="text-sm text-white/45">@Elazar-os</p>
@@ -1004,14 +1006,19 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               </div>
 
               <p className="mt-5 text-sm leading-6 text-white/60">
-                Elazar's public GitHub profile and open-source work.
+                Elazar's public GitHub profile and projects.
               </p>
+
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-3">
+                <div className="text-sm font-medium text-white/80">Public GitHub profile</div>
+                <div className="mt-1 text-xs text-white/40">Projects, code, and public activity</div>
+              </div>
 
               <a
                 href="https://github.com/Elazar-os"
                 target="_blank"
                 rel="noreferrer"
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-white/20 hover:bg-white/[0.09] hover:text-white"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-white/20 hover:bg-white/[0.09] hover:text-white"
               >
                 <Github className="h-4 w-4" />
                 View GitHub profile
