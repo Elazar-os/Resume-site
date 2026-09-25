@@ -854,10 +854,10 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
       <Sheet open={scopeOpen} onOpenChange={setScopeOpen}>
         <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
-          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
           <SheetHeader className="mb-3 text-left">
-            <SheetTitle className="text-sm font-bold">Choose a Gary scope</SheetTitle>
-            <SheetDescription className="text-xs">
+            <SheetTitle className="text-base font-semibold tracking-tight text-white">Choose a Gary scope</SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
               A new conversation starts when you switch.
             </SheetDescription>
           </SheetHeader>
@@ -871,23 +871,23 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                   type="button"
                   onClick={() => selectMode(option.mode)}
                   className={cn(
-                    "w-full flex items-center gap-3 rounded-2xl border p-3 text-left transition",
+                    "w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-200",
                     active
-                      ? "border-[#1737c8]/35 bg-[#1737c8]/10"
-                      : "border-border bg-background hover:bg-muted/50"
+                      ? "border-[#3156e8]/55 bg-[#1737c8]/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_18px_rgba(49,86,232,0.12)]"
+                      : "border-white/10 bg-white/[0.045] hover:border-white/20 hover:bg-white/[0.07]"
                   )}
                 >
                   <span className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                    active ? "bg-[#1737c8] text-white" : "bg-muted text-muted-foreground"
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
+                    active ? "border-[#6b7cff]/40 bg-[#1737c8] text-white shadow-[0_0_14px_rgba(49,86,232,0.3)]" : "border-white/10 bg-white/[0.06] text-white/55"
                   )}>
                     <Icon className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold">{option.label}</span>
-                    <span className="block text-xs text-muted-foreground">{option.description}</span>
+                    <span className="block text-sm font-semibold text-white/90">{option.label}</span>
+                    <span className="block text-xs leading-relaxed text-white/50">{option.description}</span>
                   </span>
-                  {active && <Check className="h-5 w-5 shrink-0 text-[#1737c8]" />}
+                  {active && <Check className="h-5 w-5 shrink-0 text-[#6b7cff]" />}
                 </button>
               );
             })}
