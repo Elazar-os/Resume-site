@@ -341,7 +341,52 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders() });
     }
-    if (url.pathname === "/api/gary" && request.method === "POST") {
+    if (url.pathname === "/api/github/projects" && request.method === "GET") {
+      try {
+        const githubResponse = await fetch(
+          "https://api.github.com/users/Elazar-os/repos?sort=updated&direction=desc&per_page=20",
+          {
+            headers: {
+              Accept: "application/vnd.github+json",
+              "User-Agent": "ElazarOS-Gary",
+            },
+          },
+        );
+
+        if (!githubResponse.ok) {
+          throw new Error(`GitHub API error: ${githubResponse.status}`);
+        }
+
+        const repos = (await githubResponse.json()) as Array<any>;
+        const projects = repos
+          .filter((repo) => !repo.fork && !repo.archived)
+          .slice(0, 10)
+          .map((repo) => ({
+            name: repo.name,
+            description: repo.description || "ElazarOS project",
+            url: repo.html_url,
+            language: repo.language || null,
+            stars: repo.stargazers_count || 0,
+            updatedAt: repo.updated_at || null,
+          }));
+
+        return new Response(JSON.stringify({ source: "github", owner: "Elazar-os", projects }), {
+          headers: {
+            ...corsHeaders(),
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=300",
+          },
+        });
+      } catch (err: any) {
+        console.error("GitHub projects error:", err instanceof Error ? err.message : String(err));
+        return new Response(JSON.stringify({ error: "github_projects_unavailable", projects: [] }), {
+          status: 200,
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        });
+      }
+    }
+
+  if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
         if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
           return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
