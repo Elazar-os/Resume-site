@@ -840,56 +840,34 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 {showSuggestions && (
                   <>
                     <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/80">
-                            <Github className="h-4 w-4" />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold text-white/90">Built by Elazar</div>
-                            <div className="text-[10px] text-white/40">Live from GitHub</div>
-                          </div>
+                      <div className="flex items-center gap-2.5 border-b border-white/10 px-4 py-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/80">
+                          <Github className="h-4 w-4" />
                         </div>
-                        <a
-                          href="https://github.com/Elazar-os"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="shrink-0 text-[10px] font-medium text-[#7f8fff] transition hover:text-white"
-                        >
-                          View GitHub
-                        </a>
+                        <div className="min-w-0">
+                          <div className="text-xs font-semibold text-white/90">Selected projects</div>
+                          <div className="text-[10px] text-white/40">A few things Elazar has built</div>
+                        </div>
                       </div>
-
                       <div className="divide-y divide-white/10">
-                        {githubProjectsLoading ? (
-                          <div className="px-4 py-4 text-xs text-white/40">Loading projects…</div>
-                        ) : githubProjects.length > 0 ? (
-                          githubProjects.slice(0, 4).map((project) => (
-                            <a
-                              key={project.name}
-                              href={project.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="block px-4 py-3 transition hover:bg-white/[0.04]"
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0">
-                                  <div className="truncate text-xs font-semibold text-white/90">{project.name}</div>
-                                  <div className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-white/45">
-                                    {project.description}
-                                  </div>
-                                </div>
-                                {project.language && (
-                                  <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.05] px-2 py-1 text-[9px] text-white/45">
-                                    {project.language}
-                                  </span>
-                                )}
-                              </div>
-                            </a>
-                          ))
-                        ) : (
-                          <div className="px-4 py-4 text-xs text-white/40">GitHub projects are unavailable right now.</div>
-                        )}
+                        <a href="https://github.com/Elazar-os/KOD-Invoice-Tracker-" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">KOD Invoice Tracker</div><div className="mt-1 text-[11px] text-white/45">Invoice and business workflow project</div></div>
+                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Project</span>
+                          </div>
+                        </a>
+                        <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">Resume Site</div><div className="mt-1 text-[11px] text-white/45">ElazarOS portfolio and apps hub</div></div>
+                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                          </div>
+                        </a>
+                        <a href="https://elazaros.onrender.com/" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">ElazarOS Menu Site</div><div className="mt-1 text-[11px] text-white/45">King of Delancey digital menu system</div></div>
+                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                          </div>
+                        </a>
                       </div>
                     </div>
 
