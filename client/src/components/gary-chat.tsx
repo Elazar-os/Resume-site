@@ -719,13 +719,13 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const chatPanel = (
     <div
       className={cn(
-        "flex flex-col bg-background border shadow-2xl overflow-hidden",
+        "flex flex-col bg-[#0b0d12] text-white border border-white/10 shadow-2xl overflow-hidden",
         fullPage
           ? "fixed inset-0 z-[60] w-full h-[100dvh] rounded-none border-0"
           : "fixed inset-0 z-[60] w-full h-[100dvh] rounded-none border-0"
       )}
     >
-      <div className="flex items-center justify-end gap-1 px-3 py-2 border-b">
+      <div className="flex items-center justify-end gap-1 px-3 py-2 border-b border-white/10 bg-[#0b0d12]">
           <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
@@ -759,7 +759,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           </div>
         </div>
 
-      <div ref={chatScrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div ref={chatScrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#0b0d12]">
         {messages.map((msg, i) => {
           const isGary = msg.role === "assistant";
           const showGaryAvatar = isGary && (i === 0 || messages[i - 1].role !== "assistant");
@@ -778,7 +778,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                     "rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap shadow-sm",
                     msg.role === "user"
                       ? "bg-[#1737c8] text-white rounded-br-md"
-                      : "bg-secondary text-foreground rounded-bl-md border border-border/60"
+                      : "bg-[#171a22] text-white/90 rounded-bl-md border border-white/10"
                   )}
                 >
                   {msg.content}
@@ -822,7 +822,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             <div className="w-7 mr-2 shrink-0 self-start">
               <div className="gary-generation-signal" aria-hidden="true" />
             </div>
-            <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-muted-foreground">
+            <div className="bg-[#171a22] rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-white/55 border border-white/10">
               {loadingPhrase}
             </div>
           </div>
@@ -830,7 +830,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t bg-background/95 p-3 flex gap-2">
+      <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-5 flex gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -839,7 +839,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
           disabled={loading || showGate}
-          className="flex-1 h-10 rounded-2xl border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#1737c8]/40 disabled:opacity-50"
+          className="flex-1 h-10 rounded-2xl border border-white/10 bg-[#171a22] px-4 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#1737c8]/40 disabled:opacity-50"
         />
         <Button
           size="icon"
