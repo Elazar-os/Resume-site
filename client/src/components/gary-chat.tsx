@@ -1123,7 +1123,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <span className="block text-sm font-semibold text-white/90">Shidduch Resume</span>
                 <span className="block text-xs text-white/45">Personal / Shidduch resume</span>
               </span>
-              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#7f8fff]"<ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+              <ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
             </a>
           </div>
         </SheetContent>
