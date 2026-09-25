@@ -15,6 +15,7 @@ import {
   Lock,
   Eye,
   EyeOff,
+  Github,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,6 +107,15 @@ const SUGGESTED_QUESTIONS: Record<GaryMode, string[]> = {
 type UIMessage = ChatMessage & {
   timing?: { model: string; timingMs: number };
 };
+
+interface GitHubProject {
+  name: string;
+  description: string;
+  url: string;
+  language: string | null;
+  stars: number;
+  updatedAt: string | null;
+}
 
 function GaryAvatar() {
   return (
@@ -533,6 +543,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [loadingPhrase, setLoadingPhrase] = useState(loadingPhrases[0]);
   const [showGate, setShowGate] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
+  const [githubProjects, setGithubProjects] = useState<GitHubProject[]>([]);
+  const [githubProjectsLoading, setGithubProjectsLoading] = useState(true);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -557,6 +569,31 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadGitHubProjects() {
+      try {
+        const res = await fetch("/api/github/projects");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          setGithubProjects(Array.isArray(data.projects) ? data.projects : []);
+        }
+      } catch {
+        if (!cancelled) setGithubProjects([]);
+      } finally {
+        if (!cancelled) setGithubProjectsLoading(false);
+      }
+    }
+
+    void loadGitHubProjects();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -801,7 +838,62 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 )}
 
                 {showSuggestions && (
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <>
+                    <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/80">
+                            <Github className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-semibold text-white/90">Built by Elazar</div>
+                            <div className="text-[10px] text-white/40">Live from GitHub</div>
+                          </div>
+                        </div>
+                        <a
+                          href="https://github.com/Elazar-os"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="shrink-0 text-[10px] font-medium text-[#7f8fff] transition hover:text-white"
+                        >
+                          View GitHub
+                        </a>
+                      </div>
+
+                      <div className="divide-y divide-white/10">
+                        {githubProjectsLoading ? (
+                          <div className="px-4 py-4 text-xs text-white/40">Loading projects…</div>
+                        ) : githubProjects.length > 0 ? (
+                          githubProjects.slice(0, 4).map((project) => (
+                            <a
+                              key={project.name}
+                              href={project.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="block px-4 py-3 transition hover:bg-white/[0.04]"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <div className="truncate text-xs font-semibold text-white/90">{project.name}</div>
+                                  <div className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-white/45">
+                                    {project.description}
+                                  </div>
+                                </div>
+                                {project.language && (
+                                  <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.05] px-2 py-1 text-[9px] text-white/45">
+                                    {project.language}
+                                  </span>
+                                )}
+                              </div>
+                            </a>
+                          ))
+                        ) : (
+                          <div className="px-4 py-4 text-xs text-white/40">GitHub projects are unavailable right now.</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
                     {SUGGESTED_QUESTIONS[mode].map((question) => (
                       <button
                         key={question}
@@ -812,7 +904,8 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                         {question}
                       </button>
                     ))}
-                  </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
