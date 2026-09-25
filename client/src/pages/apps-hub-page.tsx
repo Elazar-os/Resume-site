@@ -4,13 +4,6 @@ import { TopNavigation } from "@/components/top-navigation";
 
 const PROJECTS = [
   {
-    id: "invoice",
-    name: "KOD Invoice Tracker",
-    description: "Invoice and business workflow project.",
-    url: "https://kod-tracker.pages.dev/",
-    icon: FileText,
-  },
-  {
     id: "resume",
     name: "Resume Site",
     description: "ElazarOS portfolio and apps hub.",
@@ -23,6 +16,13 @@ const PROJECTS = [
     description: "King of Delancey digital menu system.",
     url: "https://elazaros-production-ecfd.up.railway.app/",
     icon: Monitor,
+  },
+  {
+    id: "invoice",
+    name: "KOD Invoice Tracker",
+    description: "Invoice and business workflow project.",
+    url: "https://kod-tracker.pages.dev/",
+    icon: FileText,
   },
 ];
 
