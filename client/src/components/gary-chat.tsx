@@ -730,7 +730,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             <button
               type="button"
               onClick={() => setScopeOpen(true)}
-              className="max-w-[150px] inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary shadow-sm hover:bg-primary/15 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="max-w-[150px] inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-semibold text-white/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition hover:bg-white/[0.1] hover:text-white focus:outline-none focus:border-white/25 focus:ring-2 focus:ring-[#6b7cff]/30"
               aria-label="Choose Gary scope"
             >
               <span className="truncate">{currentScope.label}</span>
