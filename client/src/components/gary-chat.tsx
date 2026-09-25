@@ -921,15 +921,15 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035]">
             <div className="divide-y divide-white/10">
-              <div className="px-4 py-3.5">
+              <a href="https://kod-tracker.pages.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold text-white/90">KOD Invoice Tracker</div>
                     <div className="mt-1 text-xs text-white/45">Invoice and business workflow project</div>
                   </div>
-                  <span className="shrink-0 text-[10px] font-medium text-white/35">Project</span>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
                 </div>
-              </div>
+              </a>
 
               <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
                 <div className="flex items-center justify-between gap-3">
