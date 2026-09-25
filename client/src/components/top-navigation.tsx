@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Menu, X, ExternalLink, PauseCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,12 @@ import { cn } from "@/lib/utils";
 export function TopNavigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    const closeNav = () => setIsMenuOpen(false);
+    window.addEventListener("gary-open", closeNav);
+    return () => window.removeEventListener("gary-open", closeNav);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") return location === "/";
@@ -90,7 +96,11 @@ export function TopNavigation() {
             variant="ghost"
             size="icon"
             className="lg:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => {
+              const nextOpen = !isMenuOpen;
+              setIsMenuOpen(nextOpen);
+              if (nextOpen) window.dispatchEvent(new Event("nav-open"));
+            }}
             data-testid="mobile-menu-toggle"
           >
             {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
