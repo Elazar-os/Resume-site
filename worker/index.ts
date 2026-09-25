@@ -214,10 +214,10 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     contents,
     generationConfig: {
       thinkingConfig: {
-        thinkingLevel: "medium",
+        thinkingLevel: "low",
       },
-      // Enough room to finish normal answers without making every response long or expensive.
-      maxOutputTokens: 768,
+      // 1024 is a ceiling for combined thinking + visible output; low thinking keeps routine chats from burning the whole budget.
+      maxOutputTokens: 1024,
     },
   };
   const startedAt = Date.now();
