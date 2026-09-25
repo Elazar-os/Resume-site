@@ -786,7 +786,15 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
                 {isGary && msg.timing && (
                   <div className="mt-1 px-1 text-[10px] text-muted-foreground/65">
-                    Gary-3.5-flash-lite · {(msg.timing.timingMs / 1000).toFixed(1)}s
+                    {msg.timing.model.includes("gemini-3.8-flash")
+                      ? "Gary Flash 3.8"
+                      : msg.timing.model.includes("gemini-3.7-flash")
+                      ? "Gary Flash 3.7"
+                      : msg.timing.model.includes("gemini-3.6-flash")
+                      ? "Gary Flash 3.6"
+                      : msg.timing.model.includes("gemini-3.5-flash")
+                      ? "Gary Flash 3.5"
+                      : "Gary"} · {(msg.timing.timingMs / 1000).toFixed(1)}s
                   </div>
                 )}
 
