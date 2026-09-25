@@ -137,18 +137,18 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen bg-[#f5f7fb] font-sans">
       <TopNavigation />
 
-      <div className="max-w-xl mx-auto px-5 py-12 md:py-20">
+      <div className="max-w-2xl mx-auto px-5 py-10 md:py-16">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={containerVariants}
-          className="space-y-10"
+          className="space-y-8"
         >
           <motion.div variants={itemVariants} className="text-center space-y-4">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading tracking-tight text-foreground">
+            <h1 className="text-4xl md:text-5xl font-bold font-heading tracking-tight text-foreground">
               Start the Conversation.
             </h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
@@ -156,7 +156,10 @@ export default function ContactPage() {
             </p>
           </motion.div>
 
-          <motion.div variants={itemVariants}>
+          <motion.div
+            variants={itemVariants}
+            className="rounded-[28px] border border-white/80 bg-white/70 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-2xl md:p-7"
+          >
             {status === "sent" ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -210,7 +213,7 @@ export default function ContactPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
-                    className="text-sm font-medium text-foreground"
+                    className="text-xs font-medium text-slate-600"
                   >
                     Name
                   </Label>
@@ -222,7 +225,7 @@ export default function ContactPage() {
                     onChange={(e) => setName(e.target.value)}
                     required
                     disabled={status === "sending"}
-                    className="h-12 bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    className="h-12 rounded-2xl border border-slate-200/80 bg-white/60 text-slate-900 placeholder:text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl transition-[border-color,box-shadow,background-color] duration-200 focus:border-[#3156e8]/35 focus:bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#6b7cff]/20"
                     data-testid="input-name"
                   />
                 </div>
@@ -280,7 +283,7 @@ export default function ContactPage() {
                     onChange={(e) => setMessage(e.target.value)}
                     required
                     rows={6}
-                    className="resize-none bg-muted/40 border-border/50 focus:border-primary transition-colors"
+                    className="min-h-40 resize-none rounded-2xl border border-slate-200/80 bg-white/60 py-3.5 text-slate-900 placeholder:text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl transition-[border-color,box-shadow,background-color] duration-200 focus:border-[#3156e8]/35 focus:bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#6b7cff]/20"
                     disabled={status === "sending"}
                     data-testid="input-message"
                   />
@@ -288,7 +291,7 @@ export default function ContactPage() {
 
                 {status === "error" && (
                   <div
-                    className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg"
+                    className="flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
                     data-testid="text-error"
                   >
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -299,7 +302,7 @@ export default function ContactPage() {
                 <div className="space-y-4 pt-2">
                   <Button
                     type="submit"
-                    className="w-full h-13 text-base font-semibold rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                    className="w-full h-12 rounded-2xl bg-[#1737c8] text-sm font-semibold text-white shadow-[0_10px_30px_rgba(23,55,200,0.2)] transition-all duration-200 hover:bg-[#2145dc] hover:shadow-[0_14px_38px_rgba(23,55,200,0.28)] hover:scale-[1.005] active:scale-[0.99]"
                     size="lg"
                     disabled={status === "sending"}
                     data-testid="button-submit-contact"
