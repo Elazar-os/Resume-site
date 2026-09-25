@@ -1001,28 +1001,33 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 />
                 <div className="min-w-0">
                   <h2 className="truncate text-xl font-semibold text-white">Elazar-OS</h2>
-                  <p className="text-sm text-white/45">@Elazar-os</p>
+                  <p className="text-sm text-white/45">@Elazar-os · he/him</p>
                 </div>
               </div>
 
-              <p className="mt-5 text-sm leading-6 text-white/60">
-                Elazar's public GitHub profile and projects.
+              <p className="mt-5 text-sm leading-6 text-white/65">
+                Self-taught developer and builder focused on practical software, AI, and digital experiences.
               </p>
 
-              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-3">
-                <div className="text-sm font-medium text-white/80">Public GitHub profile</div>
-                <div className="mt-1 text-xs text-white/40">Projects, code, and public activity</div>
+              <div className="mt-5 flex items-center gap-5 text-sm">
+                <span className="text-white/70"><strong className="font-semibold text-white">0</strong> followers</span>
+                <span className="text-white/70"><strong className="font-semibold text-white">0</strong> following</span>
               </div>
 
-              <a
-                href="https://github.com/Elazar-os"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-white/20 hover:bg-white/[0.09] hover:text-white"
-              >
-                <Github className="h-4 w-4" />
-                View GitHub profile
-              </a>
+              <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
+                <div className="px-3 py-3 text-center">
+                  <div className="text-lg font-semibold text-white">11</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Repositories</div>
+                </div>
+                <div className="border-x border-white/10 px-3 py-3 text-center">
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Starred</div>
+                </div>
+                <div className="px-3 py-3 text-center">
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Organizations</div>
+                </div>
+              </div>
             </div>
           </div>
         </SheetContent>
