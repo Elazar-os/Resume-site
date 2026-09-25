@@ -48,7 +48,6 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   // Keep progressively lighter Gemini models as fallbacks.
   if (gemini) {
     all.push({ provider: "gemini", model: "gemini-3.8-flash" });
-    all.push({ provider: "gemini", model: "gemini-3.7-flash" });
     all.push({ provider: "gemini", model: "gemini-3.6-flash" });
     all.push({ provider: "gemini", model: "gemini-3.5-flash" });
     all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
@@ -222,12 +221,22 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
   };
   const startedAt = Date.now();
   console.log("Gary Gemini request start:", model, "messages:", messages.length, "chars:", messages.reduce((sum, m) => sum + m.content.length, 0));
-  const res = await fetch(url, {
+  let res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
+  if (res.status === 503 && model === "gemini-3.8-flash") {
+    console.log("Gary Gemini 3.8 retrying after 503");
+    await new Promise((resolve) => setTimeout(resolve, 750));
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    console.log("Gary Gemini 3.8 retry response:", res.status, "ms:", Date.now() - startedAt);
+  }
   if (!res.ok) {
     const errText = await res.text();
     console.error("Gemini error:", model, res.status, errText);
