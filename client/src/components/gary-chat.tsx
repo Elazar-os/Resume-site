@@ -543,6 +543,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [loadingPhrase, setLoadingPhrase] = useState(loadingPhrases[0]);
   const [showGate, setShowGate] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   const [githubProjects, setGithubProjects] = useState<GitHubProject[]>([]);
   const [githubProjectsLoading, setGithubProjectsLoading] = useState(true);
   const pendingPrivateRef = useRef<string | null>(null);
@@ -839,38 +840,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
                 {showSuggestions && (
                   <>
-                    <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                      <div className="flex items-center gap-2.5 border-b border-white/10 px-4 py-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/80">
-                          <Github className="h-4 w-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs font-semibold text-white/90">Selected projects</div>
-                          <div className="text-[10px] text-white/40">A few things Elazar has built</div>
-                        </div>
-                      </div>
-                      <div className="divide-y divide-white/10">
-                        <div className="px-4 py-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">KOD Invoice Tracker</div><div className="mt-1 text-[11px] text-white/45">Invoice and business workflow project</div></div>
-                            <span className="shrink-0 text-[10px] font-medium text-white/35">Project</span>
-                          </div>
-                        </div>
-                        <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">Resume Site</div><div className="mt-1 text-[11px] text-white/45">ElazarOS portfolio and apps hub</div></div>
-                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
-                          </div>
-                        </a>
-                        <a href="https://elazaros.onrender.com/" target="_blank" rel="noreferrer" className="block px-4 py-3 transition hover:bg-white/[0.04]">
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="min-w-0"><div className="truncate text-xs font-semibold text-white/90">ElazarOS Menu Site</div><div className="mt-1 text-[11px] text-white/45">King of Delancey digital menu system</div></div>
-                            <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-
                     <div className="mt-3 flex flex-wrap gap-2">
                     {SUGGESTED_QUESTIONS[mode].map((question) => (
                       <button
@@ -915,6 +884,18 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           className="flex-1 h-10 rounded-2xl border border-white/10 bg-white/[0.07] backdrop-blur-xl px-4 text-sm text-white placeholder:text-white/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[border-color,box-shadow,background-color] duration-200 focus:outline-none focus:border-white/25 focus:bg-white/[0.09] focus:ring-2 focus:ring-[#6b7cff]/35 focus:shadow-[0_0_0_1px_rgba(107,124,255,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] disabled:opacity-50"
         />
         <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="h-10 w-10 shrink-0 rounded-2xl border border-white/10 bg-white/[0.05] text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:bg-white/[0.09] hover:text-white"
+          onClick={() => setProjectsOpen(true)}
+          disabled={showGate}
+          aria-label="View ElazarOS projects"
+          title="Projects"
+        >
+          <Github className="h-4 w-4" />
+        </Button>
+        <Button
           size="icon"
           className="h-10 w-10 rounded-2xl shrink-0 bg-[#1737c8] text-white hover:bg-[#122da5]"
           onClick={() => void sendMessage()}
@@ -924,6 +905,55 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           <Send className="w-4 h-4" />
         </Button>
       </div>
+
+      <Sheet open={projectsOpen} onOpenChange={setProjectsOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-4 text-left">
+            <SheetTitle className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
+              <Github className="h-4 w-4 text-white/70" />
+              ElazarOS projects
+            </SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              A few things Elazar has built.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035]">
+            <div className="divide-y divide-white/10">
+              <div className="px-4 py-3.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">KOD Invoice Tracker</div>
+                    <div className="mt-1 text-xs text-white/45">Invoice and business workflow project</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-white/35">Project</span>
+                </div>
+              </div>
+
+              <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">Resume Site</div>
+                    <div className="mt-1 text-xs text-white/45">ElazarOS portfolio and apps hub</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                </div>
+              </a>
+
+              <a href="https://elazaros.onrender.com/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">ElazarOS Menu Site</div>
+                    <div className="mt-1 text-xs text-white/45">King of Delancey digital menu system</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <Sheet open={scopeOpen} onOpenChange={setScopeOpen}>
         <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
