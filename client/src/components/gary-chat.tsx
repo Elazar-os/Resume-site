@@ -16,6 +16,10 @@ import {
   Eye,
   EyeOff,
   Github,
+  Plug,
+  FolderKanban,
+  CalendarDays,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -544,6 +548,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [showGate, setShowGate] = useState(false);
   const [scopeOpen, setScopeOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
+  const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [githubProjects, setGithubProjects] = useState<GitHubProject[]>([]);
   const [githubProjectsLoading, setGithubProjectsLoading] = useState(true);
   const pendingPrivateRef = useRef<string | null>(null);
@@ -873,6 +878,18 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       </div>
 
       <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-4 mb-3 flex gap-2">
+        <Button
+          type="button"
+          size="icon"
+          variant="ghost"
+          className="h-10 w-10 shrink-0 rounded-2xl border border-white/10 bg-white/[0.05] text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-[#3156e8]/40 hover:bg-[#1737c8]/10 hover:text-white"
+          onClick={() => setConnectorsOpen(true)}
+          disabled={showGate}
+          aria-label="Open Gary connectors"
+          title="Connectors"
+        >
+          <Plug className="h-4 w-4" />
+        </Button>
         <input
           ref={inputRef}
           type="text"
@@ -884,18 +901,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           className="flex-1 h-10 rounded-2xl border border-white/10 bg-white/[0.07] backdrop-blur-xl px-4 text-sm text-white placeholder:text-white/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[border-color,box-shadow,background-color] duration-200 focus:outline-none focus:border-white/25 focus:bg-white/[0.09] focus:ring-2 focus:ring-[#6b7cff]/35 focus:shadow-[0_0_0_1px_rgba(107,124,255,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] disabled:opacity-50"
         />
         <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          className="h-10 w-10 shrink-0 rounded-2xl border border-white/10 bg-white/[0.05] text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:bg-white/[0.09] hover:text-white"
-          onClick={() => setProjectsOpen(true)}
-          disabled={showGate}
-          aria-label="View ElazarOS projects"
-          title="Projects"
-        >
-          <Github className="h-4 w-4" />
-        </Button>
-        <Button
           size="icon"
           className="h-10 w-10 rounded-2xl shrink-0 bg-[#1737c8] text-white hover:bg-[#122da5]"
           onClick={() => void sendMessage()}
@@ -905,6 +910,86 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           <Send className="w-4 h-4" />
         </Button>
       </div>
+
+      <Sheet open={connectorsOpen} onOpenChange={setConnectorsOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-4 text-left">
+            <SheetTitle className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
+              <Plug className="h-4 w-4 text-[#6b7cff]" />
+              Connectors
+            </SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              Choose what Gary can pull into the conversation.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => {
+                setConnectorsOpen(false);
+                setProjectsOpen(true);
+              }}
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#6b7cff]/25 bg-[#1737c8]/15 text-[#9aa6ff]">
+                <FolderKanban className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Projects</span>
+                <span className="block text-xs leading-relaxed text-white/50">KOD Invoice Tracker, Resume Site, and ElazarOS Menu.</span>
+              </span>
+              <span className="text-[10px] font-medium text-[#7f8fff]">3 live</span>
+            </button>
+
+            <button
+              type="button"
+              disabled
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
+                <Github className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/80">GitHub</span>
+                <span className="block text-xs leading-relaxed text-white/40">Repositories, commits, and project activity.</span>
+              </span>
+              <span className="text-[10px] text-white/35">Coming next</span>
+            </button>
+
+            <button
+              type="button"
+              disabled
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
+                <CalendarDays className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/80">Calendar</span>
+                <span className="block text-xs leading-relaxed text-white/40">Future availability and scheduling.</span>
+              </span>
+              <span className="text-[10px] text-white/35">Coming next</span>
+            </button>
+
+            <button
+              type="button"
+              disabled
+              className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3.5 text-left opacity-70"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-white/50">
+                <FileText className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/80">Documents</span>
+                <span className="block text-xs leading-relaxed text-white/40">Selected resume and project information.</span>
+              </span>
+              <span className="text-[10px] text-white/35">Coming next</span>
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <Sheet open={projectsOpen} onOpenChange={setProjectsOpen}>
         <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
