@@ -758,7 +758,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             )}
           </div>
         </div>
-      </div>
 
       <div ref={chatScrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg, i) => {
