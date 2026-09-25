@@ -18,7 +18,10 @@ import {
   Github,
   ChevronRight,
   Plug,
+  FolderKanban,
   CalendarDays,
+  FileText,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,44 +137,10 @@ function GaryAvatar() {
 }
 
 function ConnectorGlyph({ type }: { type: "projects" | "contact" | "documents" }) {
-  const common = {
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: 1.8,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-  };
-
-  if (type === "projects") {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-        <path {...common} d="M5.5 7.5h8.25a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" />
-        <path {...common} d="M8.25 4.5h8.25a2 2 0 0 1 2 2v8" />
-        <path {...common} d="M7.5 11.5h5M7.5 15h3.5" />
-        <circle cx="15.75" cy="15.5" r="1.15" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  }
-
-  if (type === "contact") {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-        <rect {...common} x="3.5" y="5.5" width="17" height="13" rx="3" />
-        <path {...common} d="m5.5 8 5.15 4.1a2.15 2.15 0 0 0 2.7 0L18.5 8" />
-        <path {...common} d="M7 16h3.5" />
-        <circle cx="16.8" cy="15.5" r="1.05" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-      <path {...common} d="M6.5 4.5h8l3 3v12h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z" />
-      <path {...common} d="M14.5 4.5v4h3" />
-      <path {...common} d="M8 12h7M8 15.5h5M8 8.5h3" />
-      <path {...common} d="M16.5 15.5h1.5" />
-    </svg>
-  );
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  if (type === "projects") return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path {...common} d="M5.5 7.5h8.25a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" /><path {...common} d="M8.25 4.5h8.25a2 2 0 0 1 2 2v8" /><path {...common} d="M7.5 11.5h5M7.5 15h3.5" /><circle cx="15.75" cy="15.5" r="1.15" fill="currentColor" stroke="none" /></svg>;
+  if (type === "contact") return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><rect {...common} x="3.5" y="5.5" width="17" height="13" rx="3" /><path {...common} d="m5.5 8 5.15 4.1a2.15 2.15 0 0 0 2.7 0L18.5 8" /><path {...common} d="M7 16h3.5" /><circle cx="16.8" cy="15.5" r="1.05" fill="currentColor" stroke="none" /></svg>;
+  return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path {...common} d="M6.5 4.5h8l3 3v12h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z" /><path {...common} d="M14.5 4.5v4h3" /><path {...common} d="M8 12h7M8 15.5h5M8 8.5h3" /><path {...common} d="M16.5 15.5h1.5" /></svg>;
 }
 
 function playPopSound() {
@@ -985,7 +954,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <span className="block text-sm font-semibold text-white/90">Projects</span>
                 <span className="block text-xs leading-relaxed text-white/50">KOD Invoice Tracker, Resume Site, and ElazarOS Menu.</span>
               </span>
-              <ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+              <span className="text-[10px] font-medium text-[#7f8fff]">3 live</span>
             </button>
 
             <button
@@ -1003,7 +972,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <span className="block text-sm font-semibold text-white/90">GitHub</span>
                 <span className="block text-xs leading-relaxed text-white/50">Elazar-OS public profile.</span>
               </span>
-              <ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+              <span className="text-[10px] font-medium text-[#7f8fff]">Connected</span>
             </button>
 
             <button
@@ -1022,7 +991,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <span className="block text-sm font-semibold text-white/90">Contact</span>
                 <span className="block text-xs leading-relaxed text-white/50">Open ElazarOS contact form.</span>
               </span>
-              <ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+              <span className="text-[10px] font-medium text-[#7f8fff]"<ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
             </button>
 
             <button
@@ -1037,3 +1006,277 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
                 <ConnectorGlyph type="documents" />
               </span>
               <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Documents</span>
+                <span className="block text-xs leading-relaxed text-white/50">Resume and Shidduch resume.</span>
+              </span>
+              <span className="text-[10px] font-medium text-[#7f8fff]">2</span>
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={githubOpen} onOpenChange={setGithubOpen}>
+        <SheetContent side="bottom" className="z-[70] max-h-[88dvh] overflow-y-auto rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-5 text-left">
+            <SheetTitle className="flex items-center gap-3 text-base font-semibold tracking-tight text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06]">
+                <Github className="h-5 w-5 text-white/80" />
+              </span>
+              <span>
+                <span className="block">GitHub</span>
+                <span className="block text-xs font-normal text-white/45">Public profile preview</span>
+              </span>
+            </SheetTitle>
+          </SheetHeader>
+
+          {githubProfileLoading ? (
+            <div className="flex min-h-52 items-center justify-center text-sm text-white/45">Loading profile...</div>
+          ) : githubProfile ? (
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
+              <div className="p-5">
+                <div className="flex items-center gap-4">
+                  <img src={githubProfile.avatarUrl} alt="" className="h-16 w-16 rounded-2xl border border-white/10 object-cover" />
+                  <div className="min-w-0">
+                    <h2 className="truncate text-xl font-semibold text-white">{githubProfile.name}</h2>
+                    <p className="text-sm text-white/45">@{githubProfile.login}</p>
+                  </div>
+                </div>
+
+                {githubProfile.bio && (
+                  <p className="mt-5 text-sm leading-6 text-white/65">{githubProfile.bio}</p>
+                )}
+
+                {githubProfile.blog && (
+                  <a
+                    href={githubProfile.blog.startsWith("http") ? githubProfile.blog : `https://${githubProfile.blog}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-4 block truncate text-sm font-medium text-[#8d9aff] hover:text-white"
+                  >
+                    {githubProfile.blog.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </a>
+                )}
+
+                <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
+                  <div className="px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.publicRepos}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Repositories</div>
+                  </div>
+                  <div className="border-x border-white/10 px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.followers}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Followers</div>
+                  </div>
+                  <div className="px-3 py-3 text-center">
+                    <div className="text-lg font-semibold text-white">{githubProfile.following}</div>
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Following</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-sm text-white/50">
+              GitHub profile is unavailable right now.
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={documentsOpen} onOpenChange={setDocumentsOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-5 text-left">
+            <SheetTitle className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
+              <FileText className="h-4 w-4 text-[#6b7cff]" />
+              Documents
+            </SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              Simple access to Elazar's resumes.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-2">
+            <a
+              href="#/resume"
+              onClick={() => setDocumentsOpen(false)}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
+                <FileText className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Resume</span>
+                <span className="block text-xs text-white/45">Professional resume</span>
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#7f8fff]">Open</span>
+            </a>
+
+            <a
+              href="#/shidduch"
+              onClick={() => setDocumentsOpen(false)}
+              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
+                <FileText className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-white/90">Shidduch Resume</span>
+                <span className="block text-xs text-white/45">Personal / Shidduch resume</span>
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#7f8fff]"<ChevronRight className="h-5 w-5 shrink-0 text-white/25" />
+            </a>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={projectsOpen} onOpenChange={setProjectsOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-4 text-left">
+            <SheetTitle className="flex items-center gap-2 text-base font-semibold tracking-tight text-white">
+              <Github className="h-4 w-4 text-white/70" />
+              ElazarOS projects
+            </SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              A few things Elazar has built.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035]">
+            <div className="divide-y divide-white/10">
+              <a href="https://kod-tracker.pages.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">KOD Invoice Tracker</div>
+                    <div className="mt-1 text-xs text-white/45">Invoice and business workflow project</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                </div>
+              </a>
+
+              <a href="https://elazaros-app.elazar-greisman.workers.dev/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">Resume Site</div>
+                    <div className="mt-1 text-xs text-white/45">ElazarOS portfolio and apps hub</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                </div>
+              </a>
+
+              <a href="https://elazaros-production-ecfd.up.railway.app/" target="_blank" rel="noreferrer" className="block px-4 py-3.5 transition hover:bg-white/[0.04]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-white/90">ElazarOS Menu Site</div>
+                    <div className="mt-1 text-xs text-white/45">King of Delancey digital menu system</div>
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-[#7f8fff]">Live</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={scopeOpen} onOpenChange={setScopeOpen}>
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+          <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
+          <SheetHeader className="mb-3 text-left">
+            <SheetTitle className="text-base font-semibold tracking-tight text-white">Choose a Gary scope</SheetTitle>
+            <SheetDescription className="text-xs text-white/50">
+              A new conversation starts when you switch.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-2">
+            {SCOPE_OPTIONS.map((option) => {
+              const Icon = option.icon;
+              const active = option.mode === mode;
+              return (
+                <button
+                  key={option.mode}
+                  type="button"
+                  onClick={() => selectMode(option.mode)}
+                  className={cn(
+                    "w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-200",
+                    active
+                      ? "border-[#3156e8]/55 bg-[#1737c8]/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_18px_rgba(49,86,232,0.12)]"
+                      : "border-white/10 bg-white/[0.045] hover:border-white/20 hover:bg-white/[0.07]"
+                  )}
+                >
+                  <span className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
+                    active ? "border-[#6b7cff]/40 bg-[#1737c8] text-white shadow-[0_0_14px_rgba(49,86,232,0.3)]" : "border-white/10 bg-white/[0.06] text-white/55"
+                  )}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-white/90">{option.label}</span>
+                    <span className="block text-xs leading-relaxed text-white/50">{option.description}</span>
+                  </span>
+                  {active && <Check className="h-5 w-5 shrink-0 text-[#6b7cff]" />}
+                </button>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+
+  return (
+    <>
+      <style>{`
+        body.gary-panel-open {
+          overflow: hidden;
+          background: #0b0d12 !important;
+        }
+        html:has(body.gary-panel-open) {
+          background: #0b0d12 !important;
+        }
+        body.gary-panel-open > * nav,
+        body.gary-panel-open > * footer {
+          display: none !important;
+        }
+
+        @keyframes gary-generation-glow {
+          0%, 100% { opacity: 0.18; transform: scaleX(0.7); filter: blur(2px); }
+          50% { opacity: 0.58; transform: scaleX(1); filter: blur(3px); }
+        }
+        .gary-generation-signal {
+          width: 7px;
+          height: 28px;
+          margin-top: 2px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, transparent, rgba(23, 55, 200, 0.7), transparent);
+          box-shadow: 0 0 10px rgba(23, 55, 200, 0.2);
+          animation: gary-generation-glow 1.8s ease-in-out infinite;
+        }
+      `}</style>
+      {fullPage ? (
+        chatPanel
+      ) : (
+        <>
+          <button
+            onClick={() => {
+              setOpen((v) => {
+                const nextOpen = !v;
+                if (nextOpen) window.dispatchEvent(new Event("gary-open"));
+                return nextOpen;
+              });
+            }}
+            className={cn(
+              "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all",
+              "bg-gradient-to-br from-purple-500 to-violet-600 text-white hover:scale-105 active:scale-95",
+              open && "scale-0 opacity-0 pointer-events-none"
+            )}
+            aria-label="Open Gary chat"
+          >
+            <MessageCircle className="w-6 h-6" />
+          </button>
+          {open && chatPanel}
+        </>
+      )}
+      <GaryPrivateGateModal open={showGate} onClose={handleGateClose} />
+    </>
+  );
+}
