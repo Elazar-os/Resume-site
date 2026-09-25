@@ -114,18 +114,6 @@ type UIMessage = ChatMessage & {
   timing?: { model: string; timingMs: number };
 };
 
-interface GitHubProfile {
-  name: string;
-  login: string;
-  bio: string | null;
-  avatarUrl: string;
-  htmlUrl: string;
-  blog: string | null;
-  publicRepos: number;
-  followers: number;
-  following: number;
-}
-
 function GaryAvatar() {
   return (
     <div className={cn(
@@ -563,8 +551,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [connectorsOpen, setConnectorsOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [documentsOpen, setDocumentsOpen] = useState(false);
-  const [githubProfile, setGithubProfile] = useState<GitHubProfile | null>(null);
-  const [githubProfileLoading, setGithubProfileLoading] = useState(true);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -589,31 +575,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadGitHubProfile() {
-      try {
-        const res = await fetch("/api/github/profile");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!cancelled && data.profile) {
-          setGithubProfile(data.profile);
-        }
-      } catch {
-        if (!cancelled) setGithubProfile(null);
-      } finally {
-        if (!cancelled) setGithubProfileLoading(false);
-      }
-    }
-
-    void loadGitHubProfile();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (open) {
@@ -1016,7 +977,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       </Sheet>
 
       <Sheet open={githubOpen} onOpenChange={setGithubOpen}>
-        <SheetContent side="bottom" className="z-[70] max-h-[88dvh] overflow-y-auto rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
+        <SheetContent side="bottom" className="z-[70] rounded-t-3xl border-white/10 bg-[#11141b] px-4 pb-8 pt-3 text-white">
           <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
           <SheetHeader className="mb-5 text-left">
             <SheetTitle className="flex items-center gap-3 text-base font-semibold tracking-tight text-white">
@@ -1030,55 +991,33 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             </SheetTitle>
           </SheetHeader>
 
-          {githubProfileLoading ? (
-            <div className="flex min-h-52 items-center justify-center text-sm text-white/45">Loading profile...</div>
-          ) : githubProfile ? (
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
-              <div className="p-5">
-                <div className="flex items-center gap-4">
-                  <img src={githubProfile.avatarUrl} alt="" className="h-16 w-16 rounded-2xl border border-white/10 object-cover" />
-                  <div className="min-w-0">
-                    <h2 className="truncate text-xl font-semibold text-white">{githubProfile.name}</h2>
-                    <p className="text-sm text-white/45">@{githubProfile.login}</p>
-                  </div>
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
+            <div className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1737c8] to-[#3156e8] text-2xl font-bold text-white shadow-[0_0_24px_rgba(49,86,232,0.2)]">
+                  E
                 </div>
-
-                {githubProfile.bio && (
-                  <p className="mt-5 text-sm leading-6 text-white/65">{githubProfile.bio}</p>
-                )}
-
-                {githubProfile.blog && (
-                  <a
-                    href={githubProfile.blog.startsWith("http") ? githubProfile.blog : `https://${githubProfile.blog}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-4 block truncate text-sm font-medium text-[#8d9aff] hover:text-white"
-                  >
-                    {githubProfile.blog.replace(/^https?:\/\//, "").replace(/\/$/, "")}
-                  </a>
-                )}
-
-                <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
-                  <div className="px-3 py-3 text-center">
-                    <div className="text-lg font-semibold text-white">{githubProfile.publicRepos}</div>
-                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Repositories</div>
-                  </div>
-                  <div className="border-x border-white/10 px-3 py-3 text-center">
-                    <div className="text-lg font-semibold text-white">{githubProfile.followers}</div>
-                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Followers</div>
-                  </div>
-                  <div className="px-3 py-3 text-center">
-                    <div className="text-lg font-semibold text-white">{githubProfile.following}</div>
-                    <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Following</div>
-                  </div>
+                <div className="min-w-0">
+                  <h2 className="truncate text-xl font-semibold text-white">Elazar-OS</h2>
+                  <p className="text-sm text-white/45">@Elazar-os</p>
                 </div>
               </div>
+
+              <p className="mt-5 text-sm leading-6 text-white/60">
+                Elazar's public GitHub profile and open-source work.
+              </p>
+
+              <a
+                href="https://github.com/Elazar-os"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white/85 transition hover:border-white/20 hover:bg-white/[0.09] hover:text-white"
+              >
+                <Github className="h-4 w-4" />
+                View GitHub profile
+              </a>
             </div>
-          ) : (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-sm text-white/50">
-              GitHub profile is unavailable right now.
-            </div>
-          )}
+          </div>
         </SheetContent>
       </Sheet>
 
