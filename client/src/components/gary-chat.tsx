@@ -830,7 +830,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-5 flex gap-2">
+      <div className="border-t border-white/10 bg-[#0b0d12]/98 p-3 pb-4 mb-3 flex gap-2">
         <input
           ref={inputRef}
           type="text"
@@ -839,7 +839,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           onKeyDown={handleKeyDown}
           placeholder="Ask about Elazar…"
           disabled={loading || showGate}
-          className="flex-1 h-10 rounded-2xl border border-white/10 bg-[#171a22] px-4 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#1737c8]/40 disabled:opacity-50"
+          className="flex-1 h-10 rounded-2xl border border-white/10 bg-white/[0.07] backdrop-blur-xl px-4 text-sm text-white placeholder:text-white/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-[border-color,box-shadow,background-color] duration-200 focus:outline-none focus:border-white/25 focus:bg-white/[0.09] focus:ring-2 focus:ring-[#6b7cff]/35 focus:shadow-[0_0_0_1px_rgba(107,124,255,0.18),inset_0_1px_0_rgba(255,255,255,0.1)] disabled:opacity-50"
         />
         <Button
           size="icon"
