@@ -107,11 +107,10 @@ type UIMessage = ChatMessage & {
   timing?: { model: string; timingMs: number };
 };
 
-function GaryAvatar({ active = false }: { active?: boolean }) {
+function GaryAvatar() {
   return (
     <div className={cn(
-      "w-7 h-7 shrink-0 rounded-full overflow-hidden shadow-sm",
-      active && "gary-avatar-pulse"
+      "w-7 h-7 shrink-0 rounded-full overflow-hidden shadow-sm"
     )}>
       <img src="/gary-favicon.svg" alt="" className="w-full h-full object-cover" />
     </div>
@@ -763,7 +762,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             <div key={i} className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}>
               {isGary && (
                 <div className="w-7 mr-2 shrink-0 self-start">
-                  {showGaryAvatar ? <GaryAvatar active={loading && i === messages.length - 1} /> : null}
+                  {showGaryAvatar ? <GaryAvatar /> : null}
                 </div>
               )}
               <div className={cn("flex max-w-[88%] flex-col", msg.role === "user" ? "items-end" : "items-start")}>
@@ -806,7 +805,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         {loading && (
           <div className="flex justify-start">
             <div className="w-7 mr-2 shrink-0 self-start">
-              <GaryAvatar active />
+              <div className="gary-generation-signal" aria-hidden="true" />
             </div>
             <div className="bg-secondary rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-muted-foreground">
               {loadingPhrase}
@@ -886,11 +885,19 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   return (
     <>
       <style>{`
-        @keyframes gary-avatar-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(23, 55, 200, 0.15); transform: scale(1); }
-          50% { box-shadow: 0 0 14px 4px rgba(23, 55, 200, 0.32); transform: scale(1.04); }
+        @keyframes gary-generation-glow {
+          0%, 100% { opacity: 0.18; transform: scaleX(0.7); filter: blur(2px); }
+          50% { opacity: 0.58; transform: scaleX(1); filter: blur(3px); }
         }
-        .gary-avatar-pulse { animation: gary-avatar-pulse 1.15s ease-in-out infinite; }
+        .gary-generation-signal {
+          width: 7px;
+          height: 28px;
+          margin-top: 2px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, transparent, rgba(23, 55, 200, 0.7), transparent);
+          box-shadow: 0 0 10px rgba(23, 55, 200, 0.2);
+          animation: gary-generation-glow 1.8s ease-in-out infinite;
+        }
       `}</style>
       {fullPage ? (
         chatPanel
