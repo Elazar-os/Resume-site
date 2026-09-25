@@ -1,242 +1,99 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, ArrowRight, PauseCircle, X } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { APPS, type AppConfig } from "@/lib/apps-config";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { ArrowUpRight, FileText, LayoutDashboard, Monitor } from "lucide-react";
 import { TopNavigation } from "@/components/top-navigation";
+
+const PROJECTS = [
+  {
+    id: "invoice",
+    name: "KOD Invoice Tracker",
+    description: "Invoice and business workflow project.",
+    url: "https://kod-tracker.pages.dev/",
+    icon: FileText,
+  },
+  {
+    id: "resume",
+    name: "Resume Site",
+    description: "ElazarOS portfolio and apps hub.",
+    url: "https://elazaros-app.elazar-greisman.workers.dev/",
+    icon: LayoutDashboard,
+  },
+  {
+    id: "menu",
+    name: "ElazarOS Menu",
+    description: "King of Delancey digital menu system.",
+    url: "https://elazaros-production-ecfd.up.railway.app/",
+    icon: Monitor,
+  },
+];
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.08 } },
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring" as const, stiffness: 50 }
-  }
+  hidden: { y: 16, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { type: "spring" as const, stiffness: 55, damping: 14 } },
 };
 
 export default function AppsHubPage() {
-  const [pausedAppMessage, setPausedAppMessage] = useState<AppConfig | null>(null);
-
-  const handleAppClick = (app: AppConfig) => {
-    if (!app.active) {
-      setPausedAppMessage(app);
-      return;
-    }
-    if (app.internal) {
-      window.location.href = app.replitUrl;
-      return;
-    }
-    window.open(app.replitUrl, "_blank");
-  };
-
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen bg-[#f5f7fb] font-sans text-[#0b0d12]">
       <TopNavigation />
 
-      {/* Paused App Modal */}
-      <AnimatePresence>
-        {pausedAppMessage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-            onClick={() => setPausedAppMessage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-card rounded-xl shadow-2xl max-w-md w-full p-6 relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setPausedAppMessage(null)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
-                data-testid="close-paused-modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                  <PauseCircle className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl font-bold text-primary">{pausedAppMessage.name}</h3>
-                <p className="text-muted-foreground">
-                  {pausedAppMessage.pausedMessage || "This app is temporarily unavailable."}
-                </p>
-                <Button variant="outline" onClick={() => setPausedAppMessage(null)}>
-                  Got it
-                </Button>
-              </div>
+      <main className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#3156e8]/10 blur-3xl" />
+        <div className="pointer-events-none absolute right-0 top-80 h-64 w-64 rounded-full bg-[#1737c8]/[0.07] blur-3xl" />
+
+        <div className="relative mx-auto max-w-5xl px-5 py-12 md:px-8 md:py-20">
+          <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-10">
+            <motion.div variants={itemVariants} className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#3156e8]">ElazarOS</p>
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Apps</h1>
+              <p className="max-w-xl text-sm leading-6 text-slate-500 md:text-base">
+                A small collection of projects built to solve real problems.
+              </p>
+            </motion.div>
+
+            <motion.div variants={containerVariants} className="grid gap-5 md:grid-cols-3">
+              {PROJECTS.map((project) => {
+                const Icon = project.icon;
+                return (
+                  <motion.a
+                    key={project.id}
+                    variants={itemVariants}
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex min-h-[260px] flex-col rounded-[28px] border border-white/80 bg-white/65 p-5 shadow-[0_18px_55px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#3156e8]/20 hover:shadow-[0_24px_65px_rgba(15,23,42,0.12)]"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#3156e8]/10 bg-[#1737c8]/[0.07] text-[#3156e8] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <ArrowUpRight className="h-5 w-5 text-slate-400 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#3156e8]" />
+                    </div>
+
+                    <div className="mt-auto pt-12">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#3156e8]">Live</span>
+                        <span className="h-1 w-1 rounded-full bg-slate-300" />
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Project</span>
+                      </div>
+                      <h2 className="text-xl font-semibold tracking-tight text-[#0b0d12]">{project.name}</h2>
+                      <p className="mt-2 text-sm leading-6 text-slate-500">{project.description}</p>
+                      <span className="mt-4 inline-flex items-center rounded-xl px-3 py-2 text-xs font-semibold text-[#3156e8] transition group-hover:bg-[#1737c8]/[0.07]">
+                        Open app
+                        <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </motion.a>
+                );
+              })}
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-      
-      <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-12">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-          className="space-y-8"
-        >
-          {/* Header */}
-          <motion.div variants={itemVariants} className="text-center space-y-4">
-            <Badge variant="secondary" className="text-sm">Apps Hub</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold font-heading text-primary">
-              Elazar's Apps
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A collection of apps and tools I've built. Click on any app to open it.
-            </p>
-          </motion.div>
-
-          {/* Apps Grid */}
-          <motion.div 
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {APPS.map((app) => {
-              const Icon = app.icon;
-              const isInactive = !app.active;
-              
-              return (
-                <motion.div key={app.id} variants={itemVariants}>
-                  <Card 
-                    className={cn(
-                      "h-full overflow-hidden border-none shadow-lg transition-all duration-300 group",
-                      isInactive 
-                        ? "opacity-60 grayscale cursor-not-allowed" 
-                        : "hover:shadow-xl cursor-pointer"
-                    )}
-                    onClick={() => handleAppClick(app)}
-                    data-testid={`app-card-${app.id}`}
-                  >
-                    {/* Gradient Header */}
-                    <div className={cn(
-                      "h-2 bg-gradient-to-r",
-                      isInactive ? "from-gray-400 to-gray-500" : app.gradient
-                    )} />
-                    
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between">
-                        <div className={cn(
-                          "w-12 h-12 rounded-xl flex items-center justify-center",
-                          "bg-gradient-to-br shadow-md",
-                          isInactive ? "from-gray-400 to-gray-500" : app.gradient
-                        )}>
-                          <Icon className="w-6 h-6 text-white" />
-                        </div>
-                        {isInactive ? (
-                          <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-700 border-amber-200">
-                            <PauseCircle className="w-3 h-3 mr-1" />
-                            Paused
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-xs">
-                            App
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className={cn(
-                        "text-xl font-heading mt-3 transition-colors",
-                        isInactive ? "text-muted-foreground" : "group-hover:text-primary"
-                      )}>
-                        {app.name}
-                      </CardTitle>
-                    </CardHeader>
-
-                    <CardContent className="space-y-4">
-                      <CardDescription className="text-sm leading-relaxed">
-                        {app.description}
-                      </CardDescription>
-
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-xs text-muted-foreground font-mono">
-                          {app.subdomain}
-                        </span>
-                        {isInactive ? (
-                          <Button 
-                            size="sm" 
-                            variant="secondary"
-                            className="opacity-50"
-                            disabled
-                            data-testid={`open-app-${app.id}`}
-                          >
-                            <PauseCircle className="w-4 h-4 mr-1" />
-                            Paused
-                          </Button>
-                        ) : (
-                          <Button 
-                            size="sm" 
-                            className={cn(
-                              "bg-gradient-to-r text-white border-none",
-                              app.gradient
-                            )}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAppClick(app);
-                            }}
-                            data-testid={`open-app-${app.id}`}
-                          >
-                            Open App
-                            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* Add More Apps Section */}
-          <motion.div variants={itemVariants} className="text-center pt-8">
-            <Card className="border-dashed border-2 bg-secondary/20">
-              <CardContent className="py-8">
-                <p className="text-muted-foreground text-sm">
-                  More apps coming soon! Check back for updates.
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Instructions Card */}
-          <motion.div variants={itemVariants}>
-            <Card className="bg-card border-none shadow-md">
-              <CardHeader>
-                <CardTitle className="text-lg font-heading">Quick Access</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-muted-foreground">
-                <p>You can also access apps directly via:</p>
-                <ul className="list-disc list-inside space-y-1 pl-2">
-                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/kod</code> → KOD Menu</li>
-                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/pti</code> → PTI Young Pros</li>
-                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/shadchan</code> → Shadchan</li>
-                  <li><code className="bg-secondary px-1.5 py-0.5 rounded text-xs">elazaros.com/#/gary</code> → Gary</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
