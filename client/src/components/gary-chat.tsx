@@ -22,6 +22,11 @@ import {
   CalendarDays,
   FileText,
   Mail,
+  Link2,
+  Users,
+  BookMarked,
+  Star,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -991,37 +996,69 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
             </SheetTitle>
           </SheetHeader>
 
-          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035]">
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#0d1016]">
             <div className="p-5">
               <div className="flex items-center gap-4">
                 <img
                   src="https://github.com/Elazar-os.png"
-                  alt=""
-                  className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
+                  alt="Elazar-OS"
+                  className="h-[76px] w-[76px] rounded-full border border-white/10 object-cover"
                 />
                 <div className="min-w-0">
-                  <h2 className="truncate text-xl font-semibold text-white">Elazar-OS</h2>
-                  <p className="text-sm text-white/45">@Elazar-os · he/him</p>
+                  <h2 className="text-[22px] font-semibold tracking-tight text-white">Elazar-OS</h2>
+                  <p className="mt-0.5 text-sm text-white/50">Elazar-os · he/him</p>
                 </div>
               </div>
 
-              <p className="mt-5 text-sm leading-6 text-white/65">
-                📊 General Manager | Operations & Team Leader Dedicated to optimizing business workflows, managing high-performing teams, and driving operational excellence.
-              </p>
+              <div className="mt-6 space-y-4">
+                <p className="text-[15px] leading-6 text-white/80">
+                  📊 General Manager | Operations &amp; Team Leader<br />
+                  Dedicated to optimizing business workflows, managing high-performing teams, and driving operational excellence.
+                </p>
 
-              <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
-                <div className="px-3 py-3 text-center">
-                  <div className="text-lg font-semibold text-white">11</div>
-                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Repositories</div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3 text-white/75">
+                    <Link2 className="mt-0.5 h-5 w-5 shrink-0 text-white/45" />
+                    <span className="break-all font-medium">elazaros-app.elazar-greisman.workers.dev/</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-white/75">
+                    <Mail className="mt-0.5 h-5 w-5 shrink-0 text-white/45" />
+                    <span className="break-all font-medium">elazar.greisman@outlook.com</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-white/55">
+                    <Users className="h-5 w-5 shrink-0 text-white/45" />
+                    <span>1 following</span>
+                  </div>
                 </div>
-                <div className="border-x border-white/10 px-3 py-3 text-center">
-                  <div className="text-lg font-semibold text-white">0</div>
-                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Starred</div>
-                </div>
-                <div className="px-3 py-3 text-center">
-                  <div className="text-lg font-semibold text-white">0</div>
-                  <div className="text-[10px] uppercase tracking-[0.12em] text-white/35">Organizations</div>
-                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10">
+              <div className="flex items-center gap-4 border-b border-white/10 px-5 py-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.08] text-white/75">
+                  <BookMarked className="h-5 w-5" />
+                </span>
+                <span className="flex-1 text-base font-medium text-white/90">Repositories</span>
+                <span className="text-base text-white/55">11</span>
+                <ChevronRight className="h-5 w-5 text-white/25" />
+              </div>
+
+              <div className="flex items-center gap-4 border-b border-white/10 px-5 py-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d9ae45] text-white">
+                  <Star className="h-5 w-5 fill-current" />
+                </span>
+                <span className="flex-1 text-base font-medium text-white/90">Starred</span>
+                <span className="text-base text-white/55">0</span>
+                <ChevronRight className="h-5 w-5 text-white/25" />
+              </div>
+
+              <div className="flex items-center gap-4 px-5 py-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d87935] text-white">
+                  <Building2 className="h-5 w-5" />
+                </span>
+                <span className="flex-1 text-base font-medium text-white/90">Organizations</span>
+                <span className="text-base text-white/55">0</span>
+                <ChevronRight className="h-5 w-5 text-white/25" />
               </div>
             </div>
           </div>
