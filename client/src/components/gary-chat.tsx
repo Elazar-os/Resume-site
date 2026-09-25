@@ -708,16 +708,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           : "fixed bottom-24 right-4 z-50 w-[min(100vw-2rem,380px)] h-[min(70vh,520px)] rounded-2xl"
       )}
     >
-      <div className="border-b bg-primary/5 px-3 py-2.5">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <GaryAvatar active={loading} />
-            <div className="min-w-0">
-              <p className="font-black tracking-tight text-sm text-primary leading-tight">Gary</p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground whitespace-nowrap">Your AI guide to ElazarOS</p>
-            </div>
-          </div>
-
+      <div className="flex items-center justify-end gap-1 px-3 py-2 border-b">
           <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
