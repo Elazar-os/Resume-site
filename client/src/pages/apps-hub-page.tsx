@@ -14,7 +14,7 @@ const PROJECTS = [
     id: "menu",
     name: "ElazarOS Menu",
     description: "King of Delancey digital menu system.",
-    url: "https://elazaros-production-ecfd.up.railway.app/",
+    url: "https://elazaros-production-ecfd.up.railway.app/login",
     icon: Monitor,
   },
   {
