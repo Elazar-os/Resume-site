@@ -18,10 +18,7 @@ import {
   Github,
   ChevronRight,
   Plug,
-  FolderKanban,
   CalendarDays,
-  FileText,
-  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,6 +130,47 @@ function GaryAvatar() {
     )}>
       <img src="/gary-favicon.svg" alt="" className="w-full h-full object-cover" />
     </div>
+  );
+}
+
+function ConnectorGlyph({ type }: { type: "projects" | "contact" | "documents" }) {
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
+  if (type === "projects") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+        <path {...common} d="M5.5 7.5h8.25a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z" />
+        <path {...common} d="M8.25 4.5h8.25a2 2 0 0 1 2 2v8" />
+        <path {...common} d="M7.5 11.5h5M7.5 15h3.5" />
+        <circle cx="15.75" cy="15.5" r="1.15" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  if (type === "contact") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+        <rect {...common} x="3.5" y="5.5" width="17" height="13" rx="3" />
+        <path {...common} d="m5.5 8 5.15 4.1a2.15 2.15 0 0 0 2.7 0L18.5 8" />
+        <path {...common} d="M7 16h3.5" />
+        <circle cx="16.8" cy="15.5" r="1.05" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+      <path {...common} d="M6.5 4.5h8l3 3v12h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z" />
+      <path {...common} d="M14.5 4.5v4h3" />
+      <path {...common} d="M8 12h7M8 15.5h5M8 8.5h3" />
+      <path {...common} d="M16.5 15.5h1.5" />
+    </svg>
   );
 }
 
@@ -941,7 +979,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#6b7cff]/25 bg-[#1737c8]/15 text-[#9aa6ff]">
-                <FolderKanban className="h-5 w-5" />
+                <ConnectorGlyph type="projects" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-white/90">Projects</span>
@@ -978,7 +1016,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
-                <Mail className="h-5 w-5" />
+                <ConnectorGlyph type="contact" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-white/90">Contact</span>
@@ -996,6 +1034,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               className="w-full flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.07]"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
-                <FileText className="h-5 w-5" />
+                <ConnectorGlyph type="documents" />
               </span>
               <span className="min-w-0 flex-1">
