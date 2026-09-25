@@ -536,6 +536,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   const [scopeOpen, setScopeOpen] = useState(false);
   const pendingPrivateRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevModeRef = useRef(mode);
   const generationStartedAtRef = useRef<number | null>(null);
@@ -559,8 +560,17 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
   }, [messages, loading]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (!open) return;
+    chatScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    inputRef.current?.focus();
+    window.dispatchEvent(new Event("gary-open"));
   }, [open]);
+
+  useEffect(() => {
+    const closeGary = () => setOpen(false);
+    window.addEventListener("nav-open", closeGary);
+    return () => window.removeEventListener("nav-open", closeGary);
+  }, []);
 
   useEffect(() => {
     const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
@@ -743,7 +753,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div ref={chatScrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg, i) => {
           const isGary = msg.role === "assistant";
           const showGaryAvatar = isGary && (i === 0 || messages[i - 1].role !== "assistant");
@@ -887,7 +897,13 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
       ) : (
         <>
           <button
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => {
+              setOpen((v) => {
+                const nextOpen = !v;
+                if (nextOpen) window.dispatchEvent(new Event("gary-open"));
+                return nextOpen;
+              });
+            }}
             className={cn(
               "fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all",
               "bg-gradient-to-br from-purple-500 to-violet-600 text-white hover:scale-105 active:scale-95",
