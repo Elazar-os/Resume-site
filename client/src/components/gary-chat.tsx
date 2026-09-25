@@ -585,7 +585,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
     if (open) {
       document.body.classList.add("gary-panel-open");
       chatScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
-      inputRef.current?.focus();
       window.dispatchEvent(new Event("gary-open"));
     } else {
       document.body.classList.remove("gary-panel-open");
