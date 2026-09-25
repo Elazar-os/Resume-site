@@ -725,14 +725,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           : "fixed inset-0 z-[60] w-full h-[100dvh] rounded-none border-0"
       )}
     >
-      <div className="flex items-center justify-between gap-3 px-3 py-2 border-b border-white/10 bg-[#0b0d12]">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <GaryAvatar />
-            <div className="min-w-0 leading-tight">
-              <div className="text-sm font-bold tracking-tight text-white">Gary</div>
-              <div className="truncate text-[11px] text-white/45">ElazarOS AI assistant</div>
-            </div>
-          </div>
+      <div className="flex items-center justify-end gap-1 px-3 py-2 border-b border-white/10 bg-[#0b0d12]">
           <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
@@ -774,11 +767,6 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
           return (
             <div key={i} className={cn("flex", msg.role === "user" ? "justify-end" : "justify-start")}>
-              {isGary && (
-                <div className="w-7 mr-2 shrink-0 self-start">
-                  {showGaryAvatar ? <GaryAvatar /> : null}
-                </div>
-              )}
               <div className={cn("flex max-w-[88%] flex-col", msg.role === "user" ? "items-end" : "items-start")}>
                 <div
                   className={cn(
