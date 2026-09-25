@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, FileText, LayoutDashboard, Monitor } from "lucide-react";
+import { ArrowUpRight, FileText, LayoutDashboard, Monitor, MessageCircle } from "lucide-react";
 import { TopNavigation } from "@/components/top-navigation";
 
 const PROJECTS = [
@@ -16,6 +16,13 @@ const PROJECTS = [
     description: "King of Delancey digital menu system.",
     url: "https://elazaros-production-ecfd.up.railway.app/",
     icon: Monitor,
+  },
+  {
+    id: "gary",
+    name: "Gary",
+    description: "ElazarOS AI assistant for background, projects, and more.",
+    url: "https://elazaros-app.elazar-greisman.workers.dev/#/gary",
+    icon: MessageCircle,
   },
   {
     id: "invoice",
@@ -55,7 +62,7 @@ export default function AppsHubPage() {
               </p>
             </motion.div>
 
-            <motion.div variants={containerVariants} className="grid gap-5 md:grid-cols-3">
+            <motion.div variants={containerVariants} className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {PROJECTS.map((project) => {
                 const Icon = project.icon;
                 return (
