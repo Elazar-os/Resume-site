@@ -1006,7 +1006,7 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
               </div>
 
               <p className="mt-5 text-sm leading-6 text-white/65">
-                Self-taught developer and builder focused on practical software, AI, and digital experiences.
+                📊 General Manager | Operations & Team Leader Dedicated to optimizing business workflows, managing high-performing teams, and driving operational excellence.
               </p>
 
               <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]">
