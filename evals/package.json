@@ -1,0 +1,11 @@
+{
+  "name": "gary-evaluation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval": "braintrust eval gary.eval.mjs"
+  },
+  "dependencies": {
+    "braintrust": "^3.0.0"
+  }
+}
