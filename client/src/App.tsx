@@ -15,6 +15,7 @@ import AppRedirectPage from "@/pages/app-redirect-page";
 import ContactPage from "@/pages/contact-page";
 import ResumePDF from "@/pages/resume-pdf";
 import GaryPage from "@/pages/gary-page";
+import ReferencesContactPage from "@/pages/references-contact-page";
 import { GaryChat } from "@/components/gary-chat";
 import { useState, useEffect } from "react";
 
@@ -53,6 +54,7 @@ function Router() {
         <Route path="/jswipe" component={JSwipePage} />
         <Route path="/apps" component={AppsHubPage} />
         <Route path="/contact" component={ContactPage} />
+        <Route path="/references-contact" component={ReferencesContactPage} />
         <Route path="/resume-pdf" component={ResumePDF} />
         <Route path="/gary" component={GaryPage} />
         <Route path="/kod" component={AppRedirectPage} />
