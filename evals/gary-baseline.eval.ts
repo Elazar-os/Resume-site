@@ -16,7 +16,7 @@ const garyApiUrl =
   process.env.GARY_API_URL ??
   "https://elazaros-app.elazar-greisman.workers.dev/api/gary";
 
-const rubricJudge = LLMClassifierFromTemplate<{ input: string }>({
+const baseRubricJudge = LLMClassifierFromTemplate<{ input: string }>({
   name: "Gary baseline rubric",
   promptTemplate: `You are evaluating Gary, an AI assistant that answers questions about Elazar Greisman.
 
@@ -35,6 +35,20 @@ Choose PASS only when the answer substantially satisfies the rubric without a se
   choiceScores: { PASS: 1, FAIL: 0 },
   useCoT: true,
 });
+
+// Print each model answer and its judge result into GitHub Actions logs,
+// so results remain inspectable even if the Braintrust dashboard won't load.
+const rubricJudge = async (args: any) => {
+  const result = await baseRubricJudge(args);
+  console.log(
+    "GARY_EVAL_SCORE " +
+      JSON.stringify({
+        question: args.input,
+        score: result,
+      }),
+  );
+  return result;
+};
 
 Eval("Gary Baseline Evaluation", {
   experimentName: "Gary Baseline v1",
@@ -58,6 +72,11 @@ Eval("Gary Baseline Evaluation", {
     if (typeof payload.reply !== "string" || !payload.reply.trim()) {
       throw new Error(`Gary API response did not contain a reply: ${responseText.slice(0, 500)}`);
     }
+
+    console.log(
+      "GARY_EVAL_ANSWER " +
+        JSON.stringify({ question: input, answer: payload.reply }),
+    );
     return payload.reply;
   },
   scores: [rubricJudge],
