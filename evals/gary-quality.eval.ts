@@ -101,6 +101,7 @@ function integrityScore({
 
 Eval("Gary Quality Evaluation", {
   experimentName: "Gary Quality Baseline v2",
+  maxConcurrency: 1,
   data: () => cases.map((testCase) => ({
     input: testCase,
     expected: testCase.expected,
