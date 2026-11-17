@@ -710,7 +710,7 @@ async function callAnyModel(env: Env, system: string, messages: ChatMessage[], r
       const routeStartedAt = Date.now();
       const reply = await callRoute(env, route, system, messages);
       console.log("Gary model success:", route.provider, route.model, "ms:", Date.now() - routeStartedAt, "totalMs:", Date.now() - startedAt);
-      return { reply, model: `${route.provider}:${route.model}`, timingMs: Date.now() - startedAt };
+      return { reply, model: `${route.provider}:${route.model}`, timingMs: Date.now() - startedAt, fallback: lastError ? String(lastError).slice(0, 300) : undefined };
     } catch (err) {
       lastError = err;
       console.error("Gary model failed:", route.provider, route.model, "ms:", Date.now() - startedAt, err);
@@ -859,8 +859,8 @@ export default {
           ? formatRetrievedKnowledge(retrieveKnowledge(latestUserMessage, mode, 6))
           : "";
         const system = buildSystemMessage(mode, retrieved);
-        const { reply, model, timingMs } = await callAnyModel(env, system, messages, body.model);
-        return new Response(JSON.stringify({ reply, mode, model, timingMs }), {
+        const { reply, model, timingMs, fallback } = await callAnyModel(env, system, messages, body.model);
+        return new Response(JSON.stringify({ reply, mode, model, timingMs, fallback }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
         });
       } catch (err: any) {
