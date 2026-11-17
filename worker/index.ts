@@ -51,7 +51,8 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   // enough to time out the whole request before fallback can run.
   // Fast free providers first so a Gemini stall does not own the request.
   if (groq) all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
-  if (openrouter) all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
+  if (openrouter) all.push({ provider: "openrouter", model: "openrouter/free" });
+  if (openrouter) all.push({ provider: "openrouter", model: "google/gemma-4-26b-a4b-it:free" });
   if (gemini) all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
   if (groq) all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
   if (gemini) all.push({ provider: "gemini", model: "gemini-3.6-flash" });
@@ -66,7 +67,7 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   if (key === "quality") {
     const q: ModelRoute[] = [];
     if (gemini) q.push({ provider: "gemini", model: "gemini-3.8-flash" });
-    if (openrouter) q.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
+    if (openrouter) q.push({ provider: "openrouter", model: "openrouter/free" });
     q.push(...all);
     return q;
   }
