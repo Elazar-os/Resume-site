@@ -9,6 +9,7 @@ export interface Env {
   ASSETS: Fetcher;
   GEMINI_API_KEY: string;
   GROQ_API_KEY?: string;
+  CEREBRAS_API_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENROUTER_API_KEY?: string;
   OPEN_AI_API?: string;
@@ -28,7 +29,7 @@ interface GaryRequest {
   model?: string;
 }
 
-type ProviderName = "gemini" | "groq" | "openai" | "openrouter";
+type ProviderName = "gemini" | "groq" | "openai" | "openrouter" | "cerebras";
 
 interface ModelRoute {
   provider: ProviderName;
@@ -43,6 +44,7 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   const key = (requested || "auto").trim().toLowerCase();
   const gemini = !!env.GEMINI_API_KEY;
   const groq = !!env.GROQ_API_KEY;
+  const cerebras = !!env.CEREBRAS_API_KEY;
   const openai = !!env.OPENAI_API_KEY;
   const openrouter = !!openrouterKey(env);
 
@@ -51,6 +53,7 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   // enough to time out the whole request before fallback can run.
   // Fast free providers first so a Gemini stall does not own the request.
   if (groq) all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
+  if (cerebras) all.push({ provider: "cerebras", model: "gpt-oss-120b" });
   if (openrouter) all.push({ provider: "openrouter", model: "openrouter/free" });
   if (openrouter) all.push({ provider: "openrouter", model: "google/gemma-4-26b-a4b-it:free" });
   if (gemini) all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
@@ -59,7 +62,7 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   if (openai) all.push({ provider: "openai", model: "gpt-4o-mini" });
 
   if (key === "fast") {
-    return all.filter((r) => r.provider === "groq" || r.provider === "openrouter" || r.model.includes("flash-lite") || r.model.includes("8b"));
+    return all.filter((r) => r.provider === "groq" || r.provider === "cerebras" || r.provider === "openrouter" || r.model.includes("flash-lite") || r.model.includes("8b"));
   }
   if (key === "lite") {
     return all.filter((r) => r.provider === "gemini" || r.provider === "groq" || r.provider === "openrouter");
@@ -683,6 +686,10 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
     if (!env.GROQ_API_KEY) throw new Error("missing GROQ_API_KEY");
     return callOpenAICompat("https://api.groq.com/openai/v1/chat/completions", env.GROQ_API_KEY, route.model, system, messages);
   }
+  if (route.provider === "cerebras") {
+    if (!env.CEREBRAS_API_KEY) throw new Error("missing CEREBRAS_API_KEY");
+    return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages);
+  }
   if (route.provider === "openai") {
     if (!env.OPENAI_API_KEY) throw new Error("missing OPENAI_API_KEY");
     return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages);
@@ -832,12 +839,13 @@ export default {
         gemini: !!env.GEMINI_API_KEY,
         openrouter: !!openrouterKey(env),
         groq: !!env.GROQ_API_KEY,
+        cerebras: !!env.CEREBRAS_API_KEY,
         openai: !!env.OPENAI_API_KEY,
       }), { headers: { ...corsHeaders(), "Content-Type": "application/json" } });
     }
     if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
-        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
+        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.CEREBRAS_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
           return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
             status: 500,
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
