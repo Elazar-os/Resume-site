@@ -1,6 +1,7 @@
 import { Eval } from "braintrust";
 import { LLMClassifierFromTemplate } from "autoevals";
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
 type TestCase = {
   input: string;
@@ -9,7 +10,7 @@ type TestCase = {
 };
 
 const cases = JSON.parse(
-  readFileSync(new URL("./gary-baseline.json", import.meta.url), "utf8"),
+  readFileSync(resolve(process.cwd(), "evals/gary-baseline.json"), "utf8"),
 ) as TestCase[];
 
 const garyApiUrl =
@@ -31,7 +32,7 @@ Evaluation rubric:
 Gary's answer:
 {{output}}
 
-Choose PASS only when the answer substantially satisfies the rubric without a serious factual, privacy, or honesty failure. Otherwise choose FAIL.`,
+Choose PASS only when the answer substantially satisfies the rubric without a serious factual, privacy, or honesty failure.`,
   choiceScores: { PASS: 1, FAIL: 0 },
   useCoT: true,
 });
