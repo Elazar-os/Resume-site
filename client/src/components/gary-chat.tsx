@@ -1080,7 +1080,12 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
           <div className="space-y-2">
             <a
               href="#/resume"
-              onClick={() => setDocumentsOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setDocumentsOpen(false);
+                setOpen(false);
+                window.location.hash = "/resume";
+              }}
               className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
@@ -1095,7 +1100,12 @@ export function GaryChat({ fullPage = false, initialMode }: GaryChatProps) {
 
             <a
               href="#/shidduch"
-              onClick={() => setDocumentsOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setDocumentsOpen(false);
+                setOpen(false);
+                window.location.hash = "/shidduch";
+              }}
               className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-white/75">
