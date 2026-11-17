@@ -40,13 +40,42 @@ function openrouterKey(env: Env): string | undefined {
   return env.OPENROUTER_API_KEY || env.OPEN_AI_API;
 }
 
-function availableRoutes(env: Env, requested?: string): ModelRoute[] {
+
+function isComplexQuestion(text: string): boolean {
+  const q = (text || "").toLowerCase();
+  if (q.length > 180) return true;
+  if ((q.match(/\?/g) || []).length > 1) return true;
+  const hard = [
+    "why", "explain", "compare", "difference", "should", "values",
+    "marriage", "shidduch", "introduce", "background", "family",
+    "what makes", "how would", "career", "goals", "struggling",
+    "tell me about him", "who is he really",
+  ];
+  return hard.some((word) => q.includes(word));
+}
+
+function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRoute[] {
   const key = (requested || "auto").trim().toLowerCase();
   const gemini = !!env.GEMINI_API_KEY;
   const groq = !!env.GROQ_API_KEY;
   const cerebras = !!env.CEREBRAS_API_KEY;
   const openai = !!env.OPENAI_API_KEY;
   const openrouter = !!openrouterKey(env);
+
+  if (key === "auto") {
+    const complex = isComplexQuestion(latestUser);
+    const routes: ModelRoute[] = [];
+    if (complex) {
+      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.6-flash" });
+      if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
+      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
+    } else {
+      if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
+      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
+      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.6-flash" });
+    }
+    if (routes.length) return routes;
+  }
 
   const all: ModelRoute[] = [];
   // Prefer the model that is actually answering. 3.8-flash hangs often
@@ -708,7 +737,8 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
 
 async function callAnyModel(env: Env, system: string, messages: ChatMessage[], requested?: string): Promise<{ reply: string; model: string; timingMs: number }> {
   const startedAt = Date.now();
-  const routes = availableRoutes(env, requested);
+  const latestUser = [...messages].reverse().find((message) => message.role === "user")?.content ?? "";
+  const routes = availableRoutes(env, requested, latestUser);
   console.log("Gary model selection:", requested || "auto", routes.map((r) => `${r.provider}:${r.model}`).join(" -> "));
   if (routes.length === 0) throw new Error("No model providers configured");
   let lastError: unknown;
