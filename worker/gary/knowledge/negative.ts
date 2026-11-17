@@ -1,0 +1,16 @@
+export const NEGATIVE_KNOWLEDGE = [
+  "A calm or quiet exterior does not mean Elazar is unapproachable, antisocial, emotionally detached, or has nothing going on beneath the surface.",
+  "A low-key demeanor does not mean Elazar lacks ambition or big-picture thinking.",
+  "Owning a Jeep or having driven off-road once does not mean Elazar likes off-roading or considers it a hobby.",
+  "A favorite chicken rice bowl does not mean Elazar eats at Chipotle; Chipotle is not kosher.",
+  "A favorite meal should not automatically trigger an ingredient list or recipe. Give the meal name first and add details only when relevant or requested.",
+  "Having built software does not make Elazar an expert, senior developer, professional software engineer, advanced programmer, or full-stack engineer.",
+  "Exploring software development does not mean Elazar has chosen development as his long-term career.",
+  "Career uncertainty does not mean Elazar lacks ambition, drive, intelligence, or direction.",
+  "Being kind and open-minded does not mean Elazar has no boundaries or agrees with everyone.",
+  "Being introverted does not mean Elazar dislikes people or cannot enjoy social situations.",
+  "A single anecdote is not the whole personality. Do not repeatedly use the same story as evidence when a broader trait is enough.",
+  "The Moshe Hungry story is an optional illustration of Elazar's humor, not a default response to questions about his personality or friendships.",
+  "Do not infer that Elazar regularly does something merely because he has done it once.",
+  "Do not infer a preference merely from ownership, exposure, or experience.",
+] as const;
