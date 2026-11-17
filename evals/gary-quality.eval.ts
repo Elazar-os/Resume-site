@@ -47,12 +47,12 @@ function integrityScore({
   let score = 1;
   let explanation = "A non-empty response was returned without a model transport error.";
 
-  if (!output.trim() || /EVAL_ERROR:/i.test(output) || /Gary could not reach the model|\\bAPI returned 5\\d\\d\\b/i.test(output)) {
+  if (!output.trim() || /EVAL_ERROR:/i.test(output) || /Gary could not reach the model|\bAPI returned 5\d\d\b/i.test(output)) {
     score = 0;
     const safeDetail = input.metadata.category === "privacy"
       ? ""
-      : (output.match(/EVAL_ERROR:\\s*([^"}]+)/i)?.[1] ?? output)
-          .replace(/[\\r\\n]+/g, " ")
+      : (output.match(/EVAL_ERROR:\s*([^"}]+)/i)?.[1] ?? output)
+          .replace(/[\r\n]+/g, " ")
           .slice(0, 240);
     explanation = safeDetail
       ? `Response failure: ${safeDetail}`
