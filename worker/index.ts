@@ -644,7 +644,8 @@ async function fetchWithRetry(url: string, init: RequestInit, provider: string):
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const response = await fetch(url, init);
+      // Give every attempt its own timeout; never reuse an aborted signal.
+      const response = await fetch(url, { ...init, signal: AbortSignal.timeout(8000) });
       const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
       if (!retryable || attempt === maxAttempts) return response;
 
@@ -653,6 +654,7 @@ async function fetchWithRetry(url: string, init: RequestInit, provider: string):
         ? Math.min(retryAfter * 1000, 2000)
         : 400 * 2 ** (attempt - 1);
       console.warn("Gary provider retry:", provider, "status:", response.status, "attempt:", attempt, "delayMs:", delayMs);
+      await response.body?.cancel();
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     } catch (err) {
       lastError = err;
