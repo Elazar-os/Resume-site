@@ -3,6 +3,8 @@
  * Gary SYSTEM_PROMPT = V3.4 (rollback: set ACTIVE_PROMPT_VERSION to "v3.3" or "v3.2d")
  */
 
+import { formatRetrievedKnowledge, retrieveKnowledge } from './gary/knowledge/retriever';
+
 export interface Env {
   ASSETS: Fetcher;
   GEMINI_API_KEY: string;
@@ -10,6 +12,7 @@ export interface Env {
   OPENAI_API_KEY?: string;
   OPENROUTER_API_KEY?: string;
   OPEN_AI_API?: string;
+  GARY_KNOWLEDGE_V4?: string;
 }
 
 type GaryMode = "professional" | "shidduch" | "full";
@@ -46,21 +49,12 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   const all: ModelRoute[] = [];
   // Prefer the model that is actually answering. 3.8-flash hangs often
   // enough to time out the whole request before fallback can run.
-  if (gemini) {
-    // 3.6 is the one that actually answers in a few seconds.
-    // 3.5-flash is the slow one (20s+). Keep lite only as backup.
-    all.push({ provider: "gemini", model: "gemini-3.6-flash" });
-    all.push({ provider: "gemini", model: "gemini-3.6-flash" });
-    all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-  }
-  if (groq) {
-    all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
-    all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
-  }
-  if (openrouter) {
-    all.push({ provider: "openrouter", model: "qwen/qwen3-8b:free" });
-    all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
-  }
+  // Fast free providers first so a Gemini stall does not own the request.
+  if (groq) all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
+  if (openrouter) all.push({ provider: "openrouter", model: "meta-llama/llama-3.3-70b-instruct:free" });
+  if (gemini) all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
+  if (groq) all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
+  if (gemini) all.push({ provider: "gemini", model: "gemini-3.6-flash" });
   if (openai) all.push({ provider: "openai", model: "gpt-4o-mini" });
 
   if (key === "fast") {
@@ -595,14 +589,17 @@ A: (Here the menu system, invoice tracker, and ElazarOS are on topic, so use the
 const ACTIVE_PROMPT_VERSION = "v3.4";
 const SYSTEM_PROMPT = ACTIVE_PROMPT_VERSION === "v3.4" ? SYSTEM_PROMPT_V34 : ACTIVE_PROMPT_VERSION === "v3.3" ? SYSTEM_PROMPT_V33 : SYSTEM_PROMPT_V32D;
 
-function buildSystemMessage(mode: GaryMode): string {
+function buildSystemMessage(mode: GaryMode, knowledgeContext = ""): string {
   const modeInstruction =
     mode === "shidduch"
       ? "\n\nCURRENT MODE: shidduch. Relationship values and family form-style facts are appropriate when asked. The shadchan / \"this could have been an email\" line is allowed when the process comes up. Still obey hard privacy rules. Do not force restaurant/coding/PTI into every answer."
       : mode === "full"
       ? "\n\nCURRENT MODE: full. Professional + personal + family form-style facts when relevant. Do not over-repeat the same themes or dump the full family roster unprompted."
       : "\n\nCURRENT MODE: professional (public portfolio). Focus on work, projects, skills, career. Do not lead with King of Delancey. Family only if directly asked — brief. Do not volunteer Shidduch-specific details, including the shadchan / email line.";
-  return SYSTEM_PROMPT + modeInstruction;
+  const knowledgeInstruction = knowledgeContext
+    ? "\n\n────────\nRETRIEVED KNOWLEDGE\n────────\nThese items were selected for this question. Prefer them. Respect negative-knowledge lines. Do not mention retrieval.\n\n" + knowledgeContext
+    : "";
+  return SYSTEM_PROMPT + modeInstruction + knowledgeInstruction;
 }
 
 async function callGeminiModel(apiKey: string, model: string, system: string, messages: ChatMessage[]): Promise<string> {
@@ -627,7 +624,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(14000),
+    signal: AbortSignal.timeout(8000),
   });
   console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
@@ -664,7 +661,7 @@ async function callOpenAICompat(
       ...extraHeaders,
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(14000),
+    signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) {
     const errText = await res.text();
@@ -847,7 +844,12 @@ export default {
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
           });
         }
-        const system = buildSystemMessage(mode);
+        const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")?.content ?? "";
+        const knowledgeEnabled = env.GARY_KNOWLEDGE_V4 !== "false";
+        const retrieved = knowledgeEnabled
+          ? formatRetrievedKnowledge(retrieveKnowledge(latestUserMessage, mode, 6))
+          : "";
+        const system = buildSystemMessage(mode, retrieved);
         const { reply, model, timingMs } = await callAnyModel(env, system, messages, body.model);
         return new Response(JSON.stringify({ reply, mode, model, timingMs }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
