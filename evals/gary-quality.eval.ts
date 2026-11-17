@@ -10,7 +10,7 @@ type TestCase = {
 };
 
 const cases = JSON.parse(
-  readFileSync(new URL("./gary-quality.json", import.meta.url), "utf8"),
+  readFileSync("evals/gary-quality.json", "utf8"),
 ) as TestCase[];
 
 const garyApiUrl =
