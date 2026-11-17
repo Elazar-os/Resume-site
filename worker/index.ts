@@ -10,6 +10,7 @@ export interface Env {
   GEMINI_API_KEY: string;
   GROQ_API_KEY?: string;
   CEREBRAS_API_KEY?: string;
+  NVIDIA_API_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENROUTER_API_KEY?: string;
   OPEN_AI_API?: string;
@@ -29,7 +30,7 @@ interface GaryRequest {
   model?: string;
 }
 
-type ProviderName = "gemini" | "groq" | "openai" | "openrouter" | "cerebras";
+type ProviderName = "gemini" | "groq" | "openai" | "openrouter" | "cerebras" | "nvidia";
 
 interface ModelRoute {
   provider: ProviderName;
@@ -59,6 +60,7 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
   const gemini = !!env.GEMINI_API_KEY;
   const groq = !!env.GROQ_API_KEY;
   const cerebras = !!env.CEREBRAS_API_KEY;
+  const nvidia = !!env.NVIDIA_API_KEY;
   const openai = !!env.OPENAI_API_KEY;
   const openrouter = !!openrouterKey(env);
 
@@ -66,13 +68,13 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
     const complex = isComplexQuestion(latestUser);
     const routes: ModelRoute[] = [];
     if (complex) {
-      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.6-flash" });
+      if (nvidia) routes.push({ provider: "nvidia", model: "z-ai/glm-5.3-flash" });
+      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.8-flash" });
       if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
-      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
     } else {
+      if (nvidia) routes.push({ provider: "nvidia", model: "openai/gpt-oss-20b" });
       if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
       if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.6-flash" });
     }
     if (routes.length) return routes;
   }
@@ -83,6 +85,7 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
   // Fast free providers first so a Gemini stall does not own the request.
   if (groq) all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
   if (cerebras) all.push({ provider: "cerebras", model: "gpt-oss-120b" });
+  if (nvidia) all.push({ provider: "nvidia", model: "openai/gpt-oss-20b" });
   if (openrouter) all.push({ provider: "openrouter", model: "openrouter/free" });
   if (openrouter) all.push({ provider: "openrouter", model: "google/gemma-4-26b-a4b-it:free" });
   if (gemini) all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
@@ -719,6 +722,10 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
     if (!env.CEREBRAS_API_KEY) throw new Error("missing CEREBRAS_API_KEY");
     return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages);
   }
+  if (route.provider === "nvidia") {
+    if (!env.NVIDIA_API_KEY) throw new Error("missing NVIDIA_API_KEY");
+    return callOpenAICompat("https://integrate.api.nvidia.com/v1/chat/completions", env.NVIDIA_API_KEY, route.model, system, messages);
+  }
   if (route.provider === "openai") {
     if (!env.OPENAI_API_KEY) throw new Error("missing OPENAI_API_KEY");
     return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages);
@@ -870,12 +877,13 @@ export default {
         openrouter: !!openrouterKey(env),
         groq: !!env.GROQ_API_KEY,
         cerebras: !!env.CEREBRAS_API_KEY,
+        nvidia: !!env.NVIDIA_API_KEY,
         openai: !!env.OPENAI_API_KEY,
       }), { headers: { ...corsHeaders(), "Content-Type": "application/json" } });
     }
     if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
-        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.CEREBRAS_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
+        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.CEREBRAS_API_KEY && !env.NVIDIA_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
           return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
             status: 500,
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
