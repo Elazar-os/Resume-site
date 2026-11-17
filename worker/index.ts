@@ -72,8 +72,8 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
       if (gemini) routes.push({ provider: "gemini", model: "gemini-3.8-flash" });
       if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
     } else {
-      if (nvidia) routes.push({ provider: "nvidia", model: "openai/gpt-oss-20b" });
       if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
+      if (nvidia) routes.push({ provider: "nvidia", model: "google/gemma-4-31b-it" });
       if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
     }
     if (routes.length) return routes;
