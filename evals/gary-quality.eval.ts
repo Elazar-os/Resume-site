@@ -99,24 +99,38 @@ Eval("Gary Quality Evaluation", {
 
     for (const turn of input.turns) {
       history.push({ role: "user", content: turn });
-      const response = await fetch(garyApiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, mode: "full" }),
-      });
-      const responseText = await response.text();
-      if (!response.ok) {
-        throw new Error(`Gary API returned ${response.status}: ${responseText.slice(0, 300)}`);
+      try {
+        const response = await fetch(garyApiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history, mode: "full" }),
+        });
+        const responseText = await response.text();
+        if (!response.ok) {
+          replies.push(`EVAL_ERROR: Gary API returned ${response.status}: ${responseText.slice(0, 500)}`);
+          break;
+        }
+        let payload: { reply?: string };
+        try {
+          payload = JSON.parse(responseText) as { reply?: string };
+        } catch {
+          replies.push(`EVAL_ERROR: Gary API returned non-JSON response: ${responseText.slice(0, 500)}`);
+          break;
+        }
+        if (typeof payload.reply !== "string" || !payload.reply.trim()) {
+          replies.push(`EVAL_ERROR: Gary API response did not contain a non-empty reply: ${responseText.slice(0, 500)}`);
+          break;
+        }
+        replies.push(payload.reply);
+        history.push({ role: "assistant", content: payload.reply });
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        replies.push(`EVAL_ERROR: Request to Gary failed: ${detail}`);
+        break;
       }
-      const payload = JSON.parse(responseText) as { reply?: string };
-      if (typeof payload.reply !== "string" || !payload.reply.trim()) {
-        throw new Error("Gary API response did not contain a non-empty reply.");
-      }
-      replies.push(payload.reply);
-      history.push({ role: "assistant", content: payload.reply });
     }
 
-    return input.turns.length === 1 ? replies[0] : JSON.stringify(replies);
+    return input.turns.length === 1 ? replies[0] ?? "EVAL_ERROR: No reply was produced." : JSON.stringify(replies);
   },
   scores: [integrityScore, rubricJudge],
 });
