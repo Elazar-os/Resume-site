@@ -1,12 +1,6 @@
 name: Gary Braintrust Quality Evaluation
 
 on:
-  push:
-    branches:
-      - evals/braintrust-score-fix
-    paths:
-      - "evals/**"
-      - ".github/workflows/gary-quality-eval.yml"
   pull_request:
     branches:
       - main
@@ -15,6 +9,10 @@ on:
       - ".github/workflows/braintrust-gary-eval.yml"
       - ".github/workflows/gary-quality-eval.yml"
   workflow_dispatch:
+
+concurrency:
+  group: gary-braintrust-evaluation
+  cancel-in-progress: false
 
 permissions:
   contents: read
