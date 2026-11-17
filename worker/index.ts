@@ -827,6 +827,14 @@ export default {
       }
     }
 
+    if (url.pathname === "/api/gary-health") {
+      return new Response(JSON.stringify({
+        gemini: !!env.GEMINI_API_KEY,
+        openrouter: !!openrouterKey(env),
+        groq: !!env.GROQ_API_KEY,
+        openai: !!env.OPENAI_API_KEY,
+      }), { headers: { ...corsHeaders(), "Content-Type": "application/json" } });
+    }
     if (url.pathname === "/api/gary" && request.method === "POST") {
       try {
         if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
