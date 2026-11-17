@@ -1,0 +1,50 @@
+name: Gary Braintrust Baseline Evaluation
+
+on:
+  push:
+    branches:
+      - replit-agent
+    paths:
+      - "evals/**"
+      - ".github/workflows/braintrust-gary-eval.yml"
+  pull_request:
+    branches:
+      - replit-agent
+    paths:
+      - "evals/**"
+      - ".github/workflows/braintrust-gary-eval.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  evaluate-gary:
+    name: Evaluate Gary baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install evaluation dependencies
+        run: npm install --no-save --package-lock=false braintrust autoevals tsx
+
+      - name: Run Gary baseline in Braintrust
+        uses: braintrustdata/eval-action@v2
+        with:
+          api_key: ${{ secrets.BRAINTRUST_API_KEY }}
+          runtime: node
+          paths: evals/gary-baseline.eval.ts
+          terminate_on_failure: true
+        env:
+          GARY_API_URL: https://elazaros-app.elazar-greisman.workers.dev/api/gary
