@@ -47,9 +47,10 @@ function availableRoutes(env: Env, requested?: string): ModelRoute[] {
   // Prefer the model that is actually answering. 3.8-flash hangs often
   // enough to time out the whole request before fallback can run.
   if (gemini) {
+    // 3.6 is the one that actually answers in a few seconds.
+    // 3.5-flash is the slow one (20s+). Keep lite only as backup.
     all.push({ provider: "gemini", model: "gemini-3.6-flash" });
     all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-    all.push({ provider: "gemini", model: "gemini-3.5-flash" });
   }
   if (groq) {
     all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
@@ -371,7 +372,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(12000),
+    signal: AbortSignal.timeout(8000),
   });
   console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
@@ -408,7 +409,7 @@ async function callOpenAICompat(
       ...extraHeaders,
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(12000),
+    signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) {
     const errText = await res.text();
