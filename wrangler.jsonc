@@ -13,8 +13,5 @@
   },
   "observability": {
     "enabled": true
-  },
-  "secrets": {
-    "required": ["GEMINI_API_KEY"]
   }
 }
