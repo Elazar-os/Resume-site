@@ -155,18 +155,58 @@ async function callGemini(apiKey: string, system: string, messages: ChatMessage[
     contents,
     generationConfig: { temperature: 0.75, maxOutputTokens: 1024 },
   };
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Gemini error:", res.status, errText);
-    throw new Error(`Gemini API error: ${res.status}`);
+
+  // Retry transient provider/network failures with exponential backoff.
+  // Do not retry permanent client errors such as invalid credentials or requests.
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const retryable = res.status === 429 || res.status >= 500;
+        const errText = await res.text();
+        console.error("Gemini request failed:", {
+          status: res.status,
+          attempt,
+          retryable,
+          details: errText.slice(0, 500),
+        });
+        if (!retryable || attempt === maxAttempts) {
+          throw new Error(`Gemini API error: ${res.status}`);
+        }
+      } else {
+        const data = (await res.json()) as any;
+        const reply = data?.candidates?.[0]?.content?.parts
+          ?.map((part: { text?: string }) => part.text ?? "")
+          .join("")
+          .trim();
+
+        if (reply) return reply;
+
+        const finishReason = data?.candidates?.[0]?.finishReason ?? "no_candidate";
+        console.error("Gemini returned no usable text:", { attempt, finishReason });
+        if (attempt === maxAttempts) {
+          throw new Error(`Gemini returned no usable text: ${finishReason}`);
+        }
+      }
+    } catch (error) {
+      if (attempt === maxAttempts) throw error;
+      console.error("Gemini request exception:", {
+        attempt,
+        message: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const delayMs = 500 * 2 ** (attempt - 1);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
   }
-  const data = (await res.json()) as any;
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "I couldn’t generate a reply right now. Please try again.";
+
+  throw new Error("Gemini request failed after retries");
 }
 
 function corsHeaders(): HeadersInit {
