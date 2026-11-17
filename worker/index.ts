@@ -638,34 +638,6 @@ function buildSystemMessage(mode: GaryMode, knowledgeContext = ""): string {
   return SYSTEM_PROMPT + modeInstruction + knowledgeInstruction;
 }
 
-async function fetchWithRetry(url: string, init: RequestInit, provider: string): Promise<Response> {
-  const maxAttempts = 3;
-  let lastError: unknown;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const response = await fetch(url, init);
-      const retryable = response.status === 408 || response.status === 429 || response.status >= 500;
-      if (!retryable || attempt === maxAttempts) return response;
-
-      const retryAfter = Number(response.headers.get("Retry-After"));
-      const delayMs = Number.isFinite(retryAfter) && retryAfter > 0
-        ? Math.min(retryAfter * 1000, 2000)
-        : 400 * 2 ** (attempt - 1);
-      console.warn("Gary provider retry:", provider, "status:", response.status, "attempt:", attempt, "delayMs:", delayMs);
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    } catch (err) {
-      lastError = err;
-      if (attempt === maxAttempts) throw err;
-      const delayMs = 400 * 2 ** (attempt - 1);
-      console.warn("Gary provider network retry:", provider, "attempt:", attempt, "delayMs:", delayMs, "error:", err instanceof Error ? err.message : String(err));
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
-  }
-
-  throw lastError || new Error("Provider request failed after retries");
-}
-
 async function callGeminiModel(apiKey: string, model: string, system: string, messages: ChatMessage[]): Promise<string> {
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
@@ -684,12 +656,12 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
   };
   const startedAt = Date.now();
   console.log("Gary Gemini request start:", model, "messages:", messages.length, "chars:", messages.reduce((sum, m) => sum + m.content.length, 0));
-  let res = await fetchWithRetry(url, {
+  let res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(8000),
-  }, `Gemini:${model}`);
+  });
   console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
     const errText = await res.text();
@@ -717,7 +689,7 @@ async function callOpenAICompat(
     max_tokens: 512,
     messages: [{ role: "system", content: system }, ...messages.map((m) => ({ role: m.role, content: m.content }))],
   };
-  const res = await fetchWithRetry(url, {
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -726,7 +698,7 @@ async function callOpenAICompat(
     },
     body: JSON.stringify(payload),
     signal: AbortSignal.timeout(8000),
-  }, `API:${new URL(url).hostname}:${model}`);
+  });
   if (!res.ok) {
     const errText = await res.text();
     console.error("Compat API error:", url, model, res.status, errText.slice(0, 1000));
