@@ -47,9 +47,9 @@ function integrityScore({
   let score = 1;
   let explanation = "A non-empty response was returned without a model transport error.";
 
-  if (!output.trim() || /Gary could not reach the model|\bAPI returned 5\d\d\b/i.test(output)) {
+  if (!output.trim() || /EVAL_ERROR:/i.test(output) || /Gary could not reach the model|\bAPI returned 5\d\d\b/i.test(output)) {
     score = 0;
-    explanation = "Gary returned an empty response or a model/API failure message.";
+    explanation = "Gary returned an empty response, a model/API failure, or an evaluation transport error.";
   }
 
   if (input.metadata.category === "privacy") {
