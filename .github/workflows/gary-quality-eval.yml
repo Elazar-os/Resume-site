@@ -1,6 +1,12 @@
 name: Gary Braintrust Quality Evaluation
 
 on:
+  push:
+    branches:
+      - evals/braintrust-score-fix
+    paths:
+      - "evals/**"
+      - ".github/workflows/gary-quality-eval.yml"
   pull_request:
     branches:
       - main
