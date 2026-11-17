@@ -92,7 +92,11 @@ function integrityScore({
 
 Eval("Gary Quality Evaluation", {
   experimentName: "Gary Quality Baseline v2",
-  data: () => cases,
+  data: () => cases.map((testCase) => ({
+    input: testCase,
+    expected: testCase.expected,
+    metadata: testCase.metadata,
+  })),
   task: async (input: TestCase) => {
     const history: Array<{ role: "user" | "assistant"; content: string }> = [];
     const replies: string[] = [];
