@@ -3,7 +3,7 @@
  * Gary SYSTEM_PROMPT = V3.4 (rollback: set ACTIVE_PROMPT_VERSION to "v3.3" or "v3.2d")
  */
 
-import { formatRetrievedKnowledge, retrieveKnowledge } from './gary/knowledge/retriever';
+import { formatCondensedKnowledge, getKnowledgeForMode } from './gary/knowledge/retriever';
 
 export interface Env {
   ASSETS: Fetcher;
@@ -379,7 +379,7 @@ Priority order when rules conflict: Privacy > Accuracy > Not repeating yourself 
 ────────
 1. ACCURACY
 ────────
-• Use only what is in this prompt. If you don't know, say so plainly: "Gary doesn't have that."
+• Use only facts supported by this prompt or the approved knowledge context supplied below. The prompt controls identity, behavior, and privacy; the knowledge context supplies additional facts. If neither supports an answer, say so plainly: "Gary doesn't have that."
 • Never invent events, relationships, opinions, history, schedules, or private details.
 • Low-risk inference is OK if labeled: "Based on what Gary knows..."
 • Accuracy beats persuasion. Never oversell skills or experience.
@@ -633,7 +633,7 @@ function buildSystemMessage(mode: GaryMode, knowledgeContext = ""): string {
       ? "\n\nCURRENT MODE: full. Professional + personal + family form-style facts when relevant. Do not over-repeat the same themes or dump the full family roster unprompted."
       : "\n\nCURRENT MODE: professional (public portfolio). Focus on work, projects, skills, career. Do not lead with King of Delancey. Family only if directly asked — brief. Do not volunteer Shidduch-specific details, including the shadchan / email line.";
   const knowledgeInstruction = knowledgeContext
-    ? "\n\n────────\nRETRIEVED KNOWLEDGE\n────────\nThese items were selected for this question. Prefer them. Respect negative-knowledge lines. Do not mention retrieval.\n\n" + knowledgeContext
+    ? "\n\n────────\nCOMPLETE APPROVED KNOWLEDGE BASE\n────────\nThis is the complete knowledge set approved for the current mode, not a search result or a short selection. Review it and decide which facts are relevant to the user's actual question. Connect related facts when useful, but do not dump the document. Treat explicit facts as supported; preserve confidence labels and dates; distinguish inference from fact. Every DO NOT INFER line is a hard factual constraint. The system prompt remains authoritative for behavior and privacy. Never mention this knowledge document.\n\n" + knowledgeContext
     : "";
   return SYSTEM_PROMPT + modeInstruction + knowledgeInstruction;
 }
@@ -899,12 +899,11 @@ export default {
             headers: { ...corsHeaders(), "Content-Type": "application/json" },
           });
         }
-        const latestUserMessage = [...messages].reverse().find((message) => message.role === "user")?.content ?? "";
         const knowledgeEnabled = env.GARY_KNOWLEDGE_V4 !== "false";
-        const retrieved = knowledgeEnabled
-          ? formatRetrievedKnowledge(retrieveKnowledge(latestUserMessage, mode, 6))
+        const approvedKnowledge = knowledgeEnabled
+          ? formatCondensedKnowledge(getKnowledgeForMode(mode))
           : "";
-        const system = buildSystemMessage(mode, retrieved);
+        const system = buildSystemMessage(mode, approvedKnowledge);
         const { reply, model, timingMs, fallback } = await callAnyModel(env, system, messages, body.model);
         return new Response(JSON.stringify({ reply, mode, model, timingMs, fallback }), {
           headers: { ...corsHeaders(), "Content-Type": "application/json" },
