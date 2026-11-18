@@ -117,7 +117,7 @@ Eval("Gary Quality Evaluation", {
         const response = await fetch(garyApiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, mode: "full" }),
+          body: JSON.stringify({ messages: history, mode: "full", model: "fast" }),
         });
         const responseText = await response.text();
         if (!response.ok) {
@@ -133,6 +133,7 @@ Eval("Gary Quality Evaluation", {
         }
         console.log("GARY_MODEL_METRIC", JSON.stringify({
           category: input.metadata.category,
+          requestedRoute: "fast",
           turn: replies.length + 1,
           model: payload.model ?? null,
           totalTimingMs: typeof payload.timingMs === "number" ? payload.timingMs : null,
