@@ -64,34 +64,15 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
   const openai = !!env.OPENAI_API_KEY;
   const openrouter = !!openrouterKey(env);
 
-  if (key === "auto") {
-    const complex = isComplexQuestion(latestUser);
-    const routes: ModelRoute[] = [];
-    if (complex) {
-      if (nvidia) routes.push({ provider: "nvidia", model: "z-ai/glm-5.3-flash" });
-      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.8-flash" });
-      if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
-    } else {
-      if (openrouter) routes.push({ provider: "openrouter", model: "openrouter/free" });
-      if (nvidia) routes.push({ provider: "nvidia", model: "google/gemma-4-31b-it" });
-      if (gemini) routes.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-    }
-    if (routes.length) return routes;
-  }
-
+  // Gary's default route is quality-first: strongest chosen model first,
+  // then independent provider fallbacks. Simple and complex questions use
+  // the same priority so a "simple" heuristic cannot downgrade answer quality.
   const all: ModelRoute[] = [];
-  // Prefer the model that is actually answering. 3.8-flash hangs often
-  // enough to time out the whole request before fallback can run.
-  // Fast free providers first so a Gemini stall does not own the request.
-  if (groq) all.push({ provider: "groq", model: "llama-3.1-8b-instant" });
-  if (cerebras) all.push({ provider: "cerebras", model: "gpt-oss-120b" });
-  if (nvidia) all.push({ provider: "nvidia", model: "openai/gpt-oss-20b" });
+  if (nvidia) all.push({ provider: "nvidia", model: "z-ai/glm-5.3-flash" });
+  if (gemini) all.push({ provider: "gemini", model: "gemini-3.8-flash" });
   if (openrouter) all.push({ provider: "openrouter", model: "openrouter/free" });
-  if (openrouter) all.push({ provider: "openrouter", model: "google/gemma-4-26b-a4b-it:free" });
-  if (gemini) all.push({ provider: "gemini", model: "gemini-3.5-flash-lite" });
-  if (groq) all.push({ provider: "groq", model: "llama-3.3-70b-versatile" });
-  if (gemini) all.push({ provider: "gemini", model: "gemini-3.6-flash" });
   if (openai) all.push({ provider: "openai", model: "gpt-4o-mini" });
+  if (key === "auto") return all;
 
   if (key === "fast") {
     return all.filter((r) => r.provider === "groq" || r.provider === "cerebras" || r.provider === "openrouter" || r.model.includes("flash-lite") || r.model.includes("8b"));
@@ -638,7 +619,7 @@ function buildSystemMessage(mode: GaryMode, knowledgeContext = ""): string {
   return SYSTEM_PROMPT + modeInstruction + knowledgeInstruction;
 }
 
-async function callGeminiModel(apiKey: string, model: string, system: string, messages: ChatMessage[]): Promise<string> {
+async function callGeminiModel(apiKey: string, model: string, system: string, messages: ChatMessage[], timeoutMs: number): Promise<string> {
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
@@ -660,7 +641,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
@@ -682,6 +663,7 @@ async function callOpenAICompat(
   system: string,
   messages: ChatMessage[],
   extraHeaders: Record<string, string> = {},
+  timeoutMs = 8000,
 ): Promise<string> {
   const payload = {
     model,
@@ -697,7 +679,7 @@ async function callOpenAICompat(
       ...extraHeaders,
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
   if (!res.ok) {
     const errText = await res.text();
@@ -710,25 +692,25 @@ async function callOpenAICompat(
   return text;
 }
 
-async function callRoute(env: Env, route: ModelRoute, system: string, messages: ChatMessage[]): Promise<string> {
+async function callRoute(env: Env, route: ModelRoute, system: string, messages: ChatMessage[], timeoutMs: number): Promise<string> {
   if (route.provider === "gemini") {
-    return callGeminiModel(env.GEMINI_API_KEY, route.model, system, messages);
+    return callGeminiModel(env.GEMINI_API_KEY, route.model, system, messages, timeoutMs);
   }
   if (route.provider === "groq") {
     if (!env.GROQ_API_KEY) throw new Error("missing GROQ_API_KEY");
-    return callOpenAICompat("https://api.groq.com/openai/v1/chat/completions", env.GROQ_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://api.groq.com/openai/v1/chat/completions", env.GROQ_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   if (route.provider === "cerebras") {
     if (!env.CEREBRAS_API_KEY) throw new Error("missing CEREBRAS_API_KEY");
-    return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   if (route.provider === "nvidia") {
     if (!env.NVIDIA_API_KEY) throw new Error("missing NVIDIA_API_KEY");
-    return callOpenAICompat("https://integrate.api.nvidia.com/v1/chat/completions", env.NVIDIA_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://integrate.api.nvidia.com/v1/chat/completions", env.NVIDIA_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   if (route.provider === "openai") {
     if (!env.OPENAI_API_KEY) throw new Error("missing OPENAI_API_KEY");
-    return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   const orKey = openrouterKey(env);
   if (!orKey) throw new Error("missing OPENROUTER_API_KEY");
@@ -739,6 +721,7 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
     system,
     messages,
     { "HTTP-Referer": "https://elazaros-app.elazar-greisman.workers.dev", "X-Title": "ElazarOS Gary" },
+    timeoutMs,
   );
 }
 
@@ -749,10 +732,12 @@ async function callAnyModel(env: Env, system: string, messages: ChatMessage[], r
   console.log("Gary model selection:", requested || "auto", routes.map((r) => `${r.provider}:${r.model}`).join(" -> "));
   if (routes.length === 0) throw new Error("No model providers configured");
   let lastError: unknown;
-  for (const route of routes) {
+  for (let routeIndex = 0; routeIndex < routes.length; routeIndex++) {
+    const route = routes[routeIndex];
     try {
       const routeStartedAt = Date.now();
-      const reply = await callRoute(env, route, system, messages);
+      const timeoutMs = routeIndex === 0 ? 15000 : 8000;
+      const reply = await callRoute(env, route, system, messages, timeoutMs);
       console.log("Gary model success:", route.provider, route.model, "ms:", Date.now() - routeStartedAt, "totalMs:", Date.now() - startedAt);
       return { reply, model: `${route.provider}:${route.model}`, timingMs: Date.now() - startedAt, fallback: lastError ? String(lastError).slice(0, 300) : undefined };
     } catch (err) {
