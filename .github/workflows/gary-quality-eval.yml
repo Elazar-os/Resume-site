@@ -1,0 +1,47 @@
+name: Gary Braintrust Quality Evaluation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "evals/**"
+      - ".github/workflows/braintrust-gary-eval.yml"
+      - ".github/workflows/gary-quality-eval.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: gary-braintrust-evaluation
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  evaluate-gary:
+    name: Evaluate Gary quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install evaluation dependencies
+        run: npm install --no-save --package-lock=false braintrust autoevals tsx
+
+      - name: Run Gary evaluation in Braintrust
+        uses: braintrustdata/eval-action@v2
+        with:
+          api_key: ${{ secrets.BRAINTRUST_API_KEY }}
+          runtime: node
+          paths: evals/gary-quality.eval.ts
+          terminate_on_failure: true
+        env:
+          GARY_API_URL: https://elazaros-app.elazar-greisman.workers.dev/api/gary
