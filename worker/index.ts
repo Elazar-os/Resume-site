@@ -68,10 +68,10 @@ function availableRoutes(env: Env, requested?: string, latestUser = ""): ModelRo
   // then independent provider fallbacks. Simple and complex questions use
   // the same priority so a "simple" heuristic cannot downgrade answer quality.
   const all: ModelRoute[] = [];
-  if (nvidia) all.push({ provider: "nvidia", model: "z-ai/glm-5.3-flash" });
   if (gemini) all.push({ provider: "gemini", model: "gemini-3.8-flash" });
   if (openrouter) all.push({ provider: "openrouter", model: "openrouter/free" });
   if (openai) all.push({ provider: "openai", model: "gpt-4o-mini" });
+  if (nvidia) all.push({ provider: "nvidia", model: "z-ai/glm-5.3-flash" });
   if (key === "auto") return all;
 
   if (key === "fast") {
