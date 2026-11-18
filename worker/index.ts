@@ -643,7 +643,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(timeoutMs),
   });
-  console.log("Gary Gemini response":, model, "status:", res.status, "ms:", Date.now() - startedAt);
+  console.log("Gary Gemini response:", model, "status:", res.status, "ms:", Date.now() - startedAt);
   if (!res.ok) {
     const errText = await res.text();
     console.error("Gemini error:", model, res.status, errText);
@@ -702,15 +702,15 @@ async function callRoute(env: Env, route: ModelRoute, system: string, messages: 
   }
   if (route.provider === "cerebras") {
     if (!env.CEREBRAS_API_KEY) throw new Error("missing CEREBRAS_API_KEY");
-    return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://api.cerebras.ai/v1/chat/completions", env.CEREBRAS_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   if (route.provider === "nvidia") {
     if (!env.NVIDIA_API_KEY) throw new Error("missing NVIDIA_API_KEY");
-    return callOpenAICompat("https://integrate.api.nvidia.com/v1/chat/completions", env.NVIDIA_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://integrate.api.nvidia.com/v1/chat/completions", env.NVIDIA_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   if (route.provider === "openai") {
     if (!env.OPENAI_API_KEY) throw new Error("missing OPENAI_API_KEY");
-    return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages);
+    return callOpenAICompat("https://api.openai.com/v1/chat/completions", env.OPENAI_API_KEY, route.model, system, messages, {}, timeoutMs);
   }
   const orKey = openrouterKey(env);
   if (!orKey) throw new Error("missing OPENROUTER_API_KEY");
