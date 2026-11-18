@@ -124,13 +124,22 @@ Eval("Gary Quality Evaluation", {
           replies.push(`EVAL_ERROR: Gary API returned ${response.status}: ${responseText.slice(0, 500)}`);
           break;
         }
-        let payload: { reply?: string };
+        let payload: { reply?: string; model?: string; timingMs?: number; fallback?: string };
         try {
-          payload = JSON.parse(responseText) as { reply?: string };
+          payload = JSON.parse(responseText) as { reply?: string; model?: string; timingMs?: number; fallback?: string };
         } catch {
           replies.push(`EVAL_ERROR: Gary API returned non-JSON response: ${responseText.slice(0, 500)}`);
           break;
         }
+        console.log("GARY_MODEL_METRIC", JSON.stringify({
+          category: input.metadata.category,
+          turn: replies.length + 1,
+          model: payload.model ?? null,
+          totalTimingMs: typeof payload.timingMs === "number" ? payload.timingMs : null,
+          fallbackOccurred: Boolean(payload.fallback),
+          fallbackError: payload.fallback ?? null,
+          responseOk: typeof payload.reply === "string" && Boolean(payload.reply.trim()),
+        }));
         if (typeof payload.reply !== "string" || !payload.reply.trim()) {
           replies.push(`EVAL_ERROR: Gary API response did not contain a non-empty reply: ${responseText.slice(0, 500)}`);
           break;
