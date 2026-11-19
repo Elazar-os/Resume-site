@@ -651,7 +651,9 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
   }
   const data = (await res.json()) as any;
   const parts = data?.candidates?.[0]?.content?.parts ?? [];
-  const text = parts.map((p: any) => p?.text).filter(Boolean).join("\n").trim();
+  // Gemini thinking models may return internal thought parts separately from the user-facing answer.
+  // Never expose thought:true content; only return the final response parts.
+  const text = parts.filter((p: any) => p?.thought !== true).map((p: any) => p?.text).filter(Boolean).join("\n").trim();
   if (!text) throw new Error("empty gemini reply");
   return text;
 }
