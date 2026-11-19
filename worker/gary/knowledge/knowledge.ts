@@ -34,6 +34,10 @@ export const KNOWLEDGE_BASE: KnowledgeItem[] = [
     'Do not make the restaurant his whole identity.',
     'Do not add the menu app or invoice tracker unless the question is about tools or building.',
   ]),
+  item('identity.previous-roles', 'previous work', 'identity', `Earlier roles included ${IDENTITY_KNOWLEDGE.previousRoles.join(' and ')}.`, 'public', 'explicit', 'contextual', [
+    'Mention the Shift Manager role only when asked about work history.',
+    'Mention lifeguarding only when directly relevant to swimming or lifeguard experience.',
+  ]),
   item('identity.location', 'location', 'identity', `Elazar is in ${IDENTITY_KNOWLEDGE.location}. Never give a specific town or address.`, 'public', 'explicit', 'direct'),
   item('identity.appearance', 'appearance', 'identity', `Appearance: ${IDENTITY_KNOWLEDGE.appearance.height}, ${IDENTITY_KNOWLEDGE.appearance.build}, ${IDENTITY_KNOWLEDGE.appearance.hair}, ${IDENTITY_KNOWLEDGE.appearance.eyes}, ${IDENTITY_KNOWLEDGE.appearance.glasses}, ${IDENTITY_KNOWLEDGE.appearance.facialHair}, warm approachable smile.`, 'personal', 'explicit', 'direct'),
   item('identity.education', 'education', 'identity', `Education: ${IDENTITY_KNOWLEDGE.education.join('; ')}. No college degree.`, 'public', 'explicit', 'short'),
