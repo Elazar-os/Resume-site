@@ -51,11 +51,12 @@ export const KNOWLEDGE_BASE: KnowledgeItem[] = [
   item('personality.humor', 'humor', 'personality', PERSONALITY_KNOWLEDGE.humor + ' With close friends he is dry, blunt, and a little ridiculous. The humor is deadpan, not performative.', 'public', 'explicit', 'contextual', [
     'Do not use the same anecdote repeatedly as the default evidence of Elazar\'s personality.',
   ]),
-  item('personality.ambition', 'ambition', 'personality', 'Elazar can be quietly ambitious. His low-key demeanor should not be interpreted as a lack of drive.', 'public', 'explicit', 'contextual'),
   item('personality.values', 'values', 'personality', `Values: ${PERSONALITY_KNOWLEDGE.values.join(', ')}. Dislikes: ${PERSONALITY_KNOWLEDGE.dislikes.join(', ')}.`, 'public', 'explicit', 'contextual'),
-  item('personality.hosting', 'hosting', 'personality', 'He cooks and hosts. He will throw a meal or a small get-together at home and invite a friend.', 'personal', 'explicit', 'contextual'),
+  item('personality.hosting', 'hosting', 'personality', 'Elazar enjoys cooking and hosting. These are genuine interests, but do not imply he currently hosts or cooks frequently unless current activity is explicitly supported.', 'personal', 'explicit', 'contextual', [
+    'Do not describe cooking or hosting as a regular routine without evidence of current frequency.',
+  ]),
 
-  item('career.direction', 'career direction', 'career', CAREER_KNOWLEDGE.careerDirection, 'public', 'explicit', 'contextual', CAREER_KNOWLEDGE.negativeKnowledge),
+  item('career.direction', 'career direction', 'career', CAREER_KNOWLEDGE.careerDirection, 'public', 'explicit', 'do_not_surface', CAREER_KNOWLEDGE.negativeKnowledge),
   item('technical.identity', 'technical identity', 'technical', CAREER_KNOWLEDGE.technicalIdentity + ' He is not a senior engineer or professional software engineer.', 'public', 'explicit', 'contextual', [
     'Building software does not make Elazar a professional software engineer or expert programmer.',
   ]),
@@ -73,8 +74,12 @@ export const KNOWLEDGE_BASE: KnowledgeItem[] = [
   item('interests.favorite-meal-details', 'favorite meal ingredients', 'food', `The chicken rice bowl includes ${INTEREST_KNOWLEDGE.favorites.mealDetails.join(', ')}.`, 'personal', 'explicit', 'detail_on_request'),
   item('interests.kosher-chipotle', 'Chipotle restaurant', 'food', INTEREST_KNOWLEDGE.foodContext.kosherNote, 'personal', 'explicit', 'direct'),
   item('interests.favorites', 'favorites', 'food', `Other favorites: acai bowl, pistachio ice cream, black, Batman, The Arrow, virgin mojito, spring, Pesach, Wednesday. Use one or two, not the whole list.`, 'personal', 'explicit', 'short'),
-  item('interests.cooks', 'cooking', 'food', `He cooks ${INTEREST_KNOWLEDGE.makes.join(', ')}.`, 'personal', 'explicit', 'short'),
-  item('interests.enjoys', 'hobbies', 'interests', `He enjoys ${INTEREST_KNOWLEDGE.enjoys.join(', ')}. Fun answers should paint one picture, not dump the list.`, 'personal', 'explicit', 'short'),
+  item('interests.cooks', 'cooking', 'food', `Foods Elazar has cooked include ${INTEREST_KNOWLEDGE.makes.join(', ')}.`, 'personal', 'explicit', 'short', [
+    'Do not imply he currently cooks these foods regularly.',
+  ]),
+  item('interests.enjoys', 'hobbies', 'interests', `He genuinely enjoys ${INTEREST_KNOWLEDGE.enjoys.join(', ')}. ${INTEREST_KNOWLEDGE.activityFrequencyNote} Fun answers should paint one picture, not dump the list.`, 'personal', 'explicit', 'short', [
+    'Interests are not automatically current or frequent activities.',
+  ]),
   item('interests.jeep', 'Jeep', 'interests', `He owns and drives a ${INTEREST_KNOWLEDGE.vehicle}.`, 'personal', 'explicit', 'direct', [
     'Owning a Jeep does not mean he likes off-roading.',
   ]),
