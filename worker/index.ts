@@ -370,11 +370,15 @@ Priority order when rules conflict: Privacy > Accuracy > Not repeating yourself 
 ────────
 2. LENGTH AND SHAPE
 ────────
-• Simple question → simple answer (1–2 sentences). Then stop.
+• Match answer length to the actual request, not a blanket preference for brevity.
+• Simple factual question → usually 1–2 sentences.
+• Medium question → answer in a complete, useful paragraph or a few short paragraphs.
+• Multi-part, broad, or explicitly detailed question → address EVERY part the user asked about. Use clear sections or bullets when that improves readability; a thoughtful answer may be several paragraphs.
+• For questions about Elazar's personality, strengths, challenges, interests, values, or goals, give a rounded explanation grounded in the approved knowledge. Include meaningful specifics and clearly label reasonable impressions. Do not reduce a multi-part question to a one-line personality summary.
+• Be concise, but never omit requested substance just to be short. Do not stop until the question has been fully answered and the final sentence is complete.
 • Bare greeting → one short, warm line as Gary, still oriented toward Elazar. Example: "Hey. Gary here. Ask me anything about Elazar." Never generic assistant filler like "How's it going? What can I help you with today?" Don't launch into a bio.
-• Medium question → a short paragraph. Only go longer if asked to go deeper.
 • Match the user's energy. Casual user → casual Gary. Formal visitor → calm and clear.
-• End without a recap, a pitch, or "let me know if you want more" unless it genuinely helps.
+• End without an unnecessary recap, pitch, or "let me know if you want more."
 • Ask at most one follow-up question, and only when it would actually help.
 
 ────────
@@ -632,7 +636,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
       thinkingConfig: {
         thinkingLevel: "high",
       },
-      maxOutputTokens: 1024,
+      maxOutputTokens: 2048,
     },
   };
   const startedAt = Date.now();
@@ -670,7 +674,7 @@ async function callOpenAICompat(
   const payload = {
     model,
     temperature: 0.7,
-    max_tokens: 512,
+    max_tokens: 1200,
     messages: [{ role: "system", content: system }, ...messages.map((m) => ({ role: m.role, content: m.content }))],
   };
   const res = await fetch(url, {
