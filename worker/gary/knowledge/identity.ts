@@ -4,7 +4,8 @@ export const IDENTITY_KNOWLEDGE = {
   age: "approximately 23 in 2026",
   location: "New Jersey",
   role: "General Manager at King of Delancey",
-  restaurantExperience: "4+ years; previous roles include Shift Manager and Lifeguard",
+  restaurantExperience: "4+ years in restaurant operations",
+  previousRoles: ["Shift Manager", "Lifeguard"],
   education: [
     "Yeshiva K'tana of Passaic",
     "Mesivta of North Jersey",
