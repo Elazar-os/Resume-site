@@ -52,12 +52,12 @@ export const KNOWLEDGE_BASE: KnowledgeItem[] = [
     'Calm does not mean emotionally detached.',
     'Quiet does not mean antisocial.',
   ]),
-  item('personality.humor', 'humor', 'personality', PERSONALITY_KNOWLEDGE.humor + ' With close friends he is dry, blunt, and a little ridiculous. The humor is deadpan, not performative.', 'public', 'explicit', 'contextual', [
+  item('personality.humor', 'humor', 'personality', PERSONALITY_KNOWLEDGE.humor + ' With close friends he is dry, understated, and playful. The humor is deadpan, not performative.', 'public', 'explicit', 'contextual', [
     'Do not use the same anecdote repeatedly as the default evidence of Elazar\'s personality.',
   ]),
   item('personality.values', 'values', 'personality', `Values: ${PERSONALITY_KNOWLEDGE.values.join(', ')}. Dislikes: ${PERSONALITY_KNOWLEDGE.dislikes.join(', ')}.`, 'public', 'explicit', 'contextual'),
-  item('personality.hosting', 'hosting', 'personality', 'Elazar enjoys cooking and hosting. These are genuine interests, but do not imply he currently hosts or cooks frequently unless current activity is explicitly supported.', 'personal', 'explicit', 'contextual', [
-    'Do not describe cooking or hosting as a regular routine without evidence of current frequency.',
+  item('personality.hosting', 'hosting', 'personality', 'Elazar enjoys cooking when he feels like it and is good at hosting. When he hosts, he puts thought into making sure there is enough food and that it tastes good. These are genuine interests and strengths, but do not imply he currently hosts or cooks frequently.', 'personal', 'explicit', 'contextual', [
+    'Do not describe cooking or hosting as a regular routine without evidence of current frequency. Being good at hosting does not mean he hosts frequently.',
   ]),
 
   item('career.direction', 'career direction', 'career', CAREER_KNOWLEDGE.careerDirection, 'public', 'explicit', 'do_not_surface', CAREER_KNOWLEDGE.negativeKnowledge),
@@ -101,7 +101,10 @@ export const KNOWLEDGE_BASE: KnowledgeItem[] = [
   item('family.siblings', 'family', 'family', 'Siblings, Elazar is second oldest: Esther Baila (25), married to Shmuel Levenson (BMG), software developer; Elazar (23); Hillel (22), Hamptons Healthcare; Shloimy (18), Yeshivas Toras Maeir; Perri (15), Breuer\'s Bais Yaakov.', 'shidduch', 'explicit', 'short'),
 
   item('shidduch.process', 'shidduch', 'shidduch', 'He finds the formal shadchan process a little stiff. His line: a commercial shadchan setting up a date is the equivalent of "this could have been an email." Use only when the process comes up. Do not rant. Do not volunteer it.', 'shidduch', 'explicit', 'contextual'),
-  item('shidduch.values', 'relationship', 'shidduch', `What he wants when this is the topic: ${SHIDDUCH_KNOWLEDGE.desiredPartnerQualities.join(', ')}. Marriage as best friends. ${SHIDDUCH_KNOWLEDGE.socialBalance}`, 'shidduch', 'explicit', 'contextual'),
+  item('shidduch.values', 'relationship', 'shidduch', `What he wants when this is the topic: ${SHIDDUCH_KNOWLEDGE.desiredPartnerQualities.join(', ')}. Relationship outlook: ${SHIDDUCH_KNOWLEDGE.relationshipPhilosophy.join('; ')}. ${SHIDDUCH_KNOWLEDGE.socialBalance}`, 'shidduch', 'explicit', 'contextual'),
+  item('shidduch.how-he-relates', 'how Elazar relates', 'shidduch', SHIDDUCH_KNOWLEDGE.elazarInRelationships.join(' '), 'shidduch', 'explicit', 'contextual'),
+  item('shidduch.compatibility', 'compatibility and daily life', 'shidduch', SHIDDUCH_KNOWLEDGE.compatibilityAndDailyLife.join(' '), 'shidduch', 'explicit', 'contextual'),
+  item('shidduch.communication', 'dating and communication', 'shidduch', SHIDDUCH_KNOWLEDGE.datingCommunication.join(' '), 'shidduch', 'explicit', 'contextual'),
   item('shidduch.home', 'home', 'shidduch', `Jewish home: ${SHIDDUCH_KNOWLEDGE.jewishHome.join(', ')}. Mention only when relationships, faith, or the future is the topic.`, 'shidduch', 'explicit', 'contextual'),
 ];
 
