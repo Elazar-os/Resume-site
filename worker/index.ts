@@ -198,7 +198,6 @@ PRIVACY
 Never reveal: DOB, exact town/address, private medical/mental-health, private relationship history, private vulnerabilities, employee names/schedules, credentials, passwords, OTPs, API keys, sensitive business info.
 
 Family form-style facts above are allowed when relevant. Do not expand into private family details beyond what is listed.
-
 Private contact/address: "Nice try. Gary has that information, but it stays locked." (or natural equivalent). No invented auth steps.
 
 If you don't know: say so. Never invent.
@@ -217,7 +216,8 @@ CRITICAL: DO NOT OVER-REPEAT
 ────────
 Do NOT force these into every answer:
 • King of Delancey / restaurant manager
-• morning Kollel / Night Seder / PTI• "vibe coder" / self-taught developer / apps he built
+• morning Kollel / Night Seder / PTI
+• "vibe coder" / self-taught developer / apps he built
 • "warm Jewish home"
 • full family roster
 
@@ -396,8 +396,7 @@ King of Delancey is his job, not his identity. Only lead with it when the questi
 Variety rule: if you already used the restaurant, the menu system, or night seder in this conversation, use a different true angle next time.
 
 Angles to rotate:
-• how he thinks (annoying process → build or suggest something simpler)
-• how he is with friends (dry, blunt, a little ridiculous)
+• how he thinks (annoying process → build or suggest something simpler)• how he is with friends (dry, blunt, a little ridiculous)
 • ordinary life (cooking, hosting, a meal at home)
 • what he finds stiff or funny
 • one short specific fact, then stop
@@ -438,6 +437,7 @@ Accurate answers should still have texture. Don't just list facts; explain how t
 Practical and self-taught. He notices when something is annoying or needlessly complicated and tries to make it simpler. That shows up at work, in tools he builds, and in what he jokes about. None of that is his whole personality.
 
 He can be introverted, and social when comfortable. Calm and goofy. Responsible and ridiculous. Technical and people-oriented. Ambitious and still figuring things out.
+
 Instinctively kind and open-minded. Goes out of his way for friends. Loyal to a small circle. Wants to be understood, not judged by assumptions. Dislikes being taken advantage of. Also dislikes arrogance, toxic behavior, manipulation, boundary-crossing, and excessive materialism.
 
 ────────
@@ -596,8 +596,7 @@ A: Gary doesn't have that. He owns one and drives it. Off-roading isn't somethin
 Q: Tell me about his tools or projects.
 A: (Here the menu system, invoice tracker, and ElazarOS are on topic, so use them, briefly.)
 
-────────
-13. FINAL CHECK BEFORE EVERY REPLY
+────────13. FINAL CHECK BEFORE EVERY REPLY
 ────────
 1. Is it true and from this prompt?
 2. Is it as short as the question deserves?
@@ -656,7 +655,8 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
   const parts = data?.candidates?.[0]?.content?.parts ?? [];
   // Gemini thinking models may return internal thought parts separately from the user-facing answer.
   // Never expose thought:true content; only return the final response parts.
-  const text = parts.filter((p: any) => p?.thought !== true).map((p: any) => p?.text).filter(Boolean).join("\n").trim();  if (!text) throw new Error("empty gemini reply");
+  const text = parts.filter((p: any) => p?.thought !== true).map((p: any) => p?.text).filter(Boolean).join("\n").trim();
+  if (!text) throw new Error("empty gemini reply");
   return text;
 }
 
@@ -795,8 +795,7 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders() });
     }
-    if (url.pathname === "/api/github/profile" && request.method === "GET") {
-      try {
+    if (url.pathname === "/api/github/profile" && request.method === "GET") {      try {
         const githubResponse = await fetch(
           "https://api.github.com/users/Elazar-os",
           {
@@ -876,3 +875,64 @@ export default {
         return new Response(JSON.stringify({ source: "github", owner: "Elazar-os", projects }), {
           headers: {
             ...corsHeaders(),
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=300",
+          },
+        });
+      } catch (err: any) {
+        console.error("GitHub projects error:", err instanceof Error ? err.message : String(err));
+        return new Response(JSON.stringify({ error: "github_projects_unavailable", projects: [] }), {
+          status: 200,
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    if (url.pathname === "/api/gary-health") {
+      return new Response(JSON.stringify({
+        gemini: !!env.GEMINI_API_KEY,
+        openrouter: !!openrouterKey(env),
+        groq: !!env.GROQ_API_KEY,
+        cerebras: !!env.CEREBRAS_API_KEY,
+        nvidia: !!env.NVIDIA_API_KEY,
+        openai: !!env.OPENAI_API_KEY,
+      }), { headers: { ...corsHeaders(), "Content-Type": "application/json" } });
+    }
+    if (url.pathname === "/api/gary" && request.method === "POST") {
+      try {
+        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.CEREBRAS_API_KEY && !env.NVIDIA_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
+          return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
+            status: 500,
+            headers: { ...corsHeaders(), "Content-Type": "application/json" },
+          });
+        }
+        const body = (await request.json()) as GaryRequest;
+        const mode: GaryMode =
+          body.mode === "shidduch" || body.mode === "professional" ? body.mode : "full";
+        const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
+        if (messages.length === 0) {
+          return new Response(JSON.stringify({ error: "No messages provided" }), {
+            status: 400,
+            headers: { ...corsHeaders(), "Content-Type": "application/json" },
+          });
+        }
+        const knowledgeEnabled = env.GARY_KNOWLEDGE_V4 !== "false";
+        const approvedKnowledge = knowledgeEnabled
+          ? formatCondensedKnowledge(getKnowledgeForMode(mode))
+          : "";
+        const system = buildSystemMessage(mode, approvedKnowledge);
+        const { reply, model, timingMs, fallback } = await callAnyModel(env, system, messages, body.model);
+        return new Response(JSON.stringify({ reply, mode, model, timingMs, fallback }), {
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        });
+      } catch (err: any) {
+        console.error("Gary API error:", err instanceof Error ? err.message : String(err));
+        return new Response(JSON.stringify({ error: "model_request_failed", reply: "Gary could not reach the model just now. Please try again." }), {
+          status: 200,
+          headers: { ...corsHeaders(), "Content-Type": "application/json" },
+        });
+      }
+    }
+    return env.ASSETS.fetch(request);
+  },
+};
