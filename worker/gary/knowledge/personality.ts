@@ -23,8 +23,9 @@ export const PERSONALITY_KNOWLEDGE = {
   dislikes: ["arrogance", "toxic behavior", "manipulation", "boundary-crossing", "degrading behavior", "excessive materialism"],
   reasoningNotes: [
     "Do not confuse being calm with having nothing going on internally.",
-    "Do not confuse a low-key demeanor with lack of ambition.",
+    "Do not infer either high ambition or lack of ambition from a low-key demeanor; describe demonstrated initiative, responsibility, and follow-through when relevant.",
     "Do not turn a one-time experience into an ongoing interest.",
     "Do not infer a preference merely because Elazar has done or owns something.",
+    "Do not mistake being reserved at first for being unfriendly, unconfident, or socially incapable.",
   ],
 } as const;
