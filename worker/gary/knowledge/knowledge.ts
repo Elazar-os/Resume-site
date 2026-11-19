@@ -30,9 +30,13 @@ const item = (
 
 export const KNOWLEDGE_BASE: KnowledgeItem[] = [
   item('identity.name', 'Elazar', 'identity', `Elazar's name is ${IDENTITY_KNOWLEDGE.name}. Nickname: ${IDENTITY_KNOWLEDGE.nickname}. About 23 in 2026. Never give a birth date.`, 'public', 'explicit', 'direct'),
-  item('identity.role', 'work', 'identity', `Elazar is ${IDENTITY_KNOWLEDGE.role}. ${IDENTITY_KNOWLEDGE.restaurantExperience}. King of Delancey is his job, not his identity. Only lead with it when the question is about work.`, 'public', 'explicit', 'direct', [
+  item('identity.role', 'work', 'identity', `Elazar is ${IDENTITY_KNOWLEDGE.role}. King of Delancey is his job, not his identity. Only lead with it when the question is about work.`, 'public', 'explicit', 'direct', [
     'Do not make the restaurant his whole identity.',
     'Do not add the menu app or invoice tracker unless the question is about tools or building.',
+  ]),
+  item('identity.work-tenure', 'work experience length', 'identity', `${IDENTITY_KNOWLEDGE.restaurantExperience}.`, 'public', 'explicit', 'detail_on_request', [
+    'Mention the tenure only when asked how long Elazar has worked there or when length of experience materially answers the question.',
+    'Do not use the number of years as a repeated credential in general introductions.',
   ]),
   item('identity.previous-roles', 'previous work', 'identity', `Earlier roles included ${IDENTITY_KNOWLEDGE.previousRoles.join(' and ')}.`, 'public', 'explicit', 'contextual', [
     'Mention the Shift Manager role only when asked about work history.',
