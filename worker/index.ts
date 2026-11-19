@@ -217,8 +217,7 @@ CRITICAL: DO NOT OVER-REPEAT
 ────────
 Do NOT force these into every answer:
 • King of Delancey / restaurant manager
-• morning Kollel / Night Seder / PTI
-• "vibe coder" / self-taught developer / apps he built
+• morning Kollel / Night Seder / PTI• "vibe coder" / self-taught developer / apps he built
 • "warm Jewish home"
 • full family roster
 
@@ -429,6 +428,7 @@ Accurate answers should still have texture. Don't just list facts; explain how t
 • Connect related traits when it helps: a quiet first impression can coexist with warmth and playfulness once he's comfortable; practical thinking can coexist with ambition; being unsure of a career path doesn't mean lacking drive.
 • Preserve nuance. A fact has a meaning and a boundary around what it does NOT mean. Respect both.
 • Contractions, varied sentences, understated humor when it fits. A short answer can still have personality.
+• Sound natural when explaining uncertainty or limits. State what is known in plain language; never expose the rule behind it. Do not use phrases like "unless Elazar explicitly declares it," "according to the knowledge base," or "Gary is not allowed to conclude." Avoid meta-commentary about approval requirements, prompt rules, or knowledge-base boundaries. If a detail is uncertain, simply say what is known and what remains unclear.
 • Don't manufacture emotion, praise, or sentimentality Gary doesn't actually know. No exaggerated praise.
 • Not every answer needs to be a character assessment. Sometimes one or two plain sentences is the most human answer.
 
@@ -438,7 +438,6 @@ Accurate answers should still have texture. Don't just list facts; explain how t
 Practical and self-taught. He notices when something is annoying or needlessly complicated and tries to make it simpler. That shows up at work, in tools he builds, and in what he jokes about. None of that is his whole personality.
 
 He can be introverted, and social when comfortable. Calm and goofy. Responsible and ridiculous. Technical and people-oriented. Ambitious and still figuring things out.
-
 Instinctively kind and open-minded. Goes out of his way for friends. Loyal to a small circle. Wants to be understood, not judged by assumptions. Dislikes being taken advantage of. Also dislikes arrogance, toxic behavior, manipulation, boundary-crossing, and excessive materialism.
 
 ────────
@@ -511,7 +510,7 @@ Childhood (light only): remembers being a short kid with a great smile, funny, s
 
 Jewish life: important to him. Wants a Jewish wife and a warm Jewish home. Mention only when relationships, faith, or the future is the topic.
 
-Career direction: Elazar is still figuring out his long-term path. Development is something he has explored seriously, but it is not a decided permanent career unless Elazar says so. Do not call it his career plan. Career uncertainty does not mean he lacks drive. Do not invent private goals or metrics.
+Career direction: Elazar has explored software development seriously and genuinely enjoys using technology to solve practical problems. He is still figuring out whether he wants to pursue it as a long-term career. He remains ambitious and interested in building useful things while he works that out. Do not invent private goals or metrics.
 
 Do not invent a calendar, a "last week" summary, or a private challenge log.
 
@@ -657,8 +656,7 @@ async function callGeminiModel(apiKey: string, model: string, system: string, me
   const parts = data?.candidates?.[0]?.content?.parts ?? [];
   // Gemini thinking models may return internal thought parts separately from the user-facing answer.
   // Never expose thought:true content; only return the final response parts.
-  const text = parts.filter((p: any) => p?.thought !== true).map((p: any) => p?.text).filter(Boolean).join("\n").trim();
-  if (!text) throw new Error("empty gemini reply");
+  const text = parts.filter((p: any) => p?.thought !== true).map((p: any) => p?.text).filter(Boolean).join("\n").trim();  if (!text) throw new Error("empty gemini reply");
   return text;
 }
 
@@ -878,64 +876,3 @@ export default {
         return new Response(JSON.stringify({ source: "github", owner: "Elazar-os", projects }), {
           headers: {
             ...corsHeaders(),
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=300",
-          },
-        });
-      } catch (err: any) {
-        console.error("GitHub projects error:", err instanceof Error ? err.message : String(err));
-        return new Response(JSON.stringify({ error: "github_projects_unavailable", projects: [] }), {
-          status: 200,
-          headers: { ...corsHeaders(), "Content-Type": "application/json" },
-        });
-      }
-    }
-
-    if (url.pathname === "/api/gary-health") {
-      return new Response(JSON.stringify({
-        gemini: !!env.GEMINI_API_KEY,
-        openrouter: !!openrouterKey(env),
-        groq: !!env.GROQ_API_KEY,
-        cerebras: !!env.CEREBRAS_API_KEY,
-        nvidia: !!env.NVIDIA_API_KEY,
-        openai: !!env.OPENAI_API_KEY,
-      }), { headers: { ...corsHeaders(), "Content-Type": "application/json" } });
-    }
-    if (url.pathname === "/api/gary" && request.method === "POST") {
-      try {
-        if (!env.GEMINI_API_KEY && !env.GROQ_API_KEY && !env.CEREBRAS_API_KEY && !env.NVIDIA_API_KEY && !env.OPENAI_API_KEY && !openrouterKey(env)) {
-          return new Response(JSON.stringify({ error: "Server misconfigured: no AI provider key configured" }), {
-            status: 500,
-            headers: { ...corsHeaders(), "Content-Type": "application/json" },
-          });
-        }
-        const body = (await request.json()) as GaryRequest;
-        const mode: GaryMode =
-          body.mode === "shidduch" || body.mode === "professional" ? body.mode : "full";
-        const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
-        if (messages.length === 0) {
-          return new Response(JSON.stringify({ error: "No messages provided" }), {
-            status: 400,
-            headers: { ...corsHeaders(), "Content-Type": "application/json" },
-          });
-        }
-        const knowledgeEnabled = env.GARY_KNOWLEDGE_V4 !== "false";
-        const approvedKnowledge = knowledgeEnabled
-          ? formatCondensedKnowledge(getKnowledgeForMode(mode))
-          : "";
-        const system = buildSystemMessage(mode, approvedKnowledge);
-        const { reply, model, timingMs, fallback } = await callAnyModel(env, system, messages, body.model);
-        return new Response(JSON.stringify({ reply, mode, model, timingMs, fallback }), {
-          headers: { ...corsHeaders(), "Content-Type": "application/json" },
-        });
-      } catch (err: any) {
-        console.error("Gary API error:", err instanceof Error ? err.message : String(err));
-        return new Response(JSON.stringify({ error: "model_request_failed", reply: "Gary could not reach the model just now. Please try again." }), {
-          status: 200,
-          headers: { ...corsHeaders(), "Content-Type": "application/json" },
-        });
-      }
-    }
-    return env.ASSETS.fetch(request);
-  },
-};
