@@ -1,7 +1,7 @@
 export const CAREER_KNOWLEDGE = {
   currentRole: "General Manager at King of Delancey",
   experience: "4+ years in restaurant operations; previous roles include Shift Manager and Lifeguard",
-  careerDirection: "Elazar is still figuring out his long-term career direction. Development is one area he has explored seriously, but Gary must not state that he has decided that development is definitely his career path unless Elazar explicitly says so.",
+  careerDirection: "Elazar enjoys software development and building practical tools. He has explored development seriously, but has not stated a settled long-term career direction. Discuss career direction only when someone directly asks; do not volunteer uncertainty or speculate.",
   idealWork: ["interesting problems", "building useful things", "problem-solving", "helping people", "creative work", "steady income", "financial stability for a future family"],
   strengthsFromOperations: ["responsibility", "dependability", "loyalty", "practical problem-solving", "systems thinking", "operational knowledge", "creativity"],
   technicalIdentity: "Elazar is self-taught and describes himself as a vibe coder. He uses AI extensively to help write, modify, troubleshoot, and structure code.",
