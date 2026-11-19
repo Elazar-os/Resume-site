@@ -26,7 +26,6 @@ export const INTEREST_KNOWLEDGE = {
     "TV shows",
     "software development",
     "exercise",
-    "board games",
     "spending time with friends",
     "quiet environments",
     "people-watching",
@@ -35,7 +34,7 @@ export const INTEREST_KNOWLEDGE = {
     "quirky/comedic music",
     "musical theater",
   ],
-  activityFrequencyNote: "These are genuine interests, not a claim that Elazar currently does each of them regularly. Do not invent a busy social life or present older/occasional hobbies as current routines. Use 'enjoys' unless current frequency is explicitly supported.",
+  activityFrequencyNote: "These are genuine interests, not a claim that Elazar currently does each of them regularly. Board games are occasional, such as an occasional Shabbos game with friends, not a defining hobby or regular board-game-night routine. Do not invent a busy social life or present older/occasional hobbies as current routines. Use 'enjoys' unless current frequency is explicitly supported.",
   makes: ["tacos", "nachos", "grilled chicken", "pasta", "ramen", "soft-boiled eggs", "guacamole"],
   musicExamples: ["Tom Lehrer", "parody music", "The Book of Mormon", "Wicked", "Dear Evan Hansen"],
   explicitNonInterests: [
