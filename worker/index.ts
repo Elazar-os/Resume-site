@@ -734,15 +734,44 @@ async function callAnyModel(env: Env, system: string, messages: ChatMessage[], r
   let lastError: unknown;
   for (let routeIndex = 0; routeIndex < routes.length; routeIndex++) {
     const route = routes[routeIndex];
+    const routeStartedAt = Date.now();
+    const timeoutMs = routeIndex === 0 ? 15000 : 8000;
+    console.log("Gary model attempt:", {
+      provider: route.provider,
+      model: route.model,
+      attempt: routeIndex + 1,
+      timeoutMs,
+      totalElapsedMs: routeStartedAt - startedAt,
+    });
     try {
-      const routeStartedAt = Date.now();
-      const timeoutMs = routeIndex === 0 ? 15000 : 8000;
       const reply = await callRoute(env, route, system, messages, timeoutMs);
-      console.log("Gary model success:", route.provider, route.model, "ms:", Date.now() - routeStartedAt, "totalMs:", Date.now() - startedAt);
-      return { reply, model: `${route.provider}:${route.model}`, timingMs: Date.now() - startedAt, fallback: lastError ? String(lastError).slice(0, 300) : undefined };
+      const attemptMs = Date.now() - routeStartedAt;
+      const totalMs = Date.now() - startedAt;
+      console.log("Gary model success:", {
+        provider: route.provider,
+        model: route.model,
+        attempt: routeIndex + 1,
+        attemptMs,
+        totalMs,
+        timeoutMs,
+      });
+      return { reply, model: `${route.provider}:${route.model}`, timingMs: totalMs, fallback: lastError ? String(lastError).slice(0, 300) : undefined };
     } catch (err) {
+      const attemptMs = Date.now() - routeStartedAt;
+      const totalMs = Date.now() - startedAt;
+      const errorName = err instanceof Error ? err.name : "UnknownError";
+      const errorMessage = err instanceof Error ? err.message : String(err);
       lastError = err;
-      console.error("Gary model failed:", route.provider, route.model, "ms:", Date.now() - startedAt, err);
+      console.error("Gary model failed:", {
+        provider: route.provider,
+        model: route.model,
+        attempt: routeIndex + 1,
+        attemptMs,
+        totalMs,
+        timeoutMs,
+        errorName,
+        errorMessage,
+      });
     }
   }
   throw lastError || new Error("All models failed");
