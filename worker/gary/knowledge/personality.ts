@@ -14,11 +14,10 @@ export const PERSONALITY_KNOWLEDGE = {
     "hardworking",
     "mature",
     "dependable",
-    "goofy",
     "dry-humored",
   ],
   socialStyle: "Elazar may be reserved at first, but becomes warmer and more playful when comfortable. He often prefers genuine one-on-one interaction over being the center of attention.",
-  humor: "Elazar enjoys dry, goofy, deadpan, quirky, absurd, and sometimes biting humor. Good humor can create a strong feeling of connection for him.",
+  humor: "Elazar has a dry, deadpan sense of humor and a playful side that comes out when he is comfortable. He enjoys quirky, absurd, and sometimes biting humor. Good humor can create a strong feeling of connection for him.",
   values: ["kindness", "open-mindedness", "genuineness", "reliability", "being there for friends", "respect for boundaries"],
   dislikes: ["arrogance", "toxic behavior", "manipulation", "boundary-crossing", "degrading behavior", "excessive materialism"],
   reasoningNotes: [
